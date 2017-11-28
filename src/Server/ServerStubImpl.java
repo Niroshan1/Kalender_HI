@@ -1,14 +1,13 @@
 
 package Server;
 
+import Utilities.DBHandler;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -16,21 +15,63 @@ import java.util.logging.Logger;
  */
 public class ServerStubImpl implements ServerStub {
     
-    private LinkedList<ServerStub> connectionList = new LinkedList<>();
+    private LinkedList<Verbindung> connectionList;
+    private LinkedList<String> onlineServerList;
+    private final DBHandler datenbank;
         
-    ServerStubImpl(LinkedList<ServerStub> connectionList) {
+    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerListe, DBHandler datenbank) {
         this.connectionList = connectionList;
+        this.onlineServerList = onlineServerListe;
+        this.datenbank = datenbank;
     }
 
+    /**
+     * gibt Server die IP-Adresse und den Port eines Servers mit dem er sich verbinden soll
+     * dient der Erzeugung einer beidseitigen Verbindung / ungerichteten Verbindung
+     * 
+     * @param ip
+     * @param port
+     * @return 
+     * @throws RemoteException
+     * @throws AccessException 
+     */
     @Override
-    public void reconnect(String ip, int port) throws RemoteException, AccessException {     
-        Registry registry = LocateRegistry.getRegistry(ip, port);
+    public boolean initConnection(String ip, int port) throws RemoteException{            
         try {
+            Registry registry = LocateRegistry.getRegistry(ip, port);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-            connectionList.add(stub);
-            System.out.println("added server to List");
-        } catch (NotBoundException ex) {
-            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+            connectionList.add(new Verbindung(stub, ip, port));
+            return true;
+        } catch (NotBoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * gibt eine Liste aller Server zurueck, die gerade online und im Verbund sind
+     * 
+     * @return
+     * @throws RemoteException 
+     */
+    @Override
+    public LinkedList<String> getOnlineServerList() throws RemoteException {
+        return onlineServerList;
+    }
+
+    /**
+     * Diese Methode fuegt der onlineServerList einen neuen Server (IP) hinzu
+     * und informiert außerdem seine Nachbarn
+     * 
+     * @param ip
+     * @throws RemoteException 
+     */
+    @Override
+    public void aktOnlineServerList(String ip) throws RemoteException {
+        if(!onlineServerList.contains(ip)){
+            onlineServerList.add(ip);
+            for(Verbindung connection : connectionList){
+                connection.getServerStub().aktOnlineServerList(ip);
+            }
         }
     }
     

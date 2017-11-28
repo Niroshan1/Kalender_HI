@@ -7,11 +7,17 @@ package Server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.LinkedList;
 
 /**
  *
  * @author nader
  */
-interface ServerStub extends Remote  {
-    public void reconnect(String ip , int port) throws RemoteException;
+interface ServerStub extends Remote{
+    
+    public boolean initConnection(String ip, int port) throws RemoteException;
+    
+    public LinkedList<String> getOnlineServerList() throws RemoteException;
+    
+    public void aktOnlineServerList(String ip) throws RemoteException;
 }

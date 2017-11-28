@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    private LinkedList<ServerStub> connectionList;
+    private LinkedList<Verbindung> connectionList;
     private LinkedList<String> onlineServerListe;
     private final DBHandler datenbank;
     
@@ -56,7 +56,7 @@ public class Server {
     }
 
     private void initServerStub() throws RemoteException, AlreadyBoundException{
-        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList);
+        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerListe, datenbank);
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
         Registry serverRegistry = LocateRegistry.createRegistry(1101);
         serverRegistry.bind("ServerStub", serverStub);
@@ -79,7 +79,9 @@ public class Server {
     }
 
     private void connectToServers() {
-        // int anzahlVerbindungen = zufallswert zwischen 2 und 5 (?)
+        // zufaellige Anzahl an Verbindungen
+        int anzahlVerbindungen = (int)(Math.random() * 5) + 1;
+        
         // baue anzahlVerbindungen Verbindungen zu zufälligen Servern auf
         // zufälligen Server könnten sein: 
         //      - komplett zufällig
@@ -100,8 +102,8 @@ public class Server {
 
             Registry registry = LocateRegistry.getRegistry("localhost", 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-            connectionList.add(stub); 
-            stub.reconnect("localhost", 1100);
+            connectionList.add(new Verbindung(stub, "localhost", 1100)); 
+            stub.initConnection("localhost", 1100);
             
             System.out.println("Hallo");
         //}
