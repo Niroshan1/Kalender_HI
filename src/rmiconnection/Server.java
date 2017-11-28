@@ -45,7 +45,7 @@ public class Server {
         ServerStubImpl serverLauncher = new ServerStubImpl(connectionList);
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
         Registry serverRegistry = LocateRegistry.createRegistry(1100);
-        serverRegistry.bind("ServerStub", serverStub );
+        serverRegistry.bind("ServerStub", serverStub);
     }
 
     private void initClientStub() throws RemoteException, AlreadyBoundException{
@@ -86,6 +86,8 @@ public class Server {
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             connectionList.add(stub); 
             stub.reconnect(ip, 1100);
+            
+            System.out.println("Hallo");
         }
     }
     
