@@ -40,7 +40,7 @@ public class TerminAnlegen extends javax.swing.JFrame {
      * @param sitzungsID
      * @param hf
      */
-    public TerminAnlegen(LauncherInterface stub, int sitzungsID, Hauptfenster hf) {
+    public TerminAnlegen(ClientStub stub, int sitzungsID, Hauptfenster hf) {
         initComponents();
         this.stub = stub;
         this.sitzungsID = sitzungsID;
