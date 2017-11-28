@@ -5,7 +5,6 @@
  */
 package rmiconnection;
 
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -82,12 +81,11 @@ public class Server {
     private void hilfsfunktion(String[] args) throws RemoteException, NotBoundException {
         if(args.length > 0){
             String ip = args[0];
-            int port = Integer.parseInt(args[1]);
 
-            Registry registry = LocateRegistry.getRegistry(ip, port);
+            Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             connectionList.add(stub); 
-            stub.reconnect(ip, port);
+            stub.reconnect(ip, 1100);
         }
     }
     
