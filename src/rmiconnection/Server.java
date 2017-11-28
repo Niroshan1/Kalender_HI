@@ -22,9 +22,11 @@ import java.util.LinkedList;
 public class Server {
 
     private LinkedList<ServerStub> connectionList;
+    private LinkedList<String> onlineServerListe;
     
     public Server(){
         this.connectionList = new LinkedList<>();
+        this.onlineServerListe = new LinkedList<>();
     }
 
     void start(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException{
@@ -32,21 +34,10 @@ public class Server {
         initServerStub();
         initClientStub();
        
+        getOnlineServerListe();
+        connectToServers();
         
-        if(args.length > 0){
-            String ip= args[0];
-            int port = Integer.parseInt(args[1]);
-
-
-            Registry registry = LocateRegistry.getRegistry(ip, port);
-            ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-            connectionList.add(stub); 
-            stub.reconnect(ip, port);
-
-        }
-        
-        InetAddress ipAddr = InetAddress.getLocalHost();
-        System.out.println(ipAddr.getHostAddress());
+        hilfsfunktion(args);
         
         System.out.println("Server laeuft!");
     }
@@ -63,6 +54,41 @@ public class Server {
         ClientStub clientStub = (ClientStub)UnicastRemoteObject.exportObject(clientLauncher, 0);
         Registry clientRegistry = LocateRegistry.createRegistry(1099);
         clientRegistry.bind("ClientStub", clientStub);
+    }
+
+    private void getOnlineServerListe() {
+        // lese die Server aus der Datei alleServerListe.txt (o.ä.)
+        // versuche verbindung (rmi) mit diesen der reihe nach aufzubauen, bis
+        // eine Verbindung erzeugt werden kann
+        // dann rufe dort die Methode getOnlineServerList() auf
+        
+        //onlineServerListe = stub.getOnlineServerList();
+    }
+
+    private void connectToServers() {
+        // int anzahlVerbindungen = zufallswert zwischen 2 und 5 (?)
+        // baue anzahlVerbindungen Verbindungen zu zufälligen Servern auf
+        // zufälligen Server könnten sein: 
+        //      - komplett zufällig
+        //      - bester pings
+        //      - server mit wenigsten verbindungen
+        // nach jeder erstellten verbindung muss beim anderen server die Methode
+        // reconnect aufgerufen werden & die verbindung in die connectionList 
+        // geadded werden (der stub muss da rein)
+        //
+        // falls nur ein server online, dann nur eine Verbindung erstellen!!!
+    }
+
+    private void hilfsfunktion(String[] args) throws RemoteException, NotBoundException {
+        if(args.length > 0){
+            String ip = args[0];
+            int port = Integer.parseInt(args[1]);
+
+            Registry registry = LocateRegistry.getRegistry(ip, port);
+            ServerStub stub = (ServerStub) registry.lookup("ServerStub");
+            connectionList.add(stub); 
+            stub.reconnect(ip, port);
+        }
     }
     
 }
