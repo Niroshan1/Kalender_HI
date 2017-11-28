@@ -25,8 +25,7 @@ public class RMIConnection {
      */
  public static void main(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException{
      
-        String ip= args[0];
-        int port = Integer.parseInt(args[1]);
+    
         LinkedList<ServerStub> connectionList = new LinkedList<>();
         
        
@@ -34,7 +33,7 @@ public class RMIConnection {
         ServerStubImpl serverLauncher = new ServerStubImpl(connectionList);
         
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
-        Registry serverRegistry = LocateRegistry.createRegistry(1099);
+        Registry serverRegistry = LocateRegistry.createRegistry(1100);
         serverRegistry.bind("ServerStub", serverRegistry );
             
         System.out.println("ServerStub angelegt!");
@@ -48,13 +47,18 @@ public class RMIConnection {
             
         System.out.println("ClientStub angelegt!");
         
-        
-        Registry registry = LocateRegistry.getRegistry(ip, port);
-        ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-        connectionList.add(stub); 
-        
-        
+        if(args.length > 0){
+            String ip= args[0];
+            int port = Integer.parseInt(args[1]);
+
+
+            Registry registry = LocateRegistry.getRegistry(ip, port);
+            ServerStub stub = (ServerStub) registry.lookup("ServerStub");
+            connectionList.add(stub); 
+
+        }
         System.out.println("Server laeuft!");
+        
     }      
     
 }
