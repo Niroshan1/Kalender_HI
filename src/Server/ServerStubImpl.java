@@ -1,5 +1,5 @@
 
-package rmiconnection;
+package Server;
 
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;

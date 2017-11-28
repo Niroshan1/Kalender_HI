@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rmiconnection;
+package Server;
 
+import Utilities.DBHandler;
+import Utilities.DatenbankException;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -12,7 +14,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,13 +28,21 @@ public class Server {
 
     private LinkedList<ServerStub> connectionList;
     private LinkedList<String> onlineServerListe;
+    private final DBHandler datenbank;
     
     public Server(){
         this.connectionList = new LinkedList<>();
         this.onlineServerListe = new LinkedList<>();
+        
+        datenbank = new DBHandler(); 
+        try {
+            datenbank.getConnection();
+        } catch (ClassNotFoundException | SQLException | NoSuchAlgorithmException ex) {
+            Logger.getLogger(ClientStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    void start(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException{
+    public void start(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException{
   
         initServerStub();
         initClientStub();
@@ -44,14 +58,14 @@ public class Server {
     private void initServerStub() throws RemoteException, AlreadyBoundException{
         ServerStubImpl serverLauncher = new ServerStubImpl(connectionList);
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
-        Registry serverRegistry = LocateRegistry.createRegistry(1100);
+        Registry serverRegistry = LocateRegistry.createRegistry(1101);
         serverRegistry.bind("ServerStub", serverStub);
     }
 
-    private void initClientStub() throws RemoteException, AlreadyBoundException{
-        ClientStubImpl clientLauncher = new ClientStubImpl();   
+    private void initClientStub() throws RemoteException, AlreadyBoundException, SQLException, DatenbankException{
+        ClientStubImpl clientLauncher = new ClientStubImpl(datenbank);   
         ClientStub clientStub = (ClientStub)UnicastRemoteObject.exportObject(clientLauncher, 0);
-        Registry clientRegistry = LocateRegistry.createRegistry(1099);
+        Registry clientRegistry = LocateRegistry.createRegistry(1199);
         clientRegistry.bind("ClientStub", clientStub);
     }
 
@@ -79,16 +93,18 @@ public class Server {
     }
 
     private void hilfsfunktion(String[] args) throws RemoteException, NotBoundException {
-        if(args.length > 0){
-            String ip = args[0];
+        System.setProperty("java.rmi.server.hostname", "95.88.91.227");
+        
+       // if(args.length > 0){
+            //String ip = args[0];
 
-            Registry registry = LocateRegistry.getRegistry(ip, 1100);
+            Registry registry = LocateRegistry.getRegistry("localhost", 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             connectionList.add(stub); 
-            stub.reconnect(ip, 1100);
+            stub.reconnect("localhost", 1100);
             
             System.out.println("Hallo");
-        }
+        //}
     }
     
 }

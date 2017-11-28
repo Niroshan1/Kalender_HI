@@ -3,17 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rmiconnection;
+package Server;
 
-import java.net.InetAddress;
+import Utilities.DatenbankException;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.LinkedList;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,20 +18,20 @@ import java.util.logging.Logger;
  *
  * @author nader
  */
-public class RMIConnection {
+public class TerminkalenderMain {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args){
         
         try {
             
             Server server = new Server();
             server.start(args);
             
-        } catch (RemoteException | AlreadyBoundException | NotBoundException | UnknownHostException ex) {
-            Logger.getLogger(RMIConnection.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException | AlreadyBoundException | NotBoundException | UnknownHostException | DatenbankException | SQLException ex) {
+            Logger.getLogger(TerminkalenderMain.class.getName()).log(Level.SEVERE, null, ex);
         }
      
     }      
