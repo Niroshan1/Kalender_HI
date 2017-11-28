@@ -241,22 +241,22 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         StringBuilder sb = new StringBuilder();
         StringBuilder cl = new StringBuilder();
 
-        LinkedList<Termin> dieserMonat;
+        LinkedList<Termin> dieserMonatlokal;
 
         int monat = month + 1;
 
         try {
-            dieserMonat = stub.getTermineInMonat(monat, year, sitzungsID);
+            dieserMonatlokal = stub.getTermineInMonat(monat, year, sitzungsID);
 
             int i = 1;
             //String zusammen = " ";
 
             //condition
-            for (int x = dayOfWeek - 1, day = 1; day <= daysInMonth; x++, day++) //set text
+            for (int x = dayOfWeek - 1, tag = 1; tag <= daysInMonth; x++, tag++) //set text
             {
 
-                for (Termin termin : dieserMonat) {
-                    cl.append(day);
+                for (Termin termin : dieserMonatlokal) {
+                    cl.append(tag);
                     cl.append(".");
                     cl.append(monat);
                     cl.append(".");
@@ -285,15 +285,15 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
                 }
 
                 String getSt = sb.toString();
-                String twooLines = day + "\n" + getSt;
+                String twooLines = tag + "\n" + getSt;
                 button[x].setForeground(Color.white);
 
-                if (ld.getDayOfMonth() == day && monat == ld.getMonthValue() && year == ld.getYear()) {
+                if (ld.getDayOfMonth() == tag && monat == ld.getMonthValue() && year == ld.getYear()) {
                     button[x].setForeground(Color.red);
                     button[x].setBackground(new Color(29, 30, 66));
                 }
 
-                tagBekommen[x] = day;
+                tagBekommen[x] = tag;
 
                 button[x].setText("<html>" + twooLines.replaceAll("\\n", "<br>") + "</html>");
                 sb.setLength(0);
