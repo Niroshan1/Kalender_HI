@@ -1865,10 +1865,8 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Hauptfenster().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Hauptfenster().setVisible(true);
         });
     }
 

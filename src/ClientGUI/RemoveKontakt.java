@@ -5,12 +5,10 @@
  */
 package ClientGUI;
 
-import Terminkalender.BenutzerException;
-import Terminkalender.LauncherInterface;
+import Server.ClientStub;
+import Utilities.BenutzerException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,7 +17,7 @@ import javax.swing.JOptionPane;
  */
 public class RemoveKontakt extends javax.swing.JFrame {
     
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private int sitzungsID;
 
     /**
@@ -27,7 +25,7 @@ public class RemoveKontakt extends javax.swing.JFrame {
      * @param stub
      * @param sitzungsID
      */
-    public RemoveKontakt(LauncherInterface stub, int sitzungsID) {
+    public RemoveKontakt(ClientStub stub, int sitzungsID) {
         initComponents();
         this.stub = stub;
         this.sitzungsID = sitzungsID;
@@ -185,22 +183,16 @@ public class RemoveKontakt extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RemoveKontakt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RemoveKontakt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RemoveKontakt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(RemoveKontakt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new RemoveKontakt().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new RemoveKontakt().setVisible(true);
         });
     }
 

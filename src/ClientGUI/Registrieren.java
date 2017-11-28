@@ -5,8 +5,8 @@
  */
 package ClientGUI;
 
-import Terminkalender.BenutzerException;
-import Terminkalender.LauncherInterface;
+import Server.ClientStub;
+import Utilities.BenutzerException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -19,14 +19,14 @@ import javax.swing.JOptionPane;
  */
 public class Registrieren extends javax.swing.JFrame {
 
-    private final LauncherInterface stub;
+    private final ClientStub stub;
 
     /**
      * Creates new form Registrieren
      *
      * @param stub
      */
-    public Registrieren(LauncherInterface stub) {
+    public Registrieren(ClientStub stub) {
         initComponents();
         this.stub = stub;
     }
@@ -269,29 +269,18 @@ public class Registrieren extends javax.swing.JFrame {
 
                 }
             }
-        } catch (ClassNotFoundException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Registrieren.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Registrieren.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Registrieren.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Registrieren.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Registrieren().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Registrieren().setVisible(true);
         });
     }
 

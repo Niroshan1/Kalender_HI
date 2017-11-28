@@ -4,9 +4,7 @@
  * and open the template in the editor.
  */
 package ClientGUI;
-import Terminkalender.LauncherInterface;
-import Terminkalender.Terminkalender;
-import java.io.Serializable;
+
 import java.util.LinkedList;
 import javax.swing.AbstractListModel;
 

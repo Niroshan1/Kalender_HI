@@ -5,9 +5,12 @@ package ClientGUI;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import Server.ClientStub;
 import Utilities.BenutzerException;
+import Utilities.Datum;
 import Utilities.Teilnehmer;
 import Utilities.TerminException;
+import Utilities.Zeit;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -22,7 +25,7 @@ import javax.swing.JOptionPane;
  */
 public class TerminInhalt extends javax.swing.JFrame {
 
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private final int sitzungsID;
     private int terminID;
     DefaultListModel teilnehmerListeModel = new DefaultListModel();
@@ -34,10 +37,10 @@ public class TerminInhalt extends javax.swing.JFrame {
      * @param stub
      * @param sitzungsID
      * @throws java.rmi.RemoteException
-     * @throws Terminkalender.BenutzerException
-     * @throws Terminkalender.TerminException
+     * @throws Utilities.BenutzerException
+     * @throws Utilities.TerminException
      */
-    public TerminInhalt(int terminID, LauncherInterface stub, int sitzungsID) throws RemoteException, BenutzerException, TerminException {
+    public TerminInhalt(int terminID, ClientStub stub, int sitzungsID) throws RemoteException, BenutzerException, TerminException {
         initComponents();
 
         this.terminID = terminID;
@@ -354,7 +357,7 @@ public class TerminInhalt extends javax.swing.JFrame {
             this.dispose();
             tIB.setVisible(true);
             tIB.bearbeiteTerminInhalt();
-        } catch (RemoteException | BenutzerException | TerminException | SQLException | Datum.DatumException | Zeit.ZeitException ex) {
+        } catch (RemoteException | SQLException | BenutzerException | TerminException | Datum.DatumException | Zeit.ZeitException ex) {
             Logger.getLogger(TerminInhalt.class.getName()).log(Level.SEVERE, null, ex);
         }  
     }//GEN-LAST:event_bearbeitenLabelMouseClicked
@@ -393,13 +396,7 @@ public class TerminInhalt extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TerminInhalt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TerminInhalt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TerminInhalt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TerminInhalt.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -434,12 +431,43 @@ public class TerminInhalt extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TerminInhalt().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new TerminInhalt().setVisible(true);
         });
     }
 

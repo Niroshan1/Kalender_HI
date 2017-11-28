@@ -5,7 +5,11 @@
  */
 package ClientGUI;
 
-import Terminkalender.GUIPart.Hauptfenster;
+import Server.ClientStub;
+import Utilities.BenutzerException;
+import Utilities.Datum;
+import Utilities.TerminException;
+import Utilities.Zeit;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -19,7 +23,7 @@ import javax.swing.JOptionPane;
  */
 public class TerminAnlegen extends javax.swing.JFrame {
 
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private int sitzungsID;
     private Hauptfenster hf;
     Datum datum;
@@ -372,25 +376,22 @@ public class TerminAnlegen extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TerminAnlegen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TerminAnlegen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TerminAnlegen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TerminAnlegen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new TerminAnlegen().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new TerminAnlegen().setVisible(true);
         });
     }
 
