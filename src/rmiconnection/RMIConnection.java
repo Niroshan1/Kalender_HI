@@ -5,6 +5,8 @@
  */
 package rmiconnection;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -23,7 +25,7 @@ public class RMIConnection {
      * @param args the command line arguments
      * @throws java.rmi.RemoteException
      */
- public static void main(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException{
+ public static void main(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException{
      
     
         LinkedList<ServerStub> connectionList = new LinkedList<>();
@@ -55,8 +57,13 @@ public class RMIConnection {
             Registry registry = LocateRegistry.getRegistry(ip, port);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             connectionList.add(stub); 
+            stub.reconnect(ip, port);
 
         }
+        
+        InetAddress ipAddr = InetAddress.getLocalHost();
+        System.out.println(ipAddr.getHostAddress());
+        
         System.out.println("Server laeuft!");
         
     }      
