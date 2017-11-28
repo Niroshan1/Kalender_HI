@@ -6,17 +6,13 @@
 package ClientGUI;
 
 //import statements
-import Terminkalender.BenutzerException;
-import Terminkalender.Datum;
-import Terminkalender.LauncherInterface;
-import Terminkalender.Termin;
-import Terminkalender.TerminException;
-import Terminkalender.Zeit;
+import Server.ClientStub;
+import Utilities.BenutzerException;
+import Utilities.Termin;
+import Utilities.TerminException;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -26,7 +22,7 @@ import javax.swing.*;
 //create class
 class CalenderPanel {
 
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private final int sitzungsID;
 
     //define variables
@@ -45,7 +41,7 @@ class CalenderPanel {
     //create object of JButton
     JButton[] button = new JButton[49];
 
-    public CalenderPanel(LauncherInterface stub, int sitzungsID)//create constructor 
+    public CalenderPanel(ClientStub stub, int sitzungsID)//create constructor 
     {
         this.stub = stub;
         this.sitzungsID = sitzungsID;

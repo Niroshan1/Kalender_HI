@@ -5,8 +5,8 @@
  */
 package ClientGUI;
 
-import Terminkalender.BenutzerException;
-import Terminkalender.LauncherInterface;
+import Server.ClientStub;
+import Utilities.BenutzerException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -18,7 +18,7 @@ import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
  */
 public class YourProfil extends javax.swing.JFrame {
 
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private int sitzungsID;
     private String neuerNachname;
     private String neuerVorname;
@@ -32,7 +32,7 @@ public class YourProfil extends javax.swing.JFrame {
      * @param stub
      * @param sitzungsID
      */
-    public YourProfil(LauncherInterface stub, int sitzungsID) {
+    public YourProfil(ClientStub stub, int sitzungsID) {
         initComponents();
         this.stub = stub;
         this.sitzungsID = sitzungsID;

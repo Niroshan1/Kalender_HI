@@ -5,8 +5,8 @@
  */
 package ClientGUI;
 
-import Terminkalender.BenutzerException;
-import Terminkalender.LauncherInterface;
+import Server.ClientStub;
+import Utilities.BenutzerException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -17,7 +17,7 @@ import javax.swing.JOptionPane;
  */
 public class ForgotPassword extends javax.swing.JFrame {
     
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private int sitzungsID;
 
     /**
@@ -25,7 +25,7 @@ public class ForgotPassword extends javax.swing.JFrame {
      * @param stub
      * @param sitzungsID
      */
-    public ForgotPassword(LauncherInterface stub, int sitzungsID) {
+    public ForgotPassword(ClientStub stub, int sitzungsID) {
         initComponents();
         this.stub = stub;
         this.sitzungsID = sitzungsID;

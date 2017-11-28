@@ -5,8 +5,8 @@
  */
 package ClientGUI;
 
-import Terminkalender.BenutzerException;
-import Terminkalender.LauncherInterface;
+import Server.ClientStub;
+import Utilities.BenutzerException;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  */
 public class AddKontakt extends javax.swing.JFrame {
     
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private int sitzungsID;
     //private String username;
     /**
@@ -26,7 +26,7 @@ public class AddKontakt extends javax.swing.JFrame {
      * @param stub
      * @param sitzungsID
      */
-    public AddKontakt(LauncherInterface stub, int sitzungsID) {
+    public AddKontakt(ClientStub stub, int sitzungsID) {
         initComponents();
         this.stub = stub;
         this.sitzungsID = sitzungsID;

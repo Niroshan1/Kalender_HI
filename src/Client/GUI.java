@@ -5,6 +5,7 @@
  */
 package Client;
 
+import ClientGUI.Fenster;
 import Server.ClientStub;
 import Utilities.BenutzerException;
 import Utilities.Datum;

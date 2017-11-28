@@ -5,14 +5,13 @@
  */
 package ClientGUI;
 
-import Terminkalender.Anfrage;
-import Terminkalender.BenutzerException;
+import Server.ClientStub;
+import Utilities.Anfrage;
+import Utilities.BenutzerException;
 
-import javax.swing.DefaultListModel;
 import java.awt.*;
-import Terminkalender.LauncherInterface;
-import Terminkalender.Teilnehmer;
-import Terminkalender.TerminException;
+import Utilities.Teilnehmer;
+import Utilities.TerminException;
 import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -26,7 +25,7 @@ import javax.swing.JOptionPane;
  */
 public class EventDet extends javax.swing.JFrame {
     
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private final int sitzungsID;
     private final int index;
     String eventText;
@@ -41,7 +40,7 @@ public class EventDet extends javax.swing.JFrame {
      * @param index
      * @param hauptfenster
      */
-    public EventDet(String event, LauncherInterface stub, int sitzungsID, int index, Hauptfenster hauptfenster) {
+    public EventDet(String event, ClientStub stub, int sitzungsID, int index, Hauptfenster hauptfenster) {
         this.stub=stub;
         this.sitzungsID = sitzungsID;
         this.eventText = event;

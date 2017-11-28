@@ -5,11 +5,11 @@
  */
 package ClientGUI;
 
-import Terminkalender.BenutzerException;
-import Terminkalender.Datum;
-import Terminkalender.LauncherInterface;
-import Terminkalender.TerminException;
-import Terminkalender.Zeit;
+import Server.ClientStub;
+import Utilities.BenutzerException;
+import Utilities.Datum;
+import Utilities.TerminException;
+import Utilities.Zeit;
 import java.awt.Color;
 import java.rmi.RemoteException;
 import javax.swing.JOptionPane;
@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
  */
 public class Fenster extends javax.swing.JFrame {
 
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private int sitzungsID;
 
     /**
@@ -28,7 +28,7 @@ public class Fenster extends javax.swing.JFrame {
      *
      * @param stub
      */
-    public Fenster(LauncherInterface stub) {
+    public Fenster(ClientStub stub) {
         initComponents();
         this.stub = stub;
         infoBoxPanel.setVisible(false);

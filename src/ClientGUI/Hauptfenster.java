@@ -5,14 +5,11 @@
  */
 package ClientGUI;
 
-import Terminkalender.TerminAnlegen;
-import Terminkalender.BenutzerException;
-import Terminkalender.Datum;
-import Terminkalender.LauncherInterface;
-import Terminkalender.Meldungen;
-import Terminkalender.Termin;
-import Terminkalender.TerminException;
-import Terminkalender.TerminInhalt;
+import Server.ClientStub;
+import Utilities.BenutzerException;
+import Utilities.Datum;
+import Utilities.Termin;
+import Utilities.TerminException;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +37,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public class Hauptfenster extends javax.swing.JFrame implements ListSelectionListener {
 
-    private final LauncherInterface stub;
+    private final ClientStub stub;
     private int sitzungsID;
     //private DefaultListModel listModel;
     DefaultListModel listModel = new DefaultListModel();
@@ -68,7 +65,7 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
      * @param sitzungsID
      * @param fenster
      */
-    public Hauptfenster(LauncherInterface stub, int sitzungsID, Fenster fenster) {
+    public Hauptfenster(ClientStub stub, int sitzungsID, Fenster fenster) {
         initComponents();
 
         this.stub = stub;
