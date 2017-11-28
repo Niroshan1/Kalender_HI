@@ -14,6 +14,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -23,49 +25,18 @@ public class RMIConnection {
 
     /**
      * @param args the command line arguments
-     * @throws java.rmi.RemoteException
      */
- public static void main(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException{
-     
-    
-        LinkedList<ServerStub> connectionList = new LinkedList<>();
+    public static void main(String[] args) {
         
-       
-     
-        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList);
-        
-        ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
-        Registry serverRegistry = LocateRegistry.createRegistry(1100);
-        serverRegistry.bind("ServerStub", serverRegistry );
+        try {
             
-        System.out.println("ServerStub angelegt!");
-        
-        
-        ClientStubImpl clientLauncher = new ClientStubImpl();
-        
-        ClientStub clientStub = (ClientStub)UnicastRemoteObject.exportObject(clientLauncher, 0);
-        Registry clientRegistry = LocateRegistry.createRegistry(1099);
-        clientRegistry.bind("ClientStub", clientStub);
+            Server server = new Server();
+            server.start(args);
             
-        System.out.println("ClientStub angelegt!");
-        
-        if(args.length > 0){
-            String ip= args[0];
-            int port = Integer.parseInt(args[1]);
-
-
-            Registry registry = LocateRegistry.getRegistry(ip, port);
-            ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-            connectionList.add(stub); 
-            stub.reconnect(ip, port);
-
+        } catch (RemoteException | AlreadyBoundException | NotBoundException | UnknownHostException ex) {
+            Logger.getLogger(RMIConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        InetAddress ipAddr = InetAddress.getLocalHost();
-        System.out.println(ipAddr.getHostAddress());
-        
-        System.out.println("Server laeuft!");
-        
+     
     }      
     
 }
