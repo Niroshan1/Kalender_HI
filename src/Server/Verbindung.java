@@ -13,12 +13,13 @@ public class Verbindung {
     
     private final ServerStub stub;
     private final String ip;
-    private int port;
+    private final int port;
     
     /**
      *
      * @param stub
      * @param ip
+     * @param port
      */
     public Verbindung(ServerStub stub, String ip, int port){
         this.stub = stub;
