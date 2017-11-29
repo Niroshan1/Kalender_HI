@@ -74,5 +74,35 @@ public class ServerStubImpl implements ServerStub {
             }
         }
     }
+
+    /**
+     * Methode um zu testen, ob noch eine Verbindung zum Server besteht
+     * 
+     * @return
+     * @throws RemoteException 
+     */
+    @Override
+    public boolean ping() throws RemoteException {
+        return true;
+    }
+
+    /**
+     * Methode die testet, ob ein bestimmter Server noch erreichbar ist
+     * 
+     * @param ip
+     * @param port
+     * @return
+     * @throws RemoteException 
+     */
+    @Override
+    public boolean isServerReachable(String ip, int port) throws RemoteException {
+        for(Verbindung connection : connectionList){
+            if(connection.equals(ip, port)){
+                return connection.getServerStub().ping();
+            }
+        }
+        // hier fehlt noch, dass die nachbarn nun das selbe tun sollen
+        return false;
+    }
     
 }

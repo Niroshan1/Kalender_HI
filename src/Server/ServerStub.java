@@ -17,7 +17,9 @@ interface ServerStub extends Remote{
     
     public boolean initConnection(String ip, int port) throws RemoteException;
     
-    public LinkedList<String> getOnlineServerList() throws RemoteException;
-    
+    public LinkedList<String> getOnlineServerList() throws RemoteException;   
     public void aktOnlineServerList(String ip) throws RemoteException;
+    
+    public boolean ping() throws RemoteException;   
+    public boolean isServerReachable(String ip, int port) throws RemoteException;
 }

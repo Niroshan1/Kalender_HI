@@ -37,4 +37,10 @@ public class Verbindung {
     public int getPort(){
         return this.port;
     }
+    
+    public boolean equals(String ip, int port){
+        return this.ip.equals(ip) && this.port == port;
+    }
+    
+    
 }

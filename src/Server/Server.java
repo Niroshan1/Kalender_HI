@@ -50,7 +50,10 @@ public class Server {
         getOnlineServerListe();
         connectToServers();
         
+        //kommt später weg
         hilfsfunktion(args);
+        
+        starteThreadsMitVerbindungstests();
         
         System.out.println("Server laeuft!");
     }
@@ -107,6 +110,19 @@ public class Server {
             
             System.out.println("Hallo");
         //}
+    }
+
+    private void starteThreadsMitVerbindungstests() {
+        // diese Methode soll für jeder Verbindung einen Thread starten
+        // in diesem Thread wird alle x Sekunden getestet ob der andere Server 
+        // noch erreichbar ist. Dazu wird die Methode Ping (vom ServerStub) verwendet
+        
+        // benutze counter = 2
+        // alle x Sekunden wird der Counter 1 runtergezählt
+        // bekommt man eine Antwort beim pingen, dann wird der Counter wird auf 2 gesetzt
+        // ist der counter bei 0, wird eine anfrage in das netzwerkgeschickt, 
+        // ob der server von anderen erreicht werden kann (Methode vom ServerStub: isServerReachable)
+        // falls niemand ihn erreichen
     }
     
 }
