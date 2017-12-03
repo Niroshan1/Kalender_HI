@@ -34,12 +34,12 @@ import java.util.logging.Logger;
 public class Server {
 
     private LinkedList<Verbindung> connectionList;
-    private LinkedList<String> onlineServerListe;
+    private LinkedList<String> onlineServerList;
     private final DBHandler datenbank;
     
     public Server() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
         this.connectionList = new LinkedList<>();
-        this.onlineServerListe = new LinkedList<>();
+        this.onlineServerList = new LinkedList<>();
         
         datenbank = new DBHandler(); 
         datenbank.getConnection();
@@ -59,20 +59,26 @@ public class Server {
      */
     public void start(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException, IOException{
   
+        getOnlineServerListe();
+        
+        //naechste zeile nur zum testen notwendig
+        this.onlineServerList.add("192.168.44.7");
+        
+        //this.onlineServerList.add(getOwnIP());
+        //TODO: anderen Servern diesen ihrer Liste hinzufuegen
+        
+        System.out.println("");
         initServerStub();
         initClientStub();
-       
-        getOnlineServerListe();
-        if(this.onlineServerListe != null){
+
+        if(this.onlineServerList.size() > 1){
             connectToServers();
         }
-               
-        //kommt später weg
-        hilfsfunktion(args);
+
         
         starteThreadsMitVerbindungstests();
         
-        System.out.println("Server laeuft!");
+        System.out.println("\nServer laeuft!");
     }
 
     /**
@@ -82,10 +88,11 @@ public class Server {
      * @throws AlreadyBoundException 
      */
     private void initServerStub() throws RemoteException, AlreadyBoundException{
-        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerListe, datenbank);
+        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerList, datenbank);
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
-        Registry serverRegistry = LocateRegistry.createRegistry(1100);
+        Registry serverRegistry = LocateRegistry.createRegistry(1101);
         serverRegistry.bind("ServerStub", serverStub);
+        System.out.println("ServerStub initialisiert!");
     }
 
     /**
@@ -99,8 +106,9 @@ public class Server {
     private void initClientStub() throws RemoteException, AlreadyBoundException, SQLException, DatenbankException{
         ClientStubImpl clientLauncher = new ClientStubImpl(datenbank);   
         ClientStub clientStub = (ClientStub)UnicastRemoteObject.exportObject(clientLauncher, 0);
-        Registry clientRegistry = LocateRegistry.createRegistry(1099);
+        Registry clientRegistry = LocateRegistry.createRegistry(1199);
         clientRegistry.bind("ClientStub", clientStub);
+        System.out.println("ClientStub initialisiert!");
     }
 
     /**
@@ -108,29 +116,33 @@ public class Server {
      */
     private void getOnlineServerListe() {
         boolean successfulConnection = false;
+        String terminalAusgabe = "---> kein Server gefunden!";
         
         BufferedReader bufferedReader; 
         String line; 
         File file = new File("C:\\Users\\timtim\\Documents\\NetBeansProjects\\P2P\\src\\data\\serverlist.txt");
         Registry registry;
-        ServerStub stub;
-                
+        ServerStub stub;  
+        
+        System.out.println("\nVersuche Verbindung zu einem Server herzustellen um OnlineServerList zu erhalten");
         try { 
             bufferedReader = new BufferedReader(new FileReader(file)); 
             while ((line = bufferedReader.readLine()) != null && !successfulConnection) {                
                 try { 
                     registry = LocateRegistry.getRegistry(line, 1100);
-                    stub = (ServerStub) registry.lookup("ServerStub");                   
+                    stub = (ServerStub) registry.lookup("ServerStub"); 
                     successfulConnection = true;
-                    this.onlineServerListe = stub.getOnlineServerList();
-                    System.out.println("OnlineServerList von " + line + " erhalten");
+                    this.onlineServerList = stub.getOnlineServerList();
+                    terminalAusgabe = "---> OnlineServerList von " + line + " erhalten";
                 } catch (RemoteException | NotBoundException e) {
+                    System.out.println("*** " + line + " nicht erreichbar!");
                 }
             } 
-            bufferedReader.close();            
+            bufferedReader.close(); 
+            System.out.println(terminalAusgabe);
         } catch (IOException ex) { 
             Logger.getLogger(ClientStubImpl.class.getName()).log(Level.SEVERE, null, ex); 
-        } 
+        }         
     }
 
     /**
@@ -147,43 +159,35 @@ public class Server {
         Registry registry;
         ServerStub stub;
                            
+        System.out.println("\nVersuche 2 dauerhafte Verbindungen herzustellen");
         while(counter < 2){
             try {
                 foreignIP = findBestServerToConnectWith();
-                
-                //baut Verbindung zu anderem Server auf
-                registry = LocateRegistry.getRegistry(foreignIP, 1100);
-                stub = (ServerStub) registry.lookup("ServerStub");
-                //lässt anderen Server Verbindung zu diesem aufbauen
-                stub.initConnection(getOwnIP(), 1100);
-                //fügt Verbindung zur Liste der Verbindungen hinzu
-                this.connectionList.add(new Verbindung(stub, foreignIP, 1100));
-                System.out.println("Dauerhafte Verbindung zu Server " + foreignIP + " hergestellt!");
+                if(foreignIP.equals("Kein Server mehr verfügbar!")){
+                    System.out.println("---> Kein Server mehr verfügbar!");
+                    counter = 2;
+                }
+                else{
+                    System.out.println("Versuch zu " + foreignIP);
+                    //baut Verbindung zu anderem Server auf
+                    registry = LocateRegistry.getRegistry(foreignIP, 1100);
+                    stub = (ServerStub) registry.lookup("ServerStub");
+                    //lässt anderen Server Verbindung zu diesem aufbauen
+                    stub.initConnection(getOwnIP(), 1100);
+                    //fügt Verbindung zur Liste der Verbindungen hinzu
+                    this.connectionList.add(new Verbindung(stub, foreignIP, 1100));
+                    System.out.println("---> Verbindung zu Server " + foreignIP + " hergestellt!");
 
-                //falls bisher nur ein Server online, dann muss nur eine Verbindung aufgebaut werden
-                if(this.onlineServerListe.size() == 1){
+                    //falls bisher nur ein Server online, dann muss nur eine Verbindung aufgebaut werden
+                    if(this.onlineServerList.size() == 1){
+                        counter++;
+                    }
                     counter++;
                 }
-                counter++;
             } catch (RemoteException | NotBoundException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }            
         }
-    }
-
-    private void hilfsfunktion(String[] args) throws RemoteException, NotBoundException {
-        System.setProperty("java.rmi.server.hostname", "95.88.91.227");
-        
-       // if(args.length > 0){
-            //String ip = args[0];
-
-            Registry registry = LocateRegistry.getRegistry("localhost", 1100);
-            ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-            connectionList.add(new Verbindung(stub, "localhost", 1100)); 
-            stub.initConnection("localhost", 1100);
-            
-            System.out.println("Hallo");
-        //}
     }
 
     private void starteThreadsMitVerbindungstests() {
@@ -224,7 +228,7 @@ public class Server {
         int ping = 10000;
         int tmpPing;
         
-        for(String server : this.onlineServerListe){
+        for(String server : this.onlineServerList){
             skip = false;
             for(Verbindung verbundenerServer : this.connectionList){
                 if(verbundenerServer.getIP().equals(server)){
@@ -234,7 +238,7 @@ public class Server {
             if(!skip){
                 //teste ping zu server
                 tmpPing = ping(server);
-                if(ping < tmpPing){
+                if(ping > tmpPing){
                     bestServer = server;
                     ping = tmpPing;
                 }

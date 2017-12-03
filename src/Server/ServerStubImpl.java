@@ -19,9 +19,9 @@ public class ServerStubImpl implements ServerStub {
     private LinkedList<String> onlineServerList;
     private final DBHandler datenbank;
         
-    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerListe, DBHandler datenbank) {
+    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerList, DBHandler datenbank) {
         this.connectionList = connectionList;
-        this.onlineServerList = onlineServerListe;
+        this.onlineServerList = onlineServerList;
         this.datenbank = datenbank;
     }
 
