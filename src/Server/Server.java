@@ -120,7 +120,7 @@ public class Server {
         
         BufferedReader bufferedReader; 
         String line; 
-        File file = new File("C:\\Users\\timtim\\Documents\\NetBeansProjects\\P2P\\src\\data\\serverlist.txt");
+        File file = new File("src\\data\\serverlist.txt");
         Registry registry;
         ServerStub stub;  
         
