@@ -33,13 +33,17 @@ import java.util.logging.Logger;
  */
 public class Server {
 
-    private LinkedList<Verbindung> connectionList;
+    private final LinkedList<Verbindung> connectionList;
     private LinkedList<String> onlineServerList;
     private final DBHandler datenbank;
+    private final String ownIP;
     
-    public Server() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
+    public Server(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
         this.connectionList = new LinkedList<>();
         this.onlineServerList = new LinkedList<>();
+        this.ownIP = args[1];
+        
+        System.setProperty("java.rmi.server.hostname", this.ownIP);
         
         datenbank = new DBHandler(); 
         datenbank.getConnection();
@@ -48,7 +52,6 @@ public class Server {
     /**
      * Startet den Server und ruft alle Methoden auf, die dazu notwendig sind
      * 
-     * @param args
      * @throws RemoteException
      * @throws AlreadyBoundException
      * @throws NotBoundException
@@ -57,17 +60,14 @@ public class Server {
      * @throws DatenbankException
      * @throws IOException 
      */
-    public void start(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException, IOException{
+    public void start() throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException, IOException{
         
         System.out.println("Starte Server");
-        System.out.println("Eigene IP: " + getOwnIP());
+        System.out.println("Eigene IP: " + ownIP);
         
         getOnlineServerListe();
         
-        //naechste zeile nur zum testen notwendig
-        this.onlineServerList.add("192.168.44.7");
-        
-        //this.onlineServerList.add(getOwnIP());
+        this.onlineServerList.add(this.ownIP);
         //TODO: anderen Servern diesen ihrer Liste hinzufuegen
         
         System.out.println("");
@@ -135,9 +135,11 @@ public class Server {
                     registry = LocateRegistry.getRegistry(line, 1100);
                     stub = (ServerStub) registry.lookup("ServerStub"); 
                     successfulConnection = true;
+                    System.out.println("test");
                     this.onlineServerList = stub.getOnlineServerList();
                     terminalAusgabe = "---> OnlineServerList von " + line + " erhalten";
                 } catch (RemoteException | NotBoundException e) {
+                    System.out.println(e.getMessage());
                     System.out.println("*** " + line + " nicht erreichbar!");
                 }
             } 
@@ -208,6 +210,7 @@ public class Server {
     
     /**
      * liefert die globale ip des geräts
+     * momentan ungenutzt
      * 
      * @return
      * @throws MalformedURLException

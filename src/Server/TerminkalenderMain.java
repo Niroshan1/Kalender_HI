@@ -28,8 +28,14 @@ public class TerminkalenderMain {
     public static void main(String[] args){        
         try {  
             
-            Server server = new Server();
-            server.start(args);     
+            if(args.length == 2){
+                Server server = new Server(args);
+                server.start();   
+            }
+            else{
+                System.out.println("Bitte IP als Argument beim Start mitgeben!");
+            }
+              
             
         } catch (RemoteException | AlreadyBoundException | NotBoundException | UnknownHostException | DatenbankException | SQLException ex) {
             Logger.getLogger(TerminkalenderMain.class.getName()).log(Level.SEVERE, null, ex);
