@@ -75,7 +75,7 @@ public class Server {
             connectToServers();
         }
 
-        
+        //TODO
         starteThreadsMitVerbindungstests();
         
         System.out.println("\nServer laeuft!");
@@ -90,7 +90,7 @@ public class Server {
     private void initServerStub() throws RemoteException, AlreadyBoundException{
         ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerList, datenbank);
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
-        Registry serverRegistry = LocateRegistry.createRegistry(1101);
+        Registry serverRegistry = LocateRegistry.createRegistry(1100);
         serverRegistry.bind("ServerStub", serverStub);
         System.out.println("ServerStub initialisiert!");
     }
@@ -106,7 +106,7 @@ public class Server {
     private void initClientStub() throws RemoteException, AlreadyBoundException, SQLException, DatenbankException{
         ClientStubImpl clientLauncher = new ClientStubImpl(datenbank);   
         ClientStub clientStub = (ClientStub)UnicastRemoteObject.exportObject(clientLauncher, 0);
-        Registry clientRegistry = LocateRegistry.createRegistry(1199);
+        Registry clientRegistry = LocateRegistry.createRegistry(1099);
         clientRegistry.bind("ClientStub", clientStub);
         System.out.println("ClientStub initialisiert!");
     }
@@ -179,7 +179,7 @@ public class Server {
                     System.out.println("---> Verbindung zu Server " + foreignIP + " hergestellt!");
 
                     //falls bisher nur ein Server online, dann muss nur eine Verbindung aufgebaut werden
-                    if(this.onlineServerList.size() == 1){
+                    if(this.onlineServerList.size() == 2){
                         counter++;
                     }
                     counter++;

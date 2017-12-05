@@ -25,11 +25,12 @@ public class TerminkalenderMain {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args){
-        
+    public static void main(String[] args){        
         try {  
+            
             Server server = new Server();
-            server.start(args);           
+            server.start(args);     
+            
         } catch (RemoteException | AlreadyBoundException | NotBoundException | UnknownHostException | DatenbankException | SQLException ex) {
             Logger.getLogger(TerminkalenderMain.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException | NoSuchAlgorithmException | IOException ex) {
