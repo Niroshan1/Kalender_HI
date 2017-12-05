@@ -62,19 +62,28 @@ public class Server {
         System.out.println("Starte Server");
         System.out.println("Eigene IP: " + ownIP);
         
+        //erhalte Liste mit allen Servern die online sind
         getOnlineServerListe();
-        
-        this.onlineServerList.add(this.ownIP);
-        //TODO: anderen Servern diesen ihrer Liste hinzufuegen
-        
+               
+        //initialisiere Stubs für Server & Clients
         System.out.println("");
         initServerStub();
         initClientStub();
 
-        if(this.onlineServerList.size() > 1){
+        //baue bis zu 2 dauerhafte Verbindungen zu anderen Servern auf
+        if(this.onlineServerList.size() > 0){
             connectToServers();
         }
 
+        //füge dich selbst der Liste hinzu
+        this.onlineServerList.add(this.ownIP);
+        //lass die anderen Server dich in ihre Liste hinzufügen
+        //(mit Flooding)
+        for(Verbindung verbindung : this.connectionList){
+                new FloodingThread(verbindung.getServerStub(), this.ownIP).start();
+        }       
+        
+        //Starte Threads, die die Verbindung zu anderen Servern testen
         //TODO
         starteThreadsMitVerbindungstests();
         
@@ -160,30 +169,27 @@ public class Server {
         ServerStub stub;
                            
         System.out.println("\nVersuche 2 dauerhafte Verbindungen herzustellen");
+        
+        if(this.onlineServerList.isEmpty()){
+            counter++;
+        }
+        if(this.onlineServerList.size() == 1){
+            counter++;
+        }
+        
         while(counter < 2){
             try {
                 foreignIP = findBestServerToConnectWith();
-                if(foreignIP.equals("Kein Server mehr verfügbar!")){
-                    System.out.println("---> Kein Server mehr verfügbar!");
-                    counter = 2;
-                }
-                else{
-                    System.out.println("Versuch zu " + foreignIP);
-                    //baut Verbindung zu anderem Server auf
-                    registry = LocateRegistry.getRegistry(foreignIP, 1100);
-                    stub = (ServerStub) registry.lookup("ServerStub");
-                    //lässt anderen Server Verbindung zu diesem aufbauen
-                    stub.initConnection(this.ownIP, 1100);
-                    //fügt Verbindung zur Liste der Verbindungen hinzu
-                    this.connectionList.add(new Verbindung(stub, foreignIP, 1100));
-                    System.out.println("---> Verbindung zu Server " + foreignIP + " hergestellt!");
-
-                    //falls bisher nur ein Server online, dann muss nur eine Verbindung aufgebaut werden
-                    if(this.onlineServerList.size() == 2){
-                        counter++;
-                    }
-                    counter++;
-                }
+                System.out.println("Versuch zu " + foreignIP);
+                //baut Verbindung zu anderem Server auf
+                registry = LocateRegistry.getRegistry(foreignIP, 1100);
+                stub = (ServerStub) registry.lookup("ServerStub");
+                //lässt anderen Server Verbindung zu diesem aufbauen
+                stub.initConnection(this.ownIP, 1100);
+                //fügt Verbindung zur Liste der Verbindungen hinzu
+                this.connectionList.add(new Verbindung(stub, foreignIP, 1100));
+                System.out.println("---> Verbindung zu Server " + foreignIP + " hergestellt!");
+                
             } catch (RemoteException | NotBoundException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }            
@@ -210,7 +216,7 @@ public class Server {
      * @return 
      */
     private String findBestServerToConnectWith(){
-        String bestServer = "Kein Server mehr verfügbar!";
+        String bestServer = "";
         boolean skip;
         int ping = 10000;
         int tmpPing;

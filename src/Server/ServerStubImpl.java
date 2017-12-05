@@ -105,5 +105,23 @@ public class ServerStubImpl implements ServerStub {
         // hier fehlt noch, dass die nachbarn nun das selbe tun sollen
         return false;
     }
+
+    /**
+     * checkt ob ip schon in onlineServerList vorhanden
+     * wenn nein, wird sie eingefügt und alle Nachbarn werden benachichtig 
+     * (mit Threads -> parallel)
+     * 
+     * @param ip
+     * @throws RemoteException 
+     */
+    @Override
+    public void updateOnlineServerList(String ip) throws RemoteException {
+        if(!this.onlineServerList.contains(ip)){
+            this.onlineServerList.add(ip);
+            for(Verbindung verbindung : this.connectionList){
+                new FloodingThread(verbindung.getServerStub(), ip).start();
+            }
+        }
+    }
     
 }
