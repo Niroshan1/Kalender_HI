@@ -58,7 +58,10 @@ public class Server {
      * @throws IOException 
      */
     public void start(String[] args) throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException, IOException{
-  
+        
+        System.out.println("Starte Server");
+        System.out.println("Eigene IP: " + getOwnIP());
+        
         getOnlineServerListe();
         
         //naechste zeile nur zum testen notwendig
