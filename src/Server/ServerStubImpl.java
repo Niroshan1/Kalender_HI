@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 /**
  *
@@ -18,11 +19,13 @@ public class ServerStubImpl implements ServerStub {
     private final LinkedList<Verbindung> connectionList;
     private final LinkedList<String> onlineServerList;
     private final DBHandler datenbank;
+    private final String ownIp;
         
-    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerList, DBHandler datenbank) {
+    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerList, DBHandler datenbank, String Ip) {
         this.connectionList = connectionList;
         this.onlineServerList = onlineServerList;
         this.datenbank = datenbank;
+        this.ownIp = Ip;
     }
 
     /**
@@ -41,7 +44,7 @@ public class ServerStubImpl implements ServerStub {
             Registry registry = LocateRegistry.getRegistry(ip, port);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             connectionList.add(new Verbindung(stub, ip, port));
-            System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");            
+            System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!"); 
             return true;
         } catch (NotBoundException e) {
             return false;
@@ -106,4 +109,20 @@ public class ServerStubImpl implements ServerStub {
         return false;
     }
     
+    /**
+     * Methode um onlineServerListe bei neuer Verbindung zu erweitern und zu "Fluten"
+     * @param newIp
+     * @param sendeIp
+     */
+    @Override
+    public void onlineServerListFlooding(String newIp, String sendeIp){
+        if(!onlineServerList.contains(newIp)){
+            this.onlineServerList.add(newIp);
+            connectionList.forEach((Verbindung connection) -> {
+                if (!connection.getIP().equals(sendeIp)) {
+                    connection.getServerStub().onlineServerListFlooding(newIp, ServerStubImpl.this.ownIp);
+                }
+            });
+        }
+    }
 }

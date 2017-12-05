@@ -88,7 +88,7 @@ public class Server {
      * @throws AlreadyBoundException 
      */
     private void initServerStub() throws RemoteException, AlreadyBoundException{
-        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerList, datenbank);
+        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerList, datenbank, ownIP);
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
         Registry serverRegistry = LocateRegistry.createRegistry(1100);
         serverRegistry.bind("ServerStub", serverStub);
@@ -177,7 +177,8 @@ public class Server {
                     //fügt Verbindung zur Liste der Verbindungen hinzu
                     this.connectionList.add(new Verbindung(stub, foreignIP, 1100));
                     System.out.println("---> Verbindung zu Server " + foreignIP + " hergestellt!");
-
+                    //fügt diese IP der onlineServerList aller Servern hinzu
+                    stub.onlineServerListFlooding(this.ownIP, this.ownIP);
                     //falls bisher nur ein Server online, dann muss nur eine Verbindung aufgebaut werden
                     if(this.onlineServerList.size() == 2){
                         counter++;
@@ -244,4 +245,5 @@ public class Server {
         //TODO
         return 0;
     }
+    
 }
