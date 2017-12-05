@@ -11,9 +11,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -41,7 +38,7 @@ public class Server {
     public Server(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
         this.connectionList = new LinkedList<>();
         this.onlineServerList = new LinkedList<>();
-        this.ownIP = args[1];
+        this.ownIP = args[0];
         
         System.setProperty("java.rmi.server.hostname", this.ownIP);
         
@@ -135,11 +132,9 @@ public class Server {
                     registry = LocateRegistry.getRegistry(line, 1100);
                     stub = (ServerStub) registry.lookup("ServerStub"); 
                     successfulConnection = true;
-                    System.out.println("test");
                     this.onlineServerList = stub.getOnlineServerList();
                     terminalAusgabe = "---> OnlineServerList von " + line + " erhalten";
                 } catch (RemoteException | NotBoundException e) {
-                    System.out.println(e.getMessage());
                     System.out.println("*** " + line + " nicht erreichbar!");
                 }
             } 
@@ -178,7 +173,7 @@ public class Server {
                     registry = LocateRegistry.getRegistry(foreignIP, 1100);
                     stub = (ServerStub) registry.lookup("ServerStub");
                     //lässt anderen Server Verbindung zu diesem aufbauen
-                    stub.initConnection(getOwnIP(), 1100);
+                    stub.initConnection(this.ownIP, 1100);
                     //fügt Verbindung zur Liste der Verbindungen hinzu
                     this.connectionList.add(new Verbindung(stub, foreignIP, 1100));
                     System.out.println("---> Verbindung zu Server " + foreignIP + " hergestellt!");
@@ -206,20 +201,6 @@ public class Server {
         // ist der counter bei 0, wird eine anfrage in das netzwerkgeschickt, 
         // ob der server von anderen erreicht werden kann (Methode vom ServerStub: isServerReachable)
         // falls niemand ihn erreichen
-    }
-    
-    /**
-     * liefert die globale ip des geräts
-     * momentan ungenutzt
-     * 
-     * @return
-     * @throws MalformedURLException
-     * @throws IOException 
-     */
-    private String getOwnIP() throws MalformedURLException, IOException{      
-        URL url = new URL("http://bot.whatismyipaddress.com");
-        BufferedReader sc = new BufferedReader(new InputStreamReader(url.openStream()));
-        return sc.readLine().trim();
     }
     
     /**
