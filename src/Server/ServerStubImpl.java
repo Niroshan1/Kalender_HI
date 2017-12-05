@@ -15,8 +15,8 @@ import java.util.LinkedList;
  */
 public class ServerStubImpl implements ServerStub {
     
-    private LinkedList<Verbindung> connectionList;
-    private LinkedList<String> onlineServerList;
+    private final LinkedList<Verbindung> connectionList;
+    private final LinkedList<String> onlineServerList;
     private final DBHandler datenbank;
         
     ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerList, DBHandler datenbank) {
@@ -41,6 +41,7 @@ public class ServerStubImpl implements ServerStub {
             Registry registry = LocateRegistry.getRegistry(ip, port);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             connectionList.add(new Verbindung(stub, ip, port));
+            System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");            
             return true;
         } catch (NotBoundException e) {
             return false;
