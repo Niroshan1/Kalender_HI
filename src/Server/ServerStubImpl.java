@@ -1,6 +1,8 @@
 
 package Server;
 
+import ServerThreads.FloodingThreadAktOnlineServerList;
+import ServerThreads.FloodingThreadEntferneServerAusSystem;
 import Utilities.DBHandler;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -106,6 +108,38 @@ public class ServerStubImpl implements ServerStub {
                 if(!verbindung.getIP().equals(senderIP)){
                     new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), neueIP, this.ownIP).start();
                 }    
+            }
+        }
+    }
+
+    /**
+     * entfernt serverIP aus der onlineServerList, falls vorhanden & 
+     * sendet lösch-info via flooding & threads weiter
+     * löscht außerdem serverIP aus connectionlist, falls vorhanden 
+     * 
+     * @param serverIP
+     * @param senderIP
+     * @throws RemoteException 
+     */
+    @Override
+    public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException {
+        if(!this.onlineServerList.contains(serverIP)){
+            if(this.ownIP.equals(serverIP)){
+                //server neu in system einbinden
+            }
+            else{
+                //server aus liste der online server entfernen
+                this.onlineServerList.remove(serverIP);               
+                
+                //info via flooding weiterleiten
+                for(Verbindung verbindung : this.connectionList){
+                    //hier threads + flooding
+                    new FloodingThreadEntferneServerAusSystem(verbindung.getServerStub(), serverIP, this.ownIP).start();
+                    if(verbindung.getIP().equals(serverIP)){
+                        //server aus connectionlist entfernen
+                        connectionList.remove(verbindung);
+                    }            
+                }
             }
         }
     }

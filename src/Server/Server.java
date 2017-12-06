@@ -5,6 +5,7 @@
  */
 package Server;
 
+import ServerThreads.FloodingThreadAktOnlineServerList;
 import Utilities.DBHandler;
 import Utilities.DatenbankException;
 import java.io.BufferedReader;
@@ -85,7 +86,6 @@ public class Server {
         }       
         
         //Starte Threads, die die Verbindung zu anderen Servern testen
-        //TODO
         starteThreadsMitVerbindungstests();
         
         System.out.println("LOG * ");
@@ -168,7 +168,6 @@ public class Server {
         int counter = 0;
         long ping;
         boolean skip;
-        boolean serverGefunden;
         
         long startZeit;
         long endZeit;
@@ -191,7 +190,6 @@ public class Server {
         
         while(counter < 2){
             try {
-                serverGefunden = false;
                 ping = 10000000;
                 for(String serverIP : this.onlineServerList){
                     skip = false;

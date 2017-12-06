@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Server;
+package ServerThreads;
 
+import Server.ServerStub;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,13 +14,12 @@ import java.util.logging.Logger;
  *
  * @author timtim
  */
-public class FloodingThreadAktOnlineServerList extends Thread{
-    
+public class FloodingThreadEntferneServerAusSystem extends Thread{
     private final ServerStub verbindung;
     private final String neueIP;
     private final String ownIP;
     
-    public FloodingThreadAktOnlineServerList(ServerStub verbindung, String neueIP, String ownIP){
+    public FloodingThreadEntferneServerAusSystem(ServerStub verbindung, String neueIP, String ownIP){
         this.verbindung = verbindung;
         this.neueIP = neueIP;
         this.ownIP = ownIP;
@@ -28,10 +28,9 @@ public class FloodingThreadAktOnlineServerList extends Thread{
     @Override 
     public void run(){
         try {        
-            verbindung.updateOnlineServerList(neueIP, ownIP);
+            verbindung.entferneServerAusSystem(neueIP, ownIP);
         } catch (RemoteException ex) {
             Logger.getLogger(FloodingThreadAktOnlineServerList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 }
