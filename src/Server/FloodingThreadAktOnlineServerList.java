@@ -13,12 +13,12 @@ import java.util.logging.Logger;
  *
  * @author timtim
  */
-public class FloodingThread extends Thread{
+public class FloodingThreadAktOnlineServerList extends Thread{
     
     private final ServerStub verbindung;
     private final String ip;
     
-    public FloodingThread(ServerStub verbindung, String ip){
+    public FloodingThreadAktOnlineServerList(ServerStub verbindung, String ip){
         this.verbindung = verbindung;
         this.ip = ip;
     }    
@@ -28,7 +28,7 @@ public class FloodingThread extends Thread{
         try {        
             verbindung.aktOnlineServerList(ip);
         } catch (RemoteException ex) {
-            Logger.getLogger(FloodingThread.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FloodingThreadAktOnlineServerList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

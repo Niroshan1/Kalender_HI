@@ -119,7 +119,7 @@ public class ServerStubImpl implements ServerStub {
         if(!this.onlineServerList.contains(ip)){
             this.onlineServerList.add(ip);
             for(Verbindung verbindung : this.connectionList){
-                new FloodingThread(verbindung.getServerStub(), ip).start();
+                new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), ip).start();
             }
         }
     }
