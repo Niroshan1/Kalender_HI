@@ -15,13 +15,13 @@ import java.util.LinkedList;
  */
 interface ServerStub extends Remote{
     
-    public boolean initConnection(String ip, int port) throws RemoteException;
+    public boolean initConnection(String ip) throws RemoteException;
     
     public LinkedList<String> getOnlineServerList() throws RemoteException;   
     public void aktOnlineServerList(String ip) throws RemoteException;
     
     public boolean ping() throws RemoteException;   
-    public boolean isServerReachable(String ip, int port) throws RemoteException;
+    public boolean isServerReachable(String ip) throws RemoteException;
     
     public void updateOnlineServerList(String ip) throws RemoteException;
 }

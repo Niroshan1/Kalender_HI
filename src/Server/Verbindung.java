@@ -13,18 +13,15 @@ public class Verbindung {
     
     private final ServerStub stub;
     private final String ip;
-    private final int port;
     
     /**
      *
      * @param stub
      * @param ip
-     * @param port
      */
-    public Verbindung(ServerStub stub, String ip, int port){
+    public Verbindung(ServerStub stub, String ip){
         this.stub = stub;
         this.ip = ip;
-        this.port = port;
     }
     
     public ServerStub getServerStub(){
@@ -35,12 +32,8 @@ public class Verbindung {
         return this.ip;
     }
     
-    public int getPort(){
-        return this.port;
-    }
-    
-    public boolean equals(String ip, int port){
-        return this.ip.equals(ip) && this.port == port;
+    public boolean equals(String ip){
+        return this.ip.equals(ip);
     }
     
     

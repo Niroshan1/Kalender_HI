@@ -30,17 +30,16 @@ public class ServerStubImpl implements ServerStub {
      * dient der Erzeugung einer beidseitigen Verbindung / ungerichteten Verbindung
      * 
      * @param ip
-     * @param port
      * @return 
      * @throws RemoteException
      * @throws AccessException 
      */
     @Override
-    public boolean initConnection(String ip, int port) throws RemoteException{            
+    public boolean initConnection(String ip) throws RemoteException{            
         try {
-            Registry registry = LocateRegistry.getRegistry(ip, port);
+            Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-            connectionList.add(new Verbindung(stub, ip, port));
+            connectionList.add(new Verbindung(stub, ip));
             System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");            
             return true;
         } catch (NotBoundException e) {
@@ -91,14 +90,13 @@ public class ServerStubImpl implements ServerStub {
      * Methode die testet, ob ein bestimmter Server noch erreichbar ist
      * 
      * @param ip
-     * @param port
      * @return
      * @throws RemoteException 
      */
     @Override
-    public boolean isServerReachable(String ip, int port) throws RemoteException {
+    public boolean isServerReachable(String ip) throws RemoteException {
         for(Verbindung connection : connectionList){
-            if(connection.equals(ip, port)){
+            if(connection.equals(ip)){
                 return connection.getServerStub().ping();
             }
         }

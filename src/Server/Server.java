@@ -181,7 +181,6 @@ public class Server {
         
         System.out.println("LOG * ");
         System.out.println("LOG * Versuch bis zu 2 dauerhafte Verbindungen aufzubauen");
-        System.out.println("LOG * ");
         
         if(this.onlineServerList.isEmpty()){
             counter++;
@@ -205,29 +204,22 @@ public class Server {
                         registry = LocateRegistry.getRegistry(serverIP, 1100);
                         stubTmp = (ServerStub) registry.lookup("ServerStub"); 
                         
-                        System.out.println("LOG * starte Pingtest zu " + serverIP);
                         startZeit = new Date().getTime();
                         stubTmp.ping();
                         endZeit = new Date().getTime();
-                        System.out.println("LOG * " + serverIP + " hat Ping von " + (endZeit - startZeit));
                         
                         if(ping > (endZeit - startZeit)){
                             ping = endZeit - startZeit;
                             stub = stubTmp;
                             bestServerIP = serverIP;
-                            serverGefunden = true;
                         }  
                     }
-                    
-                }
-                if(serverGefunden){
-                    //lässt anderen Server Verbindung zu diesem aufbauen
-                    stub.initConnection(this.ownIP, 1100);
-                    //fügt Verbindung zur Liste der Verbindungen hinzu
-                    this.connectionList.add(new Verbindung(stub, "123", 1100));
-
-                    System.out.println("LOG * ---> Verbindung zu Server " + bestServerIP + " hergestellt!");
-                }             
+                }   
+                //lässt anderen Server Verbindung zu diesem aufbauen
+                stub.initConnection(this.ownIP);
+                //fügt Verbindung zur Liste der Verbindungen hinzu
+                this.connectionList.add(new Verbindung(stub, bestServerIP));
+                System.out.println("LOG * ---> Verbindung zu Server " + bestServerIP + " hergestellt! (Ping = " + ping + ")");
                 counter++;
             } catch (RemoteException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
