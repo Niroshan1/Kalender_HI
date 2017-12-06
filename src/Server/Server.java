@@ -6,6 +6,7 @@
 package Server;
 
 import ServerThreads.FloodingThreadAktOnlineServerList;
+import ServerThreads.VerbindungstestsThread;
 import Utilities.DBHandler;
 import Utilities.DatenbankException;
 import java.io.BufferedReader;
@@ -84,9 +85,6 @@ public class Server {
         for(Verbindung verbindung : this.connectionList){
                 new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), this.ownIP, this.ownIP).start();
         }       
-        
-        //Starte Threads, die die Verbindung zu anderen Servern testen
-        starteThreadsMitVerbindungstests();
         
         System.out.println("LOG * ");
         System.out.println("LOG * Server laeuft!");
@@ -175,6 +173,7 @@ public class Server {
         Registry registry;
         ServerStub stubTmp;
         
+        Verbindung verbindung;
         ServerStub stub = null;
         String bestServerIP = "";
         
@@ -215,27 +214,20 @@ public class Server {
                 }   
                 //lässt anderen Server Verbindung zu diesem aufbauen
                 stub.initConnection(this.ownIP);
+                
                 //fügt Verbindung zur Liste der Verbindungen hinzu
-                this.connectionList.add(new Verbindung(stub, bestServerIP));
+                verbindung = new Verbindung(stub, bestServerIP);
+                this.connectionList.add(verbindung);
                 System.out.println("LOG * ---> Verbindung zu Server " + bestServerIP + " hergestellt! (Ping = " + ping + ")");
+                
+                //Starte Threads, die die Verbindung zu anderen Servern testen
+                new VerbindungstestsThread(this.connectionList, verbindung).start();
+                
                 counter++;
             } catch (RemoteException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }            
         }
-    }
-
-    private void starteThreadsMitVerbindungstests() {
-        // diese Methode soll für jeder Verbindung einen Thread starten
-        // in diesem Thread wird alle x Sekunden getestet ob der andere Server 
-        // noch erreichbar ist. Dazu wird die Methode Ping (vom ServerStub) verwendet
-        
-        // benutze counter = 2
-        // alle x Sekunden wird der Counter 1 runtergezählt
-        // bekommt man eine Antwort beim pingen, dann wird der Counter wird auf 2 gesetzt
-        // ist der counter bei 0, wird eine anfrage in das netzwerkgeschickt, 
-        // ob der server von anderen erreicht werden kann (Methode vom ServerStub: isServerReachable)
-        // falls niemand ihn erreichen
     }
 
 }

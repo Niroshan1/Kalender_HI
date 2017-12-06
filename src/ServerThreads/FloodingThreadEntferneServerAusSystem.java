@@ -15,6 +15,7 @@ import java.util.logging.Logger;
  * @author timtim
  */
 public class FloodingThreadEntferneServerAusSystem extends Thread{
+    
     private final ServerStub verbindung;
     private final String neueIP;
     private final String ownIP;

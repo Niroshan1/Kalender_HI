@@ -3,6 +3,7 @@ package Server;
 
 import ServerThreads.FloodingThreadAktOnlineServerList;
 import ServerThreads.FloodingThreadEntferneServerAusSystem;
+import ServerThreads.VerbindungstestsThread;
 import Utilities.DBHandler;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -43,7 +44,9 @@ public class ServerStubImpl implements ServerStub {
         try {
             Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
-            connectionList.add(new Verbindung(stub, ip));
+            Verbindung verbindung = new Verbindung(stub, ip);
+            connectionList.add(verbindung);
+            new VerbindungstestsThread(this.connectionList, verbindung).start();
             System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");            
             return true;
         } catch (NotBoundException e) {

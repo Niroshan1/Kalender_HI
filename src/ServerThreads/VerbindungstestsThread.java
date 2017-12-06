@@ -5,7 +5,6 @@
  */
 package ServerThreads;
 
-import Server.ServerStub;
 import Server.Verbindung;
 import java.util.LinkedList;
 import java.util.logging.Level;
@@ -27,19 +26,23 @@ public class VerbindungstestsThread extends Thread{
     
     @Override 
     public void run(){
-        int counter = 3;
+        Counter counter = new Counter();
         boolean serverUp = true;
         
         while(serverUp){
             try {
                 Thread.sleep(3000);
-                System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter);
-                counter--;
-                //TODO: starte Thread mit Parameter counter                
+                System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
+                counter.decrement();
                 
-                if(counter == 0){
+                //starte Thread der Server anpingt               
+                new PingThread(this.verbindung.getServerStub(), counter).start();
+                
+                if(counter.getValue() == 0){
+                    System.out.println("--->> " + this.verbindung.getIP() + " kann nicht mehr erreicht werden");
                     this.connectionList.remove(this.verbindung);
                     //
+                    serverUp = false;
                 }
             } catch (InterruptedException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
