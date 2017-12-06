@@ -125,4 +125,16 @@ public class ServerStubImpl implements ServerStub {
             });
         }
     }
+    
+    @Override
+    public void onlineServerListDeleteFlooding(String oldIp, String sendeIp){
+        if(onlineServerList.contains(oldIp)){
+            this.onlineServerList.remove(oldIp);
+            connectionList.forEach((Verbindung connection) -> {
+                if (!connection.getIP().equals(sendeIp)) {
+                    connection.getServerStub().onlineServerListDeleteFlooding(oldIp, ServerStubImpl.this.ownIp);
+                }
+            });
+        }
+    }
 }

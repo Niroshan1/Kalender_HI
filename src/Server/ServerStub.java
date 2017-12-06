@@ -23,4 +23,5 @@ interface ServerStub extends Remote{
     public boolean ping() throws RemoteException;   
     public boolean isServerReachable(String ip, int port) throws RemoteException;
     public void onlineServerListFlooding(String newIp, String sendeIp);
+    public void onlineServerListDeleteFlooding(String oldIp, String sendeIp);
 }
