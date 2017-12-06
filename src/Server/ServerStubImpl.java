@@ -91,7 +91,7 @@ public class ServerStubImpl implements ServerStub {
 
     /**
      * checkt ob ip schon in onlineServerList vorhanden
-     * wenn nein, wird sie eingefügt und alle Nachbarn werden benachichtig 
+     * wenn nein, wird sie eingefügt und alle Nachbarn werden benachrichtig 
      * (mit Threads -> parallel)
      * 
      * @param neueIP
