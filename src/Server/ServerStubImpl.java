@@ -120,7 +120,9 @@ public class ServerStubImpl implements ServerStub {
             this.onlineServerList.add(newIp);
             connectionList.forEach((Verbindung connection) -> {
                 if (!connection.getIP().equals(sendeIp)) {
-                    connection.getServerStub().onlineServerListFlooding(newIp, ServerStubImpl.this.ownIp);
+                    new Thread(() ->{
+                        connection.getServerStub().onlineServerListFlooding(newIp, ServerStubImpl.this.ownIp);
+                    }).start();
                 }
             });
         }
@@ -132,7 +134,9 @@ public class ServerStubImpl implements ServerStub {
             this.onlineServerList.remove(oldIp);
             connectionList.forEach((Verbindung connection) -> {
                 if (!connection.getIP().equals(sendeIp)) {
-                    connection.getServerStub().onlineServerListDeleteFlooding(oldIp, ServerStubImpl.this.ownIp);
+                    new Thread(() ->{
+                        connection.getServerStub().onlineServerListDeleteFlooding(oldIp, ServerStubImpl.this.ownIp);
+                    }).start();
                 }
             });
         }
