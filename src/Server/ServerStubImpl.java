@@ -15,14 +15,16 @@ import java.util.LinkedList;
  */
 public class ServerStubImpl implements ServerStub {
     
+    private final String ownIP;
     private final LinkedList<Verbindung> connectionList;
     private final LinkedList<String> onlineServerList;
     private final DBHandler datenbank;
         
-    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerList, DBHandler datenbank) {
+    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerList, DBHandler datenbank, String ownIP) {
         this.connectionList = connectionList;
         this.onlineServerList = onlineServerList;
         this.datenbank = datenbank;
+        this.ownIP = ownIP;
     }
 
     /**
@@ -59,23 +61,6 @@ public class ServerStubImpl implements ServerStub {
     }
 
     /**
-     * Diese Methode fuegt der onlineServerList einen neuen Server (IP) hinzu
-     * und informiert außerdem seine Nachbarn
-     * 
-     * @param ip
-     * @throws RemoteException 
-     */
-    @Override
-    public void aktOnlineServerList(String ip) throws RemoteException {
-        if(!onlineServerList.contains(ip)){
-            onlineServerList.add(ip);
-            for(Verbindung connection : connectionList){
-                connection.getServerStub().aktOnlineServerList(ip);
-            }
-        }
-    }
-
-    /**
      * Methode um zu testen, ob noch eine Verbindung zum Server besteht
      * 
      * @return
@@ -109,15 +94,18 @@ public class ServerStubImpl implements ServerStub {
      * wenn nein, wird sie eingefügt und alle Nachbarn werden benachichtig 
      * (mit Threads -> parallel)
      * 
-     * @param ip
+     * @param neueIP
+     * @param senderIP
      * @throws RemoteException 
      */
     @Override
-    public void updateOnlineServerList(String ip) throws RemoteException {
-        if(!this.onlineServerList.contains(ip)){
-            this.onlineServerList.add(ip);
+    public void updateOnlineServerList(String neueIP, String senderIP) throws RemoteException {
+        if(!this.onlineServerList.contains(neueIP)){
+            this.onlineServerList.add(neueIP);
             for(Verbindung verbindung : this.connectionList){
-                new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), ip).start();
+                if(!verbindung.getIP().equals(senderIP)){
+                    new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), neueIP, this.ownIP).start();
+                }    
             }
         }
     }

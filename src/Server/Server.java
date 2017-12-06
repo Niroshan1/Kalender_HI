@@ -81,7 +81,7 @@ public class Server {
         this.onlineServerList.add(this.ownIP);
         //lass die anderen Server dich in ihre Liste hinzufügen (mit Flooding)
         for(Verbindung verbindung : this.connectionList){
-                new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), this.ownIP).start();
+                new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), this.ownIP, this.ownIP).start();
         }       
         
         //Starte Threads, die die Verbindung zu anderen Servern testen
@@ -100,7 +100,7 @@ public class Server {
      * @throws AlreadyBoundException 
      */
     private void initServerStub() throws RemoteException, AlreadyBoundException{
-        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerList, datenbank);
+        ServerStubImpl serverLauncher = new ServerStubImpl(connectionList, onlineServerList, datenbank, ownIP);
         ServerStub serverStub = (ServerStub)UnicastRemoteObject.exportObject(serverLauncher, 0);
         Registry serverRegistry = LocateRegistry.createRegistry(1100);
         serverRegistry.bind("ServerStub", serverStub);

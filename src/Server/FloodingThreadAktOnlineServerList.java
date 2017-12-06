@@ -16,17 +16,19 @@ import java.util.logging.Logger;
 public class FloodingThreadAktOnlineServerList extends Thread{
     
     private final ServerStub verbindung;
-    private final String ip;
+    private final String neueIP;
+    private final String ownIP;
     
-    public FloodingThreadAktOnlineServerList(ServerStub verbindung, String ip){
+    public FloodingThreadAktOnlineServerList(ServerStub verbindung, String neueIP, String ownIP){
         this.verbindung = verbindung;
-        this.ip = ip;
+        this.neueIP = neueIP;
+        this.ownIP = ownIP;
     }    
     
     @Override 
     public void run(){
         try {        
-            verbindung.aktOnlineServerList(ip);
+            verbindung.updateOnlineServerList(neueIP, ownIP);
         } catch (RemoteException ex) {
             Logger.getLogger(FloodingThreadAktOnlineServerList.class.getName()).log(Level.SEVERE, null, ex);
         }
