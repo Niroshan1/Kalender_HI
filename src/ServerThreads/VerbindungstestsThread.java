@@ -18,10 +18,12 @@ public class VerbindungstestsThread extends Thread{
     
     private final LinkedList<Verbindung> connectionList;
     private final Verbindung verbindung;
+    private final String ownIP;
     
-    public VerbindungstestsThread(LinkedList<Verbindung> connectionList, Verbindung verbindung){
+    public VerbindungstestsThread(LinkedList<Verbindung> connectionList, Verbindung verbindung, String ownIP){
         this.connectionList = connectionList;
         this.verbindung = verbindung;
+        this.ownIP = ownIP;
     }    
     
     @Override 
@@ -41,7 +43,10 @@ public class VerbindungstestsThread extends Thread{
                 if(counter.getValue() == 0){
                     System.out.println("--->> " + this.verbindung.getIP() + " kann nicht mehr erreicht werden");
                     this.connectionList.remove(this.verbindung);
-                    //
+                    //TODO: entferne aus onlineServerList
+                    for(Verbindung connection : this.connectionList){
+                        new FloodingThreadEntferneServerAusSystem(connection.getServerStub(), this.verbindung.getIP(), this.ownIP).start();
+                    }
                     serverUp = false;
                 }
             } catch (InterruptedException ex) {

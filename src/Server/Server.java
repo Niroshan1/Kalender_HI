@@ -221,7 +221,7 @@ public class Server {
                 System.out.println("LOG * ---> Verbindung zu Server " + bestServerIP + " hergestellt! (Ping = " + ping + ")");
                 
                 //Starte Threads, die die Verbindung zu anderen Servern testen
-                new VerbindungstestsThread(this.connectionList, verbindung).start();
+                new VerbindungstestsThread(this.connectionList, verbindung, this.ownIP).start();
                 
                 counter++;
             } catch (RemoteException ex) {

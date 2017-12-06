@@ -17,19 +17,19 @@ import java.util.logging.Logger;
 public class FloodingThreadEntferneServerAusSystem extends Thread{
     
     private final ServerStub verbindung;
-    private final String neueIP;
+    private final String serverIP;
     private final String ownIP;
     
-    public FloodingThreadEntferneServerAusSystem(ServerStub verbindung, String neueIP, String ownIP){
+    public FloodingThreadEntferneServerAusSystem(ServerStub verbindung, String serverIP, String ownIP){
         this.verbindung = verbindung;
-        this.neueIP = neueIP;
+        this.serverIP = serverIP;
         this.ownIP = ownIP;
     }    
     
     @Override 
     public void run(){
         try {        
-            verbindung.entferneServerAusSystem(neueIP, ownIP);
+            verbindung.entferneServerAusSystem(serverIP, ownIP);
         } catch (RemoteException ex) {
             Logger.getLogger(FloodingThreadAktOnlineServerList.class.getName()).log(Level.SEVERE, null, ex);
         }

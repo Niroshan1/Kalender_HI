@@ -46,7 +46,7 @@ public class ServerStubImpl implements ServerStub {
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
             connectionList.add(verbindung);
-            new VerbindungstestsThread(this.connectionList, verbindung).start();
+            new VerbindungstestsThread(this.connectionList, verbindung, this.ownIP).start();
             System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");            
             return true;
         } catch (NotBoundException e) {
@@ -128,7 +128,7 @@ public class ServerStubImpl implements ServerStub {
     public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException {
         if(!this.onlineServerList.contains(serverIP)){
             if(this.ownIP.equals(serverIP)){
-                //server neu in system einbinden
+                //TODO: server neu in system einbinden
             }
             else{
                 //server aus liste der online server entfernen
