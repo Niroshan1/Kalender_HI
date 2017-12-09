@@ -9,7 +9,6 @@ import Server.ServerDaten;
 import Server.ServerStubImpl;
 import Server.Verbindung;
 import java.rmi.RemoteException;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
