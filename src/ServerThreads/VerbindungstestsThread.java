@@ -5,7 +5,10 @@
  */
 package ServerThreads;
 
+import Server.ServerDaten;
+import Server.ServerStubImpl;
 import Server.Verbindung;
+import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,14 +19,12 @@ import java.util.logging.Logger;
  */
 public class VerbindungstestsThread extends Thread{
     
-    private final LinkedList<Verbindung> connectionList;
+    private final ServerDaten serverDaten;
     private final Verbindung verbindung;
-    private final String ownIP;
     
-    public VerbindungstestsThread(LinkedList<Verbindung> connectionList, Verbindung verbindung, String ownIP){
-        this.connectionList = connectionList;
+    public VerbindungstestsThread(ServerDaten serverDaten, Verbindung verbindung){
+        this.serverDaten = serverDaten;
         this.verbindung = verbindung;
-        this.ownIP = ownIP;
     }    
     
     @Override 
@@ -42,10 +43,17 @@ public class VerbindungstestsThread extends Thread{
                 
                 if(counter.getValue() == 0){
                     System.out.println("--->> " + this.verbindung.getIP() + " kann nicht mehr erreicht werden");
-                    this.connectionList.remove(this.verbindung);
-                    //TODO: entferne aus onlineServerList
-                    for(Verbindung connection : this.connectionList){
-                        new FloodingThreadEntferneServerAusSystem(connection.getServerStub(), this.verbindung.getIP(), this.ownIP).start();
+                    this.serverDaten.connectionList.remove(this.verbindung);
+                    this.serverDaten.onlineServerList.remove(this.verbindung);
+                    
+                    for(Verbindung connection : this.serverDaten.connectionList){
+                        new Thread(() -> {
+                        try {
+                            verbindung.getServerStub().entferneServerAusSystem(this.verbindung.getIP(), this.serverDaten.ownIP);
+                        }catch (RemoteException ex) {
+                            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }).start();
                     }
                     serverUp = false;
                 }

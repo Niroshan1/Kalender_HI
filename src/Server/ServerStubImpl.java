@@ -1,8 +1,6 @@
 
 package Server;
 
-import ServerThreads.FloodingThreadAktOnlineServerList;
-import ServerThreads.FloodingThreadEntferneServerAusSystem;
 import ServerThreads.VerbindungstestsThread;
 import Utilities.DBHandler;
 import java.rmi.AccessException;
@@ -11,6 +9,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,16 +18,10 @@ import java.util.LinkedList;
  */
 public class ServerStubImpl implements ServerStub {
     
-    private final String ownIP;
-    private final LinkedList<Verbindung> connectionList;
-    private final LinkedList<String> onlineServerList;
-    private final DBHandler datenbank;
+    private final ServerDaten serverDaten;
         
-    ServerStubImpl(LinkedList<Verbindung> connectionList, LinkedList<String> onlineServerList, DBHandler datenbank, String ownIP) {
-        this.connectionList = connectionList;
-        this.onlineServerList = onlineServerList;
-        this.datenbank = datenbank;
-        this.ownIP = ownIP;
+    ServerStubImpl(ServerDaten serverDaten) {
+        this.serverDaten = serverDaten;
     }
 
     /**
@@ -45,8 +39,8 @@ public class ServerStubImpl implements ServerStub {
             Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
-            connectionList.add(verbindung);
-            new VerbindungstestsThread(this.connectionList, verbindung, this.ownIP).start();
+            this.serverDaten.connectionList.add(verbindung);
+            new VerbindungstestsThread(this.serverDaten, verbindung).start();
             System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");            
             return true;
         } catch (NotBoundException e) {
@@ -62,7 +56,7 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public LinkedList<String> getOnlineServerList() throws RemoteException {
-        return onlineServerList;
+        return this.serverDaten.onlineServerList;
     }
 
     /**
@@ -85,7 +79,7 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public boolean isServerReachable(String ip) throws RemoteException {
-        for(Verbindung connection : connectionList){
+        for(Verbindung connection : this.serverDaten.connectionList){
             if(connection.equals(ip)){
                 return connection.getServerStub().ping();
             }
@@ -105,11 +99,17 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public void updateOnlineServerList(String neueIP, String senderIP) throws RemoteException {
-        if(!this.onlineServerList.contains(neueIP)){
-            this.onlineServerList.add(neueIP);
-            for(Verbindung verbindung : this.connectionList){
+        if(!this.serverDaten.onlineServerList.contains(neueIP)){
+            this.serverDaten.onlineServerList.add(neueIP);
+            for(Verbindung verbindung : this.serverDaten.connectionList){
                 if(!verbindung.getIP().equals(senderIP)){
-                    new FloodingThreadAktOnlineServerList(verbindung.getServerStub(), neueIP, this.ownIP).start();
+                    new Thread(() -> {
+                        try {
+                            verbindung.getServerStub().updateOnlineServerList(neueIP, this.serverDaten.ownIP);
+                        }catch (RemoteException ex) {
+                            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }).start();
                 }    
             }
         }
@@ -126,21 +126,28 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException {
-        if(!this.onlineServerList.contains(serverIP)){
-            if(this.ownIP.equals(serverIP)){
+        if(!this.serverDaten.onlineServerList.contains(serverIP)){
+            if(this.serverDaten.ownIP.equals(serverIP)){
                 //TODO: server neu in system einbinden
             }
             else{
                 //server aus liste der online server entfernen
-                this.onlineServerList.remove(serverIP);               
+                this.serverDaten.onlineServerList.remove(serverIP);               
                 
                 //info via flooding weiterleiten
-                for(Verbindung verbindung : this.connectionList){
+                for(Verbindung verbindung : this.serverDaten.connectionList){
                     //hier threads + flooding
-                    new FloodingThreadEntferneServerAusSystem(verbindung.getServerStub(), serverIP, this.ownIP).start();
+                    new Thread(() -> {
+                        try {
+                            verbindung.getServerStub().entferneServerAusSystem(serverIP, ServerStubImpl.this.serverDaten.ownIP);
+                        }catch (RemoteException ex) {
+                            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }).start();
+                    
                     if(verbindung.getIP().equals(serverIP)){
                         //server aus connectionlist entfernen
-                        connectionList.remove(verbindung);
+                        this.serverDaten.connectionList.remove(verbindung);
                     }            
                 }
             }
