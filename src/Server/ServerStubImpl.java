@@ -134,8 +134,14 @@ public class ServerStubImpl implements ServerStub {
         if(!this.serverDaten.onlineServerList.contains(serverIP)){
             if(this.serverDaten.ownIP.equals(serverIP)){
                 //TODO: server neu in system einbinden
-            }
+                System.out.println("ich bins!");
+            }           
             else{
+                System.out.println("onlineserverliste:");
+                for(String bla : this.serverDaten.onlineServerList){
+                    System.out.println(bla);
+                }
+                
                 //server aus liste der online server entfernen
                 this.serverDaten.onlineServerList.remove(serverIP);               
                 
