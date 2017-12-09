@@ -36,6 +36,11 @@ public class ServerStubImpl implements ServerStub {
     @Override
     public boolean initConnection(String ip) throws RemoteException{            
         try {
+            System.out.println("onlineserverliste:");
+            for(String bla : this.serverDaten.onlineServerList){
+                System.out.println(bla);
+            }
+            
             Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
