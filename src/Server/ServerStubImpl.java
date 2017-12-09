@@ -131,6 +131,7 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException {
+        System.out.println("---------------------------------------------------------------------------");
         if(!this.serverDaten.onlineServerList.contains(serverIP)){
             if(this.serverDaten.ownIP.equals(serverIP)){
                 //TODO: server neu in system einbinden
