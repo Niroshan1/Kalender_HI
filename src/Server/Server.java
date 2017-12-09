@@ -10,6 +10,7 @@ import Utilities.DBHandler;
 import Utilities.DatenbankException;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -148,7 +149,27 @@ public class Server {
             bufferedReader.close(); 
             System.out.println(terminalAusgabe);
         } catch (IOException ex) { 
-            Logger.getLogger(ClientStubImpl.class.getName()).log(Level.SEVERE, null, ex); 
+            //MAC-Pfad
+            file = new File("src/data/serverlist.txt");
+            
+            try { 
+            bufferedReader = new BufferedReader(new FileReader(file)); 
+            while ((line = bufferedReader.readLine()) != null && !successfulConnection) {                
+                try { 
+                    registry = LocateRegistry.getRegistry(line, 1100);
+                    stub = (ServerStub) registry.lookup("ServerStub"); 
+                    successfulConnection = true;
+                    this.serverDaten.onlineServerList = stub.getOnlineServerList();
+                    terminalAusgabe = "LOG * ---> OnlineServerList von " + line + " erhalten";
+                } catch (RemoteException | NotBoundException e) {
+                    System.out.println("LOG * ~~~ " + line + " nicht erreichbar!");
+                }
+            } 
+            bufferedReader.close(); 
+            System.out.println(terminalAusgabe);
+            } catch (IOException ex1) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex1);
+            }   
         }         
     }
 
