@@ -151,6 +151,7 @@ public class ServerStubImpl implements ServerStub {
                     //hier threads + flooding
                     new Thread(() -> {
                         try {
+                            System.out.println("jetzt wirds gelöscht");
                             verbindung.getServerStub().entferneServerAusSystem(serverIP, ServerStubImpl.this.serverDaten.ownIP);
                         }catch (RemoteException ex) {
                             Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);

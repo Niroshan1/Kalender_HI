@@ -27,7 +27,6 @@ public class TerminkalenderMain {
      */
     public static void main(String[] args){        
         try {  
-            
             if(args.length == 1){
                 Server server = new Server(args);
                 server.start();   
