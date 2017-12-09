@@ -54,7 +54,6 @@ public class VerbindungstestsThread extends Thread{
                     for(Verbindung connection : this.serverDaten.connectionList){
                         new Thread(() -> {
                             try {
-                                
                                 connection.getServerStub().entferneServerAusSystem(this.verbindung.getIP(), this.serverDaten.ownIP);
                             }catch (RemoteException ex) {
                                 System.out.println("HIHIHHIIHHIHHIHIHHIHHIIHIH");

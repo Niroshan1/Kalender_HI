@@ -138,13 +138,13 @@ public class ServerStubImpl implements ServerStub {
                 System.out.println("ich bins!");
             }           
             else{
+                //server aus liste der online server entfernen
+                this.serverDaten.onlineServerList.remove(serverIP);               
+                
                 System.out.println("onlineserverliste:");
                 for(String bla : this.serverDaten.onlineServerList){
                     System.out.println(bla);
                 }
-                
-                //server aus liste der online server entfernen
-                this.serverDaten.onlineServerList.remove(serverIP);               
                 
                 //info via flooding weiterleiten
                 for(Verbindung verbindung : this.serverDaten.connectionList){
