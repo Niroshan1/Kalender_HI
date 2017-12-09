@@ -52,14 +52,15 @@ public class VerbindungstestsThread extends Thread{
                     this.serverDaten.onlineServerList.remove(this.verbindung);
                     
                     for(Verbindung connection : this.serverDaten.connectionList){
-                        System.out.println("HIHIHHIIHHIHHIHIHHIHHIIHIH");
                         new Thread(() -> {
-                        try {
-                            verbindung.getServerStub().entferneServerAusSystem(this.verbindung.getIP(), this.serverDaten.ownIP);
-                        }catch (RemoteException ex) {
-                            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }).start();
+                            try {
+                                
+                                connection.getServerStub().entferneServerAusSystem(this.verbindung.getIP(), this.serverDaten.ownIP);
+                            }catch (RemoteException ex) {
+                                System.out.println("HIHIHHIIHHIHHIHIHHIHHIIHIH");
+                                Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }).start();
                     }
                     serverUp = false;
                 }
