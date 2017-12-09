@@ -35,6 +35,11 @@ public class VerbindungstestsThread extends Thread{
         while(serverUp){
             try {
                 Thread.sleep(3000);
+                System.out.println("onlineserverliste:");
+                for(String bla : this.serverDaten.onlineServerList){
+                    System.out.println(bla);
+                }
+                
                 System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
                 counter.decrement();
                 
