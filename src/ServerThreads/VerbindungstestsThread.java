@@ -47,6 +47,7 @@ public class VerbindungstestsThread extends Thread{
                     this.serverDaten.onlineServerList.remove(this.verbindung);
                     
                     for(Verbindung connection : this.serverDaten.connectionList){
+                        System.out.println("HIHIHHIIHHIHHIHIHHIHHIIHIH");
                         new Thread(() -> {
                         try {
                             verbindung.getServerStub().entferneServerAusSystem(this.verbindung.getIP(), this.serverDaten.ownIP);

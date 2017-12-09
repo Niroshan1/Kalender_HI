@@ -30,7 +30,6 @@ public class PingThread extends Thread{
             this.serverStub.ping();
             counter.resetCounter();
         } catch (RemoteException ex) {
-            Logger.getLogger(PingThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
