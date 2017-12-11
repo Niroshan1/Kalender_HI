@@ -131,19 +131,13 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException {
-        System.out.println("----------------------------- rufe entferneServerAusSystem auf ----------------------------------------------");
-        if(!this.serverDaten.onlineServerList.contains(serverIP)){
+        if(this.serverDaten.onlineServerList.contains(serverIP)){
             if(this.serverDaten.ownIP.equals(serverIP)){
                 //TODO: server neu in system einbinden
             }           
             else{
                 //server aus liste der online server entfernen
                 this.serverDaten.onlineServerList.remove(serverIP);               
-                
-                System.out.println("onlineserverliste:");
-                for(String bla : this.serverDaten.onlineServerList){
-                    System.out.println(bla);
-                }
                 
                 //info via flooding weiterleiten
                 for(Verbindung verbindung : this.serverDaten.connectionList){
