@@ -3,6 +3,12 @@ package Server;
 
 import ServerThreads.VerbindungstestsThread;
 import Utilities.DBHandler;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -19,6 +25,7 @@ import java.util.logging.Logger;
 public class ServerStubImpl implements ServerStub {
     
     private final ServerDaten serverDaten;
+   
         
     ServerStubImpl(ServerDaten serverDaten) {
         this.serverDaten = serverDaten;
@@ -34,35 +41,48 @@ public class ServerStubImpl implements ServerStub {
      * @throws AccessException 
      */
     @Override
-    public boolean initConnection(String ip) throws RemoteException{            
+    public boolean initConnection(String ip) throws RemoteException{   
+        
         try {
-            System.out.println("onlineserverliste:");
-            for(String bla : this.serverDaten.onlineServerList){
-                System.out.println(bla);
-            }
+            String line;
+            BufferedReader bufferedReader;
+            File file = new File("https://drive.google.com/drive/folders/154w3MRFq89XDTsASHMe7A-gEcBUldSVl");
+            FileOutputStream fileOut;
+            String[] words;
+            StringBuffer inputBuffer = new StringBuffer();
+            bufferedReader = new BufferedReader(new FileReader(file));
+            
             
             Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
             this.serverDaten.connectionList.add(verbindung);
             new VerbindungstestsThread(this.serverDaten, verbindung).start();
-            System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");            
+            System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");
+            
+           
+            while ( (line = bufferedReader.readLine()) != null){
+                words = line.split(" ");
+                if(words[0].equals(ip)){
+
+                    line = words[0] + " " + serverDaten.connectionList.size() + " " +words[2];
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');    
+            }
+
+            bufferedReader.close();
+            fileOut = new FileOutputStream(file);
+            fileOut.write(inputBuffer.toString().getBytes());
+            fileOut.close();
+            
+            
             return true;
-        } catch (NotBoundException e) {
+        } catch (NotBoundException | IOException e) {
             return false;
         }
     }
 
-    /**
-     * gibt eine Liste aller Server zurueck, die gerade online und im Verbund sind
-     * 
-     * @return
-     * @throws RemoteException 
-     */
-    @Override
-    public LinkedList<String> getOnlineServerList() throws RemoteException {
-        return this.serverDaten.onlineServerList;
-    }
 
     /**
      * Methode um zu testen, ob noch eine Verbindung zum Server besteht
@@ -93,32 +113,7 @@ public class ServerStubImpl implements ServerStub {
         return false;
     }
 
-    /**
-     * checkt ob ip schon in onlineServerList vorhanden
-     * wenn nein, wird sie eingefügt und alle Nachbarn werden benachrichtig 
-     * (mit Threads -> parallel)
-     * 
-     * @param neueIP
-     * @param senderIP
-     * @throws RemoteException 
-     */
-    @Override
-    public void updateOnlineServerList(String neueIP, String senderIP) throws RemoteException {
-        if(!this.serverDaten.onlineServerList.contains(neueIP)){
-            this.serverDaten.onlineServerList.add(neueIP);
-            for(Verbindung verbindung : this.serverDaten.connectionList){
-                if(!verbindung.getIP().equals(senderIP)){
-                    new Thread(() -> {
-                        try {
-                            verbindung.getServerStub().updateOnlineServerList(neueIP, this.serverDaten.ownIP);
-                        }catch (RemoteException ex) {
-                            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }).start();
-                }    
-            }
-        }
-    }
+
 
     /**
      * entfernt serverIP aus der onlineServerList, falls vorhanden & 
