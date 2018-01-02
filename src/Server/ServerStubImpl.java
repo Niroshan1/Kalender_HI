@@ -9,12 +9,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,11 +48,12 @@ public class ServerStubImpl implements ServerStub {
         try {
             String line;
             BufferedReader bufferedReader;
-            File file = new File("https://drive.google.com/drive/folders/154w3MRFq89XDTsASHMe7A-gEcBUldSVl");
-            FileOutputStream fileOut;
+            //File file = new File("https://1drv.ms/t/s!AjRYgaF5cS41q1BbhwaaWJip_jHP");
+            OutputStreamWriter fileOut;
+            URL url = new URL("https://1drv.ms/t/s!AjRYgaF5cS41q1Fuz38Cr_X-rBka");
             String[] words;
             StringBuffer inputBuffer = new StringBuffer();
-            bufferedReader = new BufferedReader(new FileReader(file));
+            bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
             
             
             Registry registry = LocateRegistry.getRegistry(ip, 1100);
@@ -72,8 +75,8 @@ public class ServerStubImpl implements ServerStub {
             }
 
             bufferedReader.close();
-            fileOut = new FileOutputStream(file);
-            fileOut.write(inputBuffer.toString().getBytes());
+            fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
+            fileOut.write(inputBuffer.toString());;
             fileOut.close();
             
             
@@ -126,7 +129,7 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException {
-        if(this.serverDaten.onlineServerList.contains(serverIP)){
+       /* if(this.serverDaten.onlineServerList.contains(serverIP)){
             if(this.serverDaten.ownIP.equals(serverIP)){
                 //TODO: server neu in system einbinden
             }           
@@ -152,7 +155,7 @@ public class ServerStubImpl implements ServerStub {
                     }            
                 }
             }
-        }
+        }*/
     }
     
 }
