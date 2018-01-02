@@ -34,10 +34,6 @@ public class VerbindungstestsThread extends Thread{
         while(serverUp){
             try {
                 Thread.sleep(3000);
-                System.out.println("onlineserverliste:");
-                for(String bla : this.serverDaten.onlineServerList){
-                    System.out.println(bla);
-                }
                 
                 System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
                 counter.decrement();
@@ -48,7 +44,6 @@ public class VerbindungstestsThread extends Thread{
                 if(counter.getValue() == 0){
                     System.out.println("--->> " + this.verbindung.getIP() + " kann nicht mehr erreicht werden");
                     this.serverDaten.connectionList.remove(this.verbindung);
-                    this.serverDaten.onlineServerList.remove(this.verbindung);
                     
                     for(Verbindung connection : this.serverDaten.connectionList){
                         new Thread(() -> {

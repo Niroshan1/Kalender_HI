@@ -125,8 +125,11 @@ public class Server {
             String line;
            // File file = new File("https://1drv.ms/t/s!AjRYgaF5cS41q1BbhwaaWJip_jHP");
             Verbindung verbindung;
-            URL url = new URL("https://1drv.ms/t/s!AjRYgaF5cS41q1BbhwaaWJip_jHP");
+            URL url = new URL("https://1drv.ms/t/s!AjRYgaF5cS41q1Fuz38Cr_X-rBka");
             //Scanner s = new Scanner(url.openStream());
+            
+            
+         
             ServerStub stub = null, stubTmp = null;
             Registry registry;
             int counter = 0;
