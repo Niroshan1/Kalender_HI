@@ -66,9 +66,9 @@ public class ServerStubImpl implements ServerStub {
            
             while ( (line = bufferedReader.readLine()) != null){
                 words = line.split(" ");
-                if(words[0].equals(ip)){
+                if(words[0].equals(serverDaten.ownIP)){
 
-                    line = words[0] + " " + serverDaten.connectionList.size() + " " +words[2];
+                    line = words[0] + " " + serverDaten.connectionList.size() + " 0" ;
                 }
                 inputBuffer.append(line);
                 inputBuffer.append('\n');    
