@@ -11,9 +11,14 @@ import Utilities.DatenbankException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.URL;
 import java.net.UnknownHostException;
+import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -24,6 +29,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,33 +63,14 @@ public class Server {
         System.out.println("LOG * Starte Server");
         System.out.println("LOG * Server-IP: " + serverDaten.ownIP);
         System.out.println("LOG * ");
-        
-        //erhalte Liste mit allen Servern die online sind
-        getOnlineServerListe();
-               
+              
         //initialisiere Stubs für Server & Clients
         System.out.println("LOG * ");
         initServerStub();
         initClientStub();
-
         //baue bis zu 2 dauerhafte Verbindungen zu anderen Servern auf
-        if(this.serverDaten.onlineServerList.size() > 0){
-            connectToServers();
-        }
+        connectToServers();
 
-        //füge dich selbst der Liste hinzu
-        this.serverDaten.onlineServerList.add(this.serverDaten.ownIP);
-        //lass die anderen Server dich in ihre Liste hinzufügen (mit Flooding)
-        for(Verbindung verbindung : this.serverDaten.connectionList){
-            new Thread(() -> {
-                try {
-                    verbindung.getServerStub().updateOnlineServerList(this.serverDaten.ownIP, this.serverDaten.ownIP);
-                } catch (RemoteException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }).start();
-        }       
-        
         System.out.println("LOG * ");
         System.out.println("LOG * Server laeuft!");
         System.out.println("---------------------------------------------");
@@ -122,57 +109,8 @@ public class Server {
     /**
      * baut eine Verbindung zu einem Server auf und lädt die onlineServerList von diesem
      */
-    private void getOnlineServerListe() {
-        boolean successfulConnection = false;
-        String terminalAusgabe = "LOG * ---> kein Server gefunden!";
-        
-        BufferedReader bufferedReader; 
-        String line; 
-        File file = new File("src\\data\\serverlist.txt");
-        Registry registry;
-        ServerStub stub;  
-        
-        System.out.println("LOG * Versuche Verbindung zu einem Server herzustellen um OnlineServerList zu erhalten");
-        try { 
-            bufferedReader = new BufferedReader(new FileReader(file)); 
-            while ((line = bufferedReader.readLine()) != null && !successfulConnection) {                
-                try { 
-                    registry = LocateRegistry.getRegistry(line, 1100);
-                    stub = (ServerStub) registry.lookup("ServerStub"); 
-                    successfulConnection = true;
-                    this.serverDaten.onlineServerList = stub.getOnlineServerList();
-                    terminalAusgabe = "LOG * ---> OnlineServerList von " + line + " erhalten";
-                } catch (RemoteException | NotBoundException e) {
-                    System.out.println("LOG * ~~~ " + line + " nicht erreichbar!");
-                }
-            } 
-            bufferedReader.close(); 
-            System.out.println(terminalAusgabe);
-        } catch (IOException ex) { 
-            //MAC-Pfad
-            file = new File("src/data/serverlist.txt");
-            
-            try { 
-            bufferedReader = new BufferedReader(new FileReader(file)); 
-            while ((line = bufferedReader.readLine()) != null && !successfulConnection) {                
-                try { 
-                    registry = LocateRegistry.getRegistry(line, 1100);
-                    stub = (ServerStub) registry.lookup("ServerStub"); 
-                    successfulConnection = true;
-                    this.serverDaten.onlineServerList = stub.getOnlineServerList();
-                    terminalAusgabe = "LOG * ---> OnlineServerList von " + line + " erhalten";
-                } catch (RemoteException | NotBoundException e) {
-                    System.out.println("LOG * ~~~ " + line + " nicht erreichbar!");
-                }
-            } 
-            bufferedReader.close(); 
-            System.out.println(terminalAusgabe);
-            } catch (IOException ex1) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex1);
-            }   
-        }         
-    }
-
+   
+   
     /**
      * baut bis zu 2 Verbindungen zu anderen Servern auf
      * 
@@ -180,72 +118,138 @@ public class Server {
      * @throws NotBoundException
      * @throws IOException 
      */
-    private void connectToServers() throws RemoteException, NotBoundException, IOException {
-        int counter = 0;
-        long ping;
-        boolean skip;
+    private void connectToServers() throws IOException{
         
-        long startZeit;
-        long endZeit;
-        
-        Registry registry;
-        ServerStub stubTmp;
-        
-        Verbindung verbindung;
-        ServerStub stub = null;
-        String bestServerIP = "";
-        
-        System.out.println("LOG * ");
-        System.out.println("LOG * Versuch bis zu 2 dauerhafte Verbindungen aufzubauen");
-        
-        if(this.serverDaten.onlineServerList.isEmpty()){
-            counter++;
-        }
-        if(this.serverDaten.onlineServerList.size() == 1){
-            counter++;
-        }
-        
-        while(counter < 2){
+        try {
+            BufferedReader bufferedReader;
+            String line;
+           // File file = new File("https://1drv.ms/t/s!AjRYgaF5cS41q1BbhwaaWJip_jHP");
+            Verbindung verbindung;
+            URL url = new URL("https://1drv.ms/t/s!AjRYgaF5cS41q1BbhwaaWJip_jHP");
+            //Scanner s = new Scanner(url.openStream());
+            ServerStub stub = null, stubTmp = null;
+            Registry registry;
+            int counter = 0;
+            boolean check = true;
+            OutputStreamWriter fileOut;
+            String[] words , besteEins = null , besteZwei = null;
+            bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+            StringBuffer inputBuffer = new StringBuffer();
+            
             try {
-                ping = 10000000;
-                for(String serverIP : this.serverDaten.onlineServerList){
-                    skip = false;
-                    for(Verbindung verbundenerServer : this.serverDaten.connectionList){
-                        if(verbundenerServer.getIP().equals(serverIP)){
-                            skip = true;
-                        }
+                while ((line = bufferedReader.readLine()) != null) {
+                    words = line.split(" ");
+                    if((besteEins == null) || (Integer.parseInt(words[1]) < Integer.parseInt(besteEins[1]))){
+                        besteZwei = besteEins;
+                        besteEins = words;
                     }
-                    if(!skip){
-                        registry = LocateRegistry.getRegistry(serverIP, 1100);
-                        stubTmp = (ServerStub) registry.lookup("ServerStub"); 
-                        
-                        startZeit = new Date().getTime();
-                        stubTmp.ping();
-                        endZeit = new Date().getTime();
-                        
-                        if(ping > (endZeit - startZeit)){
-                            ping = endZeit - startZeit;
-                            stub = stubTmp;
-                            bestServerIP = serverIP;
-                        }  
+                    else if((besteZwei == null) || (Integer.parseInt(words[1]) < Integer.parseInt(besteZwei[1])) ){
+                        besteZwei= words;
                     }
-                }   
-                //lässt anderen Server Verbindung zu diesem aufbauen
-                stub.initConnection(this.serverDaten.ownIP);
-                
-                //fügt Verbindung zur Liste der Verbindungen hinzu
-                verbindung = new Verbindung(stub, bestServerIP);
-                this.serverDaten.connectionList.add(verbindung);
-                System.out.println("LOG * ---> Verbindung zu Server " + bestServerIP + " hergestellt! (Ping = " + ping + ")");
-                
-                //Starte Threads, die die Verbindung zu anderen Servern testen
-                new VerbindungstestsThread(this.serverDaten, verbindung).start();
-                
-                counter++;
-            } catch (RemoteException ex) {
+                }
+            } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            }            
+            }
+            bufferedReader.close();
+            
+            
+            
+            //Verbindung zu besteEins aufbauen falls nicht null
+            if( besteEins != null){
+                try {
+                    registry = LocateRegistry.getRegistry(besteEins[0], 1100);
+                    stubTmp = (ServerStub) registry.lookup("ServerStub");
+                    //lässt anderen Server Verbindung zu diesem aufbauen
+                    stubTmp.initConnection(this.serverDaten.ownIP);
+                     //fügt Verbindung zur Liste der Verbindungen hinzu
+                    verbindung = new Verbindung(stub, besteEins[0]);
+                    this.serverDaten.connectionList.add(verbindung);
+                    System.out.println("LOG * ---> Verbindung zu Server " + besteEins[0] + " hergestellt!");
+                    //Starte Threads, die die Verbindung zu anderen Servern testen
+                    new VerbindungstestsThread(this.serverDaten, verbindung).start();
+                    bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                    while ( (line = bufferedReader.readLine()) != null){
+                        words = line.split(" ");
+                        if(words[0].equals(besteEins[0])){
+                            
+                            line = words[0] + " " + words[1] + " 0";
+                        }
+                        inputBuffer.append(line);
+                        inputBuffer.append('\n');    
+                    }
+                    
+                    bufferedReader.close();
+                    fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
+                    fileOut.write(inputBuffer.toString());
+                    fileOut.close();
+                    counter++;
+                } catch (RemoteException | NotBoundException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                }   
+            }
+            
+            
+            
+            //Verbindung zu besteZwei aufbauen falls nicht null
+            if( besteZwei != null){
+                try {
+                    registry = LocateRegistry.getRegistry(besteZwei[0], 1100);
+                     stubTmp = (ServerStub) registry.lookup("ServerStub");
+                    //lässt anderen Server Verbindung zu diesem aufbauen
+                    stubTmp.initConnection(this.serverDaten.ownIP);
+
+                    //fügt Verbindung zur Liste der Verbindungen hinzu
+                    verbindung = new Verbindung(stub, besteZwei[0]);
+                    this.serverDaten.connectionList.add(verbindung);
+                    System.out.println("LOG * ---> Verbindung zu Server " + besteZwei[0] + " hergestellt!");
+
+                    //Starte Threads, die die Verbindung zu anderen Servern testen
+                    new VerbindungstestsThread(this.serverDaten, verbindung).start();
+                    bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+                    while ( (line = bufferedReader.readLine()) != null){
+                        words = line.split(" ");
+                        if(words[0].equals(besteZwei[0])){
+                            
+                            line = words[0] + " " + words[1] + " 0";
+                        }
+                        inputBuffer.append(line);
+                        inputBuffer.append('\n');    
+                    }
+                    
+                    bufferedReader.close();
+                    fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
+                    fileOut.write(inputBuffer.toString());
+                    fileOut.close();
+                    counter++;
+                } catch (RemoteException | NotBoundException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            }
+            
+            bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+            while ( (line = bufferedReader.readLine()) != null){
+                words = line.split(" ");
+                if(words[0].equals(serverDaten.ownIP)){
+                    check = false;      
+                    line = words[0] + " " + counter + " 0";
+                }
+                inputBuffer.append(line);
+                inputBuffer.append('\n');    
+            }
+            if(check){
+                inputBuffer.append(serverDaten.ownIP + " " + counter + " 0");
+                inputBuffer.append('\n');
+                
+            }
+            bufferedReader.close();
+            fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
+            fileOut.write(inputBuffer.toString());
+            fileOut.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
+                
+                
     }
 
 }
