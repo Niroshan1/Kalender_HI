@@ -2,12 +2,7 @@
 package Server;
 
 import ServerThreads.VerbindungstestsThread;
-import Utilities.DBHandler;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -17,8 +12,6 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,8 +20,7 @@ import java.util.logging.Logger;
 public class ServerStubImpl implements ServerStub {
     
     private final ServerDaten serverDaten;
-   
-        
+          
     ServerStubImpl(ServerDaten serverDaten) {
         this.serverDaten = serverDaten;
     }
@@ -43,8 +35,7 @@ public class ServerStubImpl implements ServerStub {
      * @throws AccessException 
      */
     @Override
-    public boolean initConnection(String ip) throws RemoteException{   
-        
+    public boolean initConnection(String ip) throws RemoteException{           
         try {
             String line;
             BufferedReader bufferedReader;
@@ -90,72 +81,18 @@ public class ServerStubImpl implements ServerStub {
     /**
      * Methode um zu testen, ob noch eine Verbindung zum Server besteht
      * 
+     * @param senderIP
      * @return
      * @throws RemoteException 
      */
     @Override
-    public boolean ping() throws RemoteException {
-        return true;
-    }
-
-    /**
-     * Methode die testet, ob ein bestimmter Server noch erreichbar ist
-     * 
-     * @param ip
-     * @return
-     * @throws RemoteException 
-     */
-    @Override
-    public boolean isServerReachable(String ip) throws RemoteException {
-        for(Verbindung connection : this.serverDaten.connectionList){
-            if(connection.equals(ip)){
-                return connection.getServerStub().ping();
+    public boolean ping(String senderIP) throws RemoteException {
+        for(Verbindung verbindung : serverDaten.connectionList){
+            if(verbindung.getIP().equals(senderIP)){
+                return true;
             }
         }
-        // hier fehlt noch, dass die nachbarn nun das selbe tun sollen
         return false;
-    }
-
-
-
-    /**
-     * entfernt serverIP aus der onlineServerList, falls vorhanden & 
-     * sendet lösch-info via flooding & threads weiter
-     * löscht außerdem serverIP aus connectionlist, falls vorhanden 
-     * 
-     * @param serverIP
-     * @param senderIP
-     * @throws RemoteException 
-     */
-    @Override
-    public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException {
-       /* if(this.serverDaten.onlineServerList.contains(serverIP)){
-            if(this.serverDaten.ownIP.equals(serverIP)){
-                //TODO: server neu in system einbinden
-            }           
-            else{
-                //server aus liste der online server entfernen
-                this.serverDaten.onlineServerList.remove(serverIP);               
-                
-                //info via flooding weiterleiten
-                for(Verbindung verbindung : this.serverDaten.connectionList){
-                    //hier threads + flooding
-                    new Thread(() -> {
-                        try {
-                            System.out.println("jetzt wirds gelöscht");
-                            verbindung.getServerStub().entferneServerAusSystem(serverIP, ServerStubImpl.this.serverDaten.ownIP);
-                        }catch (RemoteException ex) {
-                            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }).start();
-                    
-                    if(verbindung.getIP().equals(serverIP)){
-                        //server aus connectionlist entfernen
-                        this.serverDaten.connectionList.remove(verbindung);
-                    }            
-                }
-            }
-        }*/
-    }
+    }   
     
 }

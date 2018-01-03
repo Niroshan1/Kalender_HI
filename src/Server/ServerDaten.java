@@ -16,14 +16,12 @@ import java.util.LinkedList;
  */
 public class ServerDaten {
     
-    public final LinkedList<Verbindung> connectionList;
-  
+    public final LinkedList<Verbindung> connectionList; 
     public final DBHandler datenbank;
     public final String ownIP;
     
     public ServerDaten(String ownIP) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
-        this.connectionList = new LinkedList<>();
-        
+        this.connectionList = new LinkedList<>();    
         this.ownIP = ownIP;
         datenbank = new DBHandler(); 
         datenbank.getConnection();        

@@ -120,7 +120,7 @@ public class Server {
             int counter = 0;
             boolean check = true;
             OutputStreamWriter fileOut;
-            String[] words , besteEins = null , besteZwei = null;
+            String[] words , besteZeile1 = null , besteZeile2 = null;
             bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuffer inputBuffer = new StringBuffer();
             
@@ -128,12 +128,12 @@ public class Server {
             try {
                 while ((line = bufferedReader.readLine()) != null) {
                     words = line.split(" ");
-                    if((besteEins == null) || (Integer.parseInt(words[1]) < Integer.parseInt(besteEins[1]))){
-                        besteZwei = besteEins;
-                        besteEins = words;
+                    if((besteZeile1 == null) || (Integer.parseInt(words[1]) < Integer.parseInt(besteZeile1[1]))){
+                        besteZeile2 = besteZeile1;
+                        besteZeile1 = words;
                     }
-                    else if((besteZwei == null) || (Integer.parseInt(words[1]) < Integer.parseInt(besteZwei[1])) ){
-                        besteZwei= words;
+                    else if((besteZeile2 == null) || (Integer.parseInt(words[1]) < Integer.parseInt(besteZeile2[1])) ){
+                        besteZeile2= words;
                     }
                 }
             } catch (IOException ex) {
@@ -142,18 +142,18 @@ public class Server {
             bufferedReader.close();          
             
             //Verbindung zu besteEins aufbauen falls nicht null
-            if(connectTo(besteEins)){
+            if(connectTo(besteZeile1)){
                 counter++;
             }        
                      
             //Verbindung zu besteZwei aufbauen falls nicht null
-            if(connectTo(besteZwei)){
+            if(connectTo(besteZeile2)){
                 counter++;
             }
             
             //aktuallisiert eigene eintraege in der serverliste
             bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-            while ( (line = bufferedReader.readLine()) != null){
+            while((line = bufferedReader.readLine()) != null){
                 words = line.split(" ");
                 if(words[0].equals(serverDaten.ownIP)){
                     check = false;      
@@ -164,8 +164,7 @@ public class Server {
             }
             if(check){
                 inputBuffer.append(serverDaten.ownIP + " " + counter + " 0");
-                inputBuffer.append('\n');
-                
+                inputBuffer.append('\n');                
             }
             bufferedReader.close();
             fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());

@@ -7,7 +7,6 @@ package Server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.LinkedList;
 
 /**
  *
@@ -16,12 +15,5 @@ import java.util.LinkedList;
 public interface ServerStub extends Remote{
     
     public boolean initConnection(String ip) throws RemoteException;
-    
-    
-    
-    public boolean ping() throws RemoteException;   
-    public boolean isServerReachable(String ip) throws RemoteException;
-    
-    
-    public void entferneServerAusSystem(String serverIP, String senderIP) throws RemoteException;
+    public boolean ping(String senderIP) throws RemoteException;   
 }

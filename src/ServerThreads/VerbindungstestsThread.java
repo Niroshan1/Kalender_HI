@@ -39,28 +39,34 @@ public class VerbindungstestsThread extends Thread{
                 counter.decrement();
                 
                 //starte Thread der Server anpingt               
-                new PingThread(this.verbindung.getServerStub(), counter).start();
+                new PingThread(this.verbindung.getServerStub(), counter, serverDaten).start();
                 
-                if(counter.getValue() == 0){
-                    System.out.println("--->> " + this.verbindung.getIP() + " kann nicht mehr erreicht werden");
+                //test ob keine verbindung mehr zu anderem server
+                if(counter.getValue() <= 0){
+                    //Verbindung löschen
                     this.serverDaten.connectionList.remove(this.verbindung);
+                    System.out.println("--->> Verbindung zu " + this.verbindung.getIP() + " wurde beendet");
                     
-                    for(Verbindung connection : this.serverDaten.connectionList){
-                        new Thread(() -> {
-                            try {
-                                connection.getServerStub().entferneServerAusSystem(this.verbindung.getIP(), this.serverDaten.ownIP);
-                            }catch (RemoteException ex) {
-                                System.out.println("HIHIHHIIHHIHHIHIHHIHHIIHIH");
-                                Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }).start();
+                    //teste ob noch genug Verbindungen vorhanden sind
+                    if(this.serverDaten.connectionList.size() < 2){
+                        
                     }
+                    
+                    //TODO: aktuallisiere serverliste
+                    //eigene werte immer auf 'words[0] serverDaten.connectionList.size 0'
+                    
+                    //erhöhe 3. Spalte des anderen servers
+                    if(counter.getValue() == 0){
+                        //TODO!!!
+                    }
+                    
+                    //beende Schleife
                     serverUp = false;
                 }
+                
             } catch (InterruptedException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
+            }   
         }
     }
 }

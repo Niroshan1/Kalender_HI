@@ -7,8 +7,7 @@ package ServerThreads;
 
 import Server.ServerStub;
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import Server.ServerDaten;
 
 /**
  *
@@ -18,17 +17,26 @@ public class PingThread extends Thread{
     
     private final ServerStub serverStub;
     private final Counter counter;
+    private final ServerDaten serverDaten;
     
-    public PingThread(ServerStub serverStub, Counter counter){
+    public PingThread(ServerStub serverStub, Counter counter, ServerDaten serverDaten){
         this.serverStub = serverStub;
         this.counter = counter;
+        this.serverDaten = serverDaten;
     }    
     
     @Override 
     public void run(){
-        try {
-            this.serverStub.ping();
-            counter.resetCounter();
+        try {          
+            if(this.serverStub.ping(serverDaten.ownIP)){
+                //pingtest kam an, alles gut, resete counter
+                counter.resetCounter();
+            }
+            else{
+                //pingtest kam an, aber der andere Server 
+                //hat keine Verbindung mehr zu diesem
+                counter.setNegativ();
+            }
         } catch (RemoteException ex) {
         }
     }

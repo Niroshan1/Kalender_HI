@@ -28,4 +28,8 @@ public class Counter {
     public void decrement(){
         value--;
     }
+    
+    public void setNegativ(){
+        value = -1;
+    }
 }
