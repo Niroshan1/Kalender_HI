@@ -8,6 +8,7 @@ package ServerThreads;
 import Server.ServerDaten;
 import Server.ServerStubImpl;
 import Server.Verbindung;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +50,8 @@ public class VerbindungstestsThread extends Thread{
                     
                     //teste ob noch genug Verbindungen vorhanden sind
                     if(this.serverDaten.connectionList.size() < 2){
-                        
+                        //lass Server eine weitere Verbindung aufbauen
+                        this.serverDaten.connectToServer();
                     }
                     
                     //TODO: aktuallisiere serverliste
@@ -64,7 +66,7 @@ public class VerbindungstestsThread extends Thread{
                     serverUp = false;
                 }
                 
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | IOException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
             }   
         }
