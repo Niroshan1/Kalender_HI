@@ -6,19 +6,14 @@
 package Server;
 
 import ServerThreads.VerbindungstestsThread;
-import Utilities.DBHandler;
 import Utilities.DatenbankException;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -27,9 +22,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -68,6 +60,7 @@ public class Server {
         System.out.println("LOG * ");
         initServerStub();
         initClientStub();
+        
         //baue bis zu 2 dauerhafte Verbindungen zu anderen Servern auf
         connectToServers();
 
@@ -105,11 +98,6 @@ public class Server {
         clientRegistry.bind("ClientStub", clientStub);
         System.out.println("LOG * ClientStub initialisiert!");
     }
-
-    /**
-     * baut eine Verbindung zu einem Server auf und lädt die onlineServerList von diesem
-     */
-   
    
     /**
      * baut bis zu 2 Verbindungen zu anderen Servern auf
@@ -119,19 +107,16 @@ public class Server {
      * @throws IOException 
      */
     private void connectToServers() throws IOException{
-        
         try {
+            //TODO: lesen aus onlinefile!!
+            
+            
             BufferedReader bufferedReader;
             String line;
            // File file = new File("https://1drv.ms/t/s!AjRYgaF5cS41q1BbhwaaWJip_jHP");
-            Verbindung verbindung;
             URL url = new URL("https://1drv.ms/t/s!AjRYgaF5cS41q1Fuz38Cr_X-rBka");
             //Scanner s = new Scanner(url.openStream());
-            
-            
-         
-            ServerStub stub = null, stubTmp = null;
-            Registry registry;
+                       
             int counter = 0;
             boolean check = true;
             OutputStreamWriter fileOut;
@@ -139,6 +124,7 @@ public class Server {
             bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
             StringBuffer inputBuffer = new StringBuffer();
             
+            //sucht 2 Server mit den Wenigsten Verbindungen zum Verbinden
             try {
                 while ((line = bufferedReader.readLine()) != null) {
                     words = line.split(" ");
@@ -153,82 +139,19 @@ public class Server {
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
-            bufferedReader.close();
-            
-            
+            bufferedReader.close();          
             
             //Verbindung zu besteEins aufbauen falls nicht null
-            if( besteEins != null){
-                try {
-                    registry = LocateRegistry.getRegistry(besteEins[0], 1100);
-                    stubTmp = (ServerStub) registry.lookup("ServerStub");
-                    //lässt anderen Server Verbindung zu diesem aufbauen
-                    stubTmp.initConnection(this.serverDaten.ownIP);
-                     //fügt Verbindung zur Liste der Verbindungen hinzu
-                    verbindung = new Verbindung(stub, besteEins[0]);
-                    this.serverDaten.connectionList.add(verbindung);
-                    System.out.println("LOG * ---> Verbindung zu Server " + besteEins[0] + " hergestellt!");
-                    //Starte Threads, die die Verbindung zu anderen Servern testen
-                    new VerbindungstestsThread(this.serverDaten, verbindung).start();
-                    bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                    while ( (line = bufferedReader.readLine()) != null){
-                        words = line.split(" ");
-                        if(words[0].equals(besteEins[0])){
-                            
-                            line = words[0] + " " + words[1] + " 0";
-                        }
-                        inputBuffer.append(line);
-                        inputBuffer.append('\n');    
-                    }
-                    
-                    bufferedReader.close();
-                    fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
-                    fileOut.write(inputBuffer.toString());
-                    fileOut.close();
-                    counter++;
-                } catch (RemoteException | NotBoundException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                }   
-            }
-            
-            
-            
+            if(connectTo(besteEins)){
+                counter++;
+            }        
+                     
             //Verbindung zu besteZwei aufbauen falls nicht null
-            if( besteZwei != null){
-                try {
-                    registry = LocateRegistry.getRegistry(besteZwei[0], 1100);
-                     stubTmp = (ServerStub) registry.lookup("ServerStub");
-                    //lässt anderen Server Verbindung zu diesem aufbauen
-                    stubTmp.initConnection(this.serverDaten.ownIP);
-
-                    //fügt Verbindung zur Liste der Verbindungen hinzu
-                    verbindung = new Verbindung(stub, besteZwei[0]);
-                    this.serverDaten.connectionList.add(verbindung);
-                    System.out.println("LOG * ---> Verbindung zu Server " + besteZwei[0] + " hergestellt!");
-
-                    //Starte Threads, die die Verbindung zu anderen Servern testen
-                    new VerbindungstestsThread(this.serverDaten, verbindung).start();
-                    bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                    while ( (line = bufferedReader.readLine()) != null){
-                        words = line.split(" ");
-                        if(words[0].equals(besteZwei[0])){
-                            
-                            line = words[0] + " " + words[1] + " 0";
-                        }
-                        inputBuffer.append(line);
-                        inputBuffer.append('\n');    
-                    }
-                    
-                    bufferedReader.close();
-                    fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
-                    fileOut.write(inputBuffer.toString());
-                    fileOut.close();
-                    counter++;
-                } catch (RemoteException | NotBoundException ex) {
-                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                } 
+            if(connectTo(besteZwei)){
+                counter++;
             }
             
+            //aktuallisiert eigene eintraege in der serverliste
             bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
             while ( (line = bufferedReader.readLine()) != null){
                 words = line.split(" ");
@@ -248,6 +171,7 @@ public class Server {
             fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
             fileOut.write(inputBuffer.toString());
             fileOut.close();
+            
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -255,4 +179,43 @@ public class Server {
                 
     }
 
+    /**
+     * baut eine Verbindung zu einem Server auf, lässt dann den server mit diesem 
+     * verbinden und aktuallisiert am Ende die serverlist
+     * 
+     * @param serverlistElement
+     * @return 
+     */
+    private boolean connectTo(String[] serverlistElement) throws IOException{
+        Verbindung verbindung;            
+        ServerStub serverStub;
+        Registry registry;
+        
+        if(serverlistElement != null){
+            try {
+                //baut Verbindung zu Server auf
+                registry = LocateRegistry.getRegistry(serverlistElement[0], 1100);
+                serverStub = (ServerStub) registry.lookup("ServerStub");
+                
+                //lässt anderen Server Verbindung zu diesem aufbauen
+                serverStub.initConnection(this.serverDaten.ownIP);
+
+                //fügt Verbindung zur Liste der Verbindungen hinzu
+                verbindung = new Verbindung(serverStub, serverlistElement[0]);
+                this.serverDaten.connectionList.add(verbindung);
+                
+                //Ausgabe im Terminal
+                System.out.println("LOG * ---> Verbindung zu Server " + serverlistElement[0] + " hergestellt!");
+
+                //Starte Threads, die die Verbindung zu anderen Servern testen
+                new VerbindungstestsThread(this.serverDaten, verbindung).start();   
+                
+            } catch (RemoteException | NotBoundException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            } 
+        }
+        return false;
+    }
+    
+    
 }
