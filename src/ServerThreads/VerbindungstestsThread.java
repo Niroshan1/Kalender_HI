@@ -6,10 +6,8 @@
 package ServerThreads;
 
 import Server.ServerDaten;
-import Server.ServerStubImpl;
 import Server.Verbindung;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,10 +50,7 @@ public class VerbindungstestsThread extends Thread{
                     if(this.serverDaten.connectionList.size() < 2){
                         //lass Server eine weitere Verbindung aufbauen
                         this.serverDaten.connectToServer();
-                    }
-                    
-                    //TODO: aktuallisiere serverliste
-                    //eigene werte immer auf 'words[0] serverDaten.connectionList.size 0'
+                    }                                     
                     
                     //erhöhe 3. Spalte des anderen servers
                     if(counter.getValue() == 0){
@@ -65,6 +60,9 @@ public class VerbindungstestsThread extends Thread{
                     //beende Schleife
                     serverUp = false;
                 }
+                
+                //TODO: aktuallisiere serverliste
+                //eigene werte immer auf 'words[0] serverDaten.connectionList.size 0'
                 
             } catch (InterruptedException | IOException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
