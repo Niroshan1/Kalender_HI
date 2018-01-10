@@ -43,14 +43,22 @@ public class VerbindungstestsThread extends Thread{
                 //test ob keine verbindung mehr zu anderem server
                 if(counter.getValue() <= 0){
                     
-                    //Wenn Verbindung zu Parent war, versuche erneut Verbindung zu diesem aufzubauen                
-                    if(this.serverDaten.parent != null && this.serverDaten.parent.getIP().equals(this.verbindung.getIP())){
+                    //Wenn Verbindung zu Parent war, versuche erneut Verbindung zu diesem aufzubauen                                    
+                    if(this.serverDaten.leftchild != null 
+                            && this.serverDaten.leftchild.getIP().equals(this.verbindung.getIP())){          
+                        //evtl TODO
+                        this.serverDaten.leftchild = null;
+
+                    } else if(this.serverDaten.rightchild != null 
+                            && this.serverDaten.rightchild.getIP().equals(this.verbindung.getIP())){ 
+                        //evtl TODO
+                        this.serverDaten.rightchild = null;
+
+                    } else if(this.serverDaten.parent != null 
+                            && this.serverDaten.parent.getIP().equals(this.verbindung.getIP())){
                         System.out.println("--->> Versuche neue Verbindung zu Parent aufzubauen");
-                        this.serverDaten.connectToParent();
+                        this.serverDaten.connectToParent();          
                     }
-                    else{
-                        //TODO: ..
-                    }                  
                     
                     //beende Schleife
                     serverUp = false;
