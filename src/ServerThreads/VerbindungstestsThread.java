@@ -33,38 +33,29 @@ public class VerbindungstestsThread extends Thread{
         while(serverUp){
             try {
                 Thread.sleep(3000);
-                
+                       
                 System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
-                counter.decrement();
+                counter.decrement();               
                 
                 //starte Thread der Server anpingt               
                 new PingThread(this.verbindung.getServerStub(), counter, serverDaten).start();
                 
                 //test ob keine verbindung mehr zu anderem server
-                if(counter.getValue() <= 0){
+                if(counter.getValue() == 0){
                     //Verbindung löschen
-                    this.serverDaten.connectionList.remove(this.verbindung);
+                    //this.serverDaten.connectionList.remove(this.verbindung);
                     System.out.println("--->> Verbindung zu " + this.verbindung.getIP() + " wurde beendet");
                     
                     //teste ob noch genug Verbindungen vorhanden sind
-                    if(this.serverDaten.connectionList.size() < 2){
+                    //if(this.serverDaten.connectionList.size() < 2){
                         //lass Server eine weitere Verbindung aufbauen
-                        this.serverDaten.connectToServer();
-                    }                                     
-                    
-                    //erhöhe 3. Spalte des anderen servers
-                    if(counter.getValue() == 0){
-                        //TODO!!!
-                    }
+                    //    this.serverDaten.connectToServer();
+                    //}                   
                     
                     //beende Schleife
                     serverUp = false;
-                }
-                
-                //TODO: aktuallisiere serverliste
-                //eigene werte immer auf 'words[0] serverDaten.connectionList.size 0'
-                
-            } catch (InterruptedException | IOException ex) {
+                }                
+            } catch (InterruptedException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
             }   
         }
