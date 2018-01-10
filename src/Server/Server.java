@@ -52,8 +52,7 @@ public class Server {
         //initialisiere Stubs für Server & Clients
         System.out.println("LOG * ");
         initServerStub();
-        initClientStub();
-        
+               
         //baut Verbindung zu Parent auf
         if(!args[1].equals("root")){
             this.serverDaten.connectToParent();
@@ -62,6 +61,9 @@ public class Server {
         else{
             this.serverDaten.ladeDatenbank();
         }
+        
+        System.out.println("LOG * ");
+        initClientStub();
 
         System.out.println("LOG * ");
         System.out.println("LOG * Server laeuft!");
