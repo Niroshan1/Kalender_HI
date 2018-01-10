@@ -56,17 +56,19 @@ public class ServerDaten {
 
             //lässt anderen Server Verbindung zu diesem aufbauen
             if(serverStub.initConnection(this.ownIP)){
-                //TODO: werfe Fehler
+                //fügt Verbindung zur Liste der Verbindungen hinzu
+                this.parent = new Verbindung(serverStub, parentIP);
+
+                //Ausgabe im Terminal
+                System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
+
+                //Starte Threads, die die Verbindung zu anderen Servern testen
+                new VerbindungstestsThread(this, this.parent).start();                
             }
-
-            //fügt Verbindung zur Liste der Verbindungen hinzu
-            this.parent = new Verbindung(serverStub, parentIP);
-
-            //Ausgabe im Terminal
-            System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
-
-            //Starte Threads, die die Verbindung zu anderen Servern testen
-            new VerbindungstestsThread(this, this.parent).start();   
+            else{
+                //TODO: werfe Fehler
+                System.out.println("werfe fehler");
+            }
 
         } catch (RemoteException | NotBoundException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
