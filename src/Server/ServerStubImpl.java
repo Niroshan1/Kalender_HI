@@ -52,7 +52,7 @@ public class ServerStubImpl implements ServerStub {
                 new VerbindungstestsThread(this.serverDaten, verbindung).start();
 
                 //Ausgabe im Terminal            
-                System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!"); 
+                System.out.println("LOG * ---> Verbindung zu linkem Kind " + ip + " hergestellt!"); 
             }
             //testet ob Server noch kein rechtes Kind had
             else if(this.serverDaten.rightchild == null){
@@ -62,7 +62,7 @@ public class ServerStubImpl implements ServerStub {
                 new VerbindungstestsThread(this.serverDaten, verbindung).start();
 
                 //Ausgabe im Terminal            
-                System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!"); 
+                System.out.println("LOG * ---> Verbindung zu rechtem Kind " + ip + " hergestellt!"); 
             }           
             else{
                 //Server hat schon 2 Kinder => fehler
@@ -86,18 +86,17 @@ public class ServerStubImpl implements ServerStub {
     public boolean ping(String senderIP) throws RemoteException {
         boolean result = false;
         
-        if(!(this.serverDaten.leftchild == null)){
-            if(this.serverDaten.leftchild.getIP().equals(senderIP)){
-                result = true;
-            }
-        } else if(!(this.serverDaten.rightchild == null)){
-            if(this.serverDaten.rightchild.getIP().equals(senderIP)){
-                result = true;
-            }
-        } else if(!(this.serverDaten.parent == null)){
-            if(this.serverDaten.parent.getIP().equals(senderIP)){
-                result = true;
-            }
+        if(this.serverDaten.leftchild != null 
+                && this.serverDaten.leftchild.getIP().equals(senderIP)){          
+            result = true;
+            
+        } else if(this.serverDaten.rightchild != null 
+                && this.serverDaten.rightchild.getIP().equals(senderIP)){            
+            result = true;
+            
+        } else if(this.serverDaten.parent != null 
+                && this.serverDaten.parent.getIP().equals(senderIP)){
+            result = true;           
         }
         
         return result;

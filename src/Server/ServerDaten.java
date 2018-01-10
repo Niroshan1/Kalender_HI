@@ -63,7 +63,7 @@ public class ServerDaten {
             this.parent = new Verbindung(serverStub, parentIP);
 
             //Ausgabe im Terminal
-            System.out.println("LOG * ---> Verbindung zu Server " + parentIP + " hergestellt!");
+            System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
 
             //Starte Threads, die die Verbindung zu anderen Servern testen
             new VerbindungstestsThread(this, this.parent).start();   
