@@ -84,9 +84,23 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public boolean ping(String senderIP) throws RemoteException {
-        return this.serverDaten.leftchild.getIP().equals(senderIP) 
-                || this.serverDaten.rightchild.getIP().equals(senderIP)
-                || this.serverDaten.parent.getIP().equals(senderIP);
+        boolean result = false;
+        
+        if(!(this.serverDaten.leftchild == null)){
+            if(this.serverDaten.leftchild.getIP().equals(senderIP)){
+                result = true;
+            }
+        } else if(this.serverDaten.rightchild == null){
+            if(this.serverDaten.rightchild.getIP().equals(senderIP)){
+                result = true;
+            }
+        } else if(this.serverDaten.parent == null){
+            if(this.serverDaten.parent.getIP().equals(senderIP)){
+                result = true;
+            }
+        }
+        
+        return result;
     }   
     
 }
