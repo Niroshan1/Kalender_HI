@@ -90,11 +90,11 @@ public class ServerStubImpl implements ServerStub {
             if(this.serverDaten.leftchild.getIP().equals(senderIP)){
                 result = true;
             }
-        } else if(this.serverDaten.rightchild == null){
+        } else if(!(this.serverDaten.rightchild == null)){
             if(this.serverDaten.rightchild.getIP().equals(senderIP)){
                 result = true;
             }
-        } else if(this.serverDaten.parent == null){
+        } else if(!(this.serverDaten.parent == null)){
             if(this.serverDaten.parent.getIP().equals(senderIP)){
                 result = true;
             }

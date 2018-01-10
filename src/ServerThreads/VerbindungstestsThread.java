@@ -43,7 +43,7 @@ public class VerbindungstestsThread extends Thread{
                 //test ob keine verbindung mehr zu anderem server
                 if(counter.getValue() == 0){
                     
-                    //Wenn Verbindung zu Parent war                  
+                    //Wenn Verbindung zu Parent war, versuche erneut Verbindung zu diesem aufzubauen                
                     if(this.serverDaten.parent.getIP().equals(this.verbindung.getIP())){
                         System.out.println("--->> Versuche neue Verbindung zu Parent aufzubauen");
                         this.serverDaten.connectToParent();
