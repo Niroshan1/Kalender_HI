@@ -66,7 +66,7 @@ public class ServerDaten {
                 new VerbindungstestsThread(this, this.parent).start();                
             }
             else{
-                //TODO: werfe Fehler
+                //TODO: Fehlermeldung anpassen && Server beenden lassen
                 System.out.println("werfe fehler");
             }
 
@@ -82,6 +82,7 @@ public class ServerDaten {
 
     void ladeDatenbankFromParent() {
         //TODO: lade DB von Parent (mit Stub-Methode)
+        //this.parent.ladeDB();
     }
     
     
