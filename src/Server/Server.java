@@ -5,7 +5,6 @@
  */
 package Server;
 
-import ServerThreads.VerbindungstestsThread;
 import Utilities.DatenbankException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -17,8 +16,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
