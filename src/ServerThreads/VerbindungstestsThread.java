@@ -42,20 +42,20 @@ public class VerbindungstestsThread extends Thread{
                 
                 //test ob keine verbindung mehr zu anderem server
                 if(counter.getValue() == 0){
-                    //Verbindung löschen
-                    //this.serverDaten.connectionList.remove(this.verbindung);
-                    System.out.println("--->> Verbindung zu " + this.verbindung.getIP() + " wurde beendet");
                     
-                    //teste ob noch genug Verbindungen vorhanden sind
-                    //if(this.serverDaten.connectionList.size() < 2){
-                        //lass Server eine weitere Verbindung aufbauen
-                    //    this.serverDaten.connectToServer();
-                    //}                   
+                    //Wenn Verbindung zu Parent war                  
+                    if(this.serverDaten.parent.getIP().equals(this.verbindung.getIP())){
+                        System.out.println("--->> Versuche neue Verbindung zu Parent aufzubauen");
+                        this.serverDaten.connectToParent();
+                    }
+                    else{
+                        //TODO: ..
+                    }                  
                     
                     //beende Schleife
                     serverUp = false;
                 }                
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | IOException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
             }   
         }

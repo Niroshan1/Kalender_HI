@@ -30,7 +30,7 @@ public class Server {
     private final String[] args;
     
     public Server(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{       
-        this.serverDaten = new ServerDaten(args[0]);
+        this.serverDaten = new ServerDaten(args);
         this.args = args;
         System.setProperty("java.rmi.server.hostname", args[0]);
     }
@@ -59,7 +59,7 @@ public class Server {
         
         //baut Verbindung zu Parent auf
         if(!args[1].equals("root")){
-            connectToParent();
+            this.serverDaten.connectToParent();
             this.serverDaten.ladeDatenbankFromParent();
         }
         else{
@@ -101,40 +101,7 @@ public class Server {
         System.out.println("LOG * ClientStub initialisiert!");
     }
     
-    /**
-     * baut Verbindungen zu einem anderen Server auf
-     * 
-     * @throws RemoteException
-     * @throws IOException 
-     */
-    public void connectToParent() throws IOException{           
-        ServerStub serverStub;
-        Registry registry;
-        String parentIP = args[1];
-        
-        try {
-            //baut Verbindung zu Server auf
-            registry = LocateRegistry.getRegistry(parentIP, 1100);
-            serverStub = (ServerStub) registry.lookup("ServerStub");
-
-            //lässt anderen Server Verbindung zu diesem aufbauen
-            if(serverStub.initConnection(this.serverDaten.ownIP)){
-                //TODO: werfe Fehler
-            }
-
-            //fügt Verbindung zur Liste der Verbindungen hinzu
-            this.serverDaten.parent = new Verbindung(serverStub, parentIP);
-
-            //Ausgabe im Terminal
-            System.out.println("LOG * ---> Verbindung zu Server " + parentIP + " hergestellt!");
-
-            //Starte Threads, die die Verbindung zu anderen Servern testen
-            new VerbindungstestsThread(this.serverDaten, this.serverDaten.parent).start();   
-
-        } catch (RemoteException | NotBoundException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }                           
-    }
+    
    
     
 }
