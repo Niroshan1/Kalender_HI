@@ -42,6 +42,8 @@ public class Server {
      * @throws SQLException
      * @throws DatenbankException
      * @throws IOException 
+     * @throws java.lang.ClassNotFoundException 
+     * @throws java.security.NoSuchAlgorithmException 
      */
     public void start() throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException, IOException, ClassNotFoundException, NoSuchAlgorithmException{
         
@@ -63,7 +65,7 @@ public class Server {
         }
         
         System.out.println("LOG * ");
-        initClientStub();
+        //initClientStub();
 
         System.out.println("LOG * ");
         System.out.println("LOG * Server laeuft!");
