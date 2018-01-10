@@ -16,4 +16,6 @@ public interface ServerStub extends Remote{
     
     public boolean initConnection(String ip) throws RemoteException;
     public boolean ping(String senderIP) throws RemoteException;  
+    
+    // public .... ladeDB(...) throws RemoteException;
 }
