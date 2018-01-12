@@ -40,6 +40,7 @@ public class ServerDaten {
         this.parentIP = args[1];
         this.childCount = null;
         
+        
         if (parentIP == "root")
             this.serverID = "0";
         else
