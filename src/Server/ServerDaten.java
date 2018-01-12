@@ -29,6 +29,8 @@ public class ServerDaten {
     public DBHandler datenbank;
     public final String ownIP;
     public final String parentIP;
+    public final String serverID;
+    private String[] childCount;
     
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{    
         this.parent = null;
@@ -36,9 +38,25 @@ public class ServerDaten {
         this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
+        this.childCount = null;
+        
+        
+        if (parentIP == "root")
+            this.serverID = "0";
+        else
+            this.serverID = null;
+        
         datenbank = null;      
     }
     
+    /**
+     * Methode um anhand der parentID die serverID zu bekommen.
+     * @param parentIP
+     * @return 
+     */
+    //private String getID(String parentIP){
+        
+    //}
     /**
      * baut Verbindungen zu einem anderen Server auf
      * 
