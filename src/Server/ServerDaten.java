@@ -24,21 +24,23 @@ import java.util.logging.Logger;
 public class ServerDaten {
     
     public Verbindung parent; 
-    public Verbindung leftchild;
-    public Verbindung rightchild;
+    //public Verbindung leftchild;
+    //public Verbindung rightchild;
+    public Verbindung childConnection[];
     public DBHandler datenbank;
     public final String ownIP;
     public final String parentIP;
     public final String serverID;
-    private String[] childCount;
+    public String childCount [];
     
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{    
         this.parent = null;
-        this.leftchild = null;
-        this.rightchild = null;
+        //this.leftchild = null;
+        //this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
         this.childCount = null;
+        this.childConnection = null;
         
         
         if (parentIP == "root")
@@ -79,7 +81,7 @@ public class ServerDaten {
 
                 //Ausgabe im Terminal
                 System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
-
+                                
                 //Starte Threads, die die Verbindung zu anderen Servern testen
                 new VerbindungstestsThread(this, this.parent).start();                
             }
@@ -102,6 +104,8 @@ public class ServerDaten {
         //TODO: lade DB von Parent (mit Stub-Methode)
         //this.parent.ladeDB();
     }
+    
+    
     
     
 
