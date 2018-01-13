@@ -109,7 +109,7 @@ public class ServerStubImpl implements ServerStub {
         boolean result = false;
         
         
-        for (int i = 1; i < this.serverDaten.childConnection.length; i++) {
+        for (int i = 0; i < this.serverDaten.childConnection.length; i++) {
             if (this.serverDaten.childConnection[i] != null
                     && this.serverDaten.childConnection[i].getIP().equals(senderIP)) {
                 result = true;

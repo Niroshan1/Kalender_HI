@@ -44,7 +44,7 @@ public class ServerDaten {
         this.ownIP = args[0];
         this.parentIP = args[1];
         this.childCount = null;
-        this.childConnection = null;
+        this.childConnection = new Verbindung[10];
         
         if (parentIP.equals("root"))
             this.serverID = "0";

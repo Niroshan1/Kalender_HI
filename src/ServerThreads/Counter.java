@@ -14,7 +14,7 @@ public class Counter {
     private int value;
     
     public Counter(){
-        this.value = 0;
+        this.value = 3;
     }
     
     public int getValue(){
@@ -25,8 +25,8 @@ public class Counter {
         value = 3;
     }
     
-    public void increment(){
-        value++;
+    public void decrement(){
+        value--;
     }
     
     public void setNegativ(){
