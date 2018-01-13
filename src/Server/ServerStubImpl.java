@@ -40,6 +40,16 @@ public class ServerStubImpl implements ServerStub {
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
             
+                
+                    this.serverDaten.childCount.add(verbindung) ;
+                    new VerbindungstestsThread(this.serverDaten, verbindung).start();
+                    //Ausgabe im Terminal
+                    if(this.serverDaten.childCount.contains(verbindung)){
+                        System.out.println("LOG * ---> Verbindung zu Kind " + verbindung.getIP() + " hergestellt!"); 
+                    }
+            
+            
+            /*
             //testet ob server noch kein linkes Kind hat
             if(this.serverDaten.leftchild == null){
                 //speichert Verbinung als linkes Kind
@@ -63,7 +73,8 @@ public class ServerStubImpl implements ServerStub {
             else{
                 //Server hat schon 2 Kinder => fehler
                 result = false;
-            }           
+            }
+            */
             return result;
         } catch (NotBoundException | IOException e) {
             return false;

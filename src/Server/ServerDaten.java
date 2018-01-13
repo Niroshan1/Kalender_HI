@@ -14,6 +14,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,19 +31,22 @@ public class ServerDaten {
     public DBHandler datenbank;
     public final String ownIP;
     public final String parentIP;
-    public final String serverID;
-    private String[] childCount;
+    public String serverID;
+    public final ArrayList childCount;
+    public ListIterator<Integer> li; 
+    private final int max = 10;
     
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{    
+
         this.parent = null;
         this.leftchild = null;
         this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
-        this.childCount = null;
+        this.childCount = new ArrayList();
+        this.li = childCount.listIterator();
         
-        
-        if (parentIP == "root")
+        if (parentIP.equals("root"))
             this.serverID = "0";
         else
             this.serverID = null;
@@ -50,13 +55,20 @@ public class ServerDaten {
     }
     
     /**
-     * Methode um anhand der parentID die serverID zu bekommen.
+     * Methode um anhand der parentIP die serverID zu bekommen.
      * @param parentIP
      * @return 
      */
-    //private String getID(String parentIP){
-        
-    //}
+    /*
+    private String getID(String parentIP){
+        for(int i = 0; i <= childCount.length; i++){
+            if(childCount[i].equals(parentIP)){
+                
+            }
+        }
+        return serverID;
+    }*/
+    
     /**
      * baut Verbindungen zu einem anderen Server auf
      * 
@@ -81,7 +93,8 @@ public class ServerDaten {
                 System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
 
                 //Starte Threads, die die Verbindung zu anderen Servern testen
-                new VerbindungstestsThread(this, this.parent).start();                
+                new VerbindungstestsThread(this , this.parent).start();  
+                
             }
             else{
                 //TODO: Fehlermeldung anpassen && Server beenden lassen
