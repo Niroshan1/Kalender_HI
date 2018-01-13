@@ -11,7 +11,7 @@ import java.rmi.registry.Registry;
 
 /**
  *
- * @author nader
+ * @author Niroshan, Vincent
  */
 public class ServerStubImpl implements ServerStub {
     
@@ -40,12 +40,28 @@ public class ServerStubImpl implements ServerStub {
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
             
-                for(int i = 0; i < this.serverDaten.childCount.length; i++){
-                    this.serverDaten.childCount[i] = verbindung ;
-                    new VerbindungstestsThread(this.serverDaten, verbindung).start();
-                    //Ausgabe im Terminal
-                    System.out.println("LOG * ---> Verbindung zu Kind " + this.serverDaten.childCount[i].getIP() + " hergestellt!"); 
-                    
+                for(int i = 0; i < this.serverDaten.childConnection.length; i++){
+                    if (this.serverDaten.childConnection[i] == null) {
+                        
+                        // Speichert Verbindung als Kind
+                        this.serverDaten.childConnection[i] = verbindung ;
+                        
+                        // Starte Thread, der die Verbindung zu anderen Servern testet
+                        new VerbindungstestsThread(this.serverDaten, verbindung).start();
+                        // Ergänzt die ID des Kindes
+                        this.serverDaten.childCount[i] = String.valueOf(i) + "#";
+                        
+                        //Ausgabe im Terminal
+                         System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.childCount[i] + " " + ip +  " hergestellt!");
+                         
+                         result = true;
+                         
+                         break;
+                    }else if(result == false) {
+                        result = false; 
+                        //Ausgabe im Terminal            
+                        System.out.println("LOG * ---> Verbindung zu KindServer Fehler!"); 
+                    }
                 }
             
             /*
@@ -92,16 +108,15 @@ public class ServerStubImpl implements ServerStub {
     public boolean ping(String senderIP) throws RemoteException {
         boolean result = false;
         
-        if(this.serverDaten.leftchild != null 
-                && this.serverDaten.leftchild.getIP().equals(senderIP)){          
-            result = true;
-            
-        } else if(this.serverDaten.rightchild != null 
-                && this.serverDaten.rightchild.getIP().equals(senderIP)){            
-            result = true;
-            
-        } else if(this.serverDaten.parent != null 
-                && this.serverDaten.parent.getIP().equals(senderIP)){
+        
+        for (int i = 1; i < this.serverDaten.childConnection.length; i++) {
+            if (this.serverDaten.childConnection[i] != null
+                    && this.serverDaten.childConnection[i].getIP().equals(senderIP)) {
+                result = true;
+            }
+}
+        if(this.serverDaten.parent != null 
+            && this.serverDaten.parent.getIP().equals(senderIP)){
             result = true;           
         }
         

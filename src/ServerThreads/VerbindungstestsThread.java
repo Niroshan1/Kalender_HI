@@ -35,13 +35,13 @@ public class VerbindungstestsThread extends Thread{
                 Thread.sleep(3000);
                        
                 System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
-                counter.decrement();               
+                counter.increment();               
                 
                 //starte Thread der Server anpingt               
-                new PingThread(this.verbindung.getServerStub(), counter, serverDaten).start();
-                
+                //new PingThread(this.verbindung.getServerStub(), counter, serverDaten).start();
+                /*
                 //test ob keine verbindung mehr zu anderem server
-                if(counter.getValue() <= 0){
+                if(counter.getValue() >= 0){
                     
                     //Wenn Verbindung zu Parent war, versuche erneut Verbindung zu diesem aufzubauen                                    
                     if(this.serverDaten.leftchild != null 
@@ -62,8 +62,8 @@ public class VerbindungstestsThread extends Thread{
                     
                     //beende Schleife
                     serverUp = false;
-                }                
-            } catch (InterruptedException | IOException ex) {
+                } */               
+            } catch (InterruptedException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
             }   
         }

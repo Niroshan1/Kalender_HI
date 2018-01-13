@@ -32,7 +32,9 @@ public class ServerDaten {
     public final String ownIP;
     public final String parentIP;
     public String serverID;
-    public final Verbindung[] childCount;
+    public final String[] childCount;
+    public Verbindung[] childConnection;
+    
     
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{    
 
@@ -41,7 +43,8 @@ public class ServerDaten {
         this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
-        this.childCount = new Verbindung[10];
+        this.childCount = null;
+        this.childConnection = null;
         
         if (parentIP.equals("root"))
             this.serverID = "0";
