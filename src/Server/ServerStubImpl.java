@@ -49,10 +49,10 @@ public class ServerStubImpl implements ServerStub {
                         // Starte Thread, der die Verbindung zu anderen Servern testet
                         new VerbindungstestsThread(this.serverDaten, verbindung).start();
                         // Ergänzt die ID des Kindes
-                        this.serverDaten.childCount[i] = String.valueOf(i) + "#";
+                        //this.serverDaten.childCount[i] = String.valueOf(i) + "#";
                         
                         //Ausgabe im Terminal
-                         System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.childCount[i] + " " + ip +  " hergestellt!");
+                         System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.childConnection[i] + " " + ip +  " hergestellt!");
                          
                          result = true;
                          
@@ -109,12 +109,11 @@ public class ServerStubImpl implements ServerStub {
         boolean result = false;
         
         
-        for (int i = 0; i < this.serverDaten.childConnection.length; i++) {
-            if (this.serverDaten.childConnection[i] != null
-                    && this.serverDaten.childConnection[i].getIP().equals(senderIP)) {
+        for (Verbindung childConnection : this.serverDaten.childConnection) {
+            if (childConnection != null && childConnection.getIP().equals(senderIP)) {
                 result = true;
             }
-}
+        }
         if(this.serverDaten.parent != null 
             && this.serverDaten.parent.getIP().equals(senderIP)){
             result = true;           

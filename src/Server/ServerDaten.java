@@ -43,7 +43,7 @@ public class ServerDaten {
         this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
-        this.childCount = null;
+        this.childCount = new String[10];
         this.childConnection = new Verbindung[10];
         
         if (parentIP.equals("root"))
