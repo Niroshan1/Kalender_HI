@@ -40,14 +40,13 @@ public class ServerStubImpl implements ServerStub {
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
             
-                
-                    this.serverDaten.childCount.add(verbindung) ;
+                for(int i = 0; i < this.serverDaten.childCount.length; i++){
+                    this.serverDaten.childCount[i] = verbindung ;
                     new VerbindungstestsThread(this.serverDaten, verbindung).start();
                     //Ausgabe im Terminal
-                    if(this.serverDaten.childCount.contains(verbindung)){
-                        System.out.println("LOG * ---> Verbindung zu Kind " + verbindung.getIP() + " hergestellt!"); 
-                    }
-            
+                    System.out.println("LOG * ---> Verbindung zu Kind " + this.serverDaten.childCount[i].getIP() + " hergestellt!"); 
+                    
+                }
             
             /*
             //testet ob server noch kein linkes Kind hat

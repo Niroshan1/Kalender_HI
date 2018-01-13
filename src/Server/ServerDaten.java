@@ -32,9 +32,7 @@ public class ServerDaten {
     public final String ownIP;
     public final String parentIP;
     public String serverID;
-    public final ArrayList childCount;
-    public ListIterator<Integer> li; 
-    private final int max = 10;
+    public final Verbindung[] childCount;
     
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{    
 
@@ -43,8 +41,7 @@ public class ServerDaten {
         this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
-        this.childCount = new ArrayList();
-        this.li = childCount.listIterator();
+        this.childCount = new Verbindung[10];
         
         if (parentIP.equals("root"))
             this.serverID = "0";
