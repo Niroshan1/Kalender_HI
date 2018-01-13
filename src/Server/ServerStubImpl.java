@@ -54,6 +54,7 @@ public class ServerStubImpl implements ServerStub {
 
                     //Server hat verbindung
                     result = true;
+                    
 
                     break;
                 } else {
