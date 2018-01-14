@@ -48,7 +48,7 @@ public class ServerStubImpl implements ServerStub {
                         
                         // Starte Thread, der die Verbindung zu anderen Servern testet
                         new VerbindungstestsThread(this.serverDaten, verbindung).start();
-                        // Ergänzt die ID des Kindes
+                        // TODO: Ergänzt die ID des Kindes
                         //this.serverDaten.childCount[i] = String.valueOf(i) + "#";
                         
                         //Ausgabe im Terminal
