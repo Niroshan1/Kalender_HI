@@ -27,12 +27,12 @@ public class TerminkalenderMain {
      */
     public static void main(String[] args){        
         try {  
-            if(args.length == 1){
+            if(args.length == 2){
                 Server server = new Server(args);
                 server.start();   
             }
             else{
-                System.out.println("Bitte IP als Argument beim Start mitgeben!");
+                System.out.println("Eingabeparameter: <Eigene IP> <Parent IP>");
             }
               
             

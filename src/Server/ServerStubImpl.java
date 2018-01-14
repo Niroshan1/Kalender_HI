@@ -2,11 +2,7 @@
 package Server;
 
 import ServerThreads.VerbindungstestsThread;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,7 +11,7 @@ import java.rmi.registry.Registry;
 
 /**
  *
- * @author nader
+ * @author Niroshan, Vincent
  */
 public class ServerStubImpl implements ServerStub {
     
@@ -36,42 +32,65 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public boolean initConnection(String ip) throws RemoteException{           
-        try {
-            String line;
-            BufferedReader bufferedReader;
-            //File file = new File("https://1drv.ms/t/s!AjRYgaF5cS41q1BbhwaaWJip_jHP");
-            OutputStreamWriter fileOut;
-            URL url = new URL("https://1drv.ms/t/s!AjRYgaF5cS41q1Fuz38Cr_X-rBka");
-            String[] words;
-            StringBuffer inputBuffer = new StringBuffer();
-            bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
+        try {    
+            boolean result = true;
             
-            
+            //baut Verbindung zu Server auf
             Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
-            this.serverDaten.connectionList.add(verbindung);
-            new VerbindungstestsThread(this.serverDaten, verbindung).start();
-            System.out.println("Dauerhafte Verbindung zu Server " + ip + " hergestellt!");
             
-           
-            while ( (line = bufferedReader.readLine()) != null){
-                words = line.split(" ");
-                if(words[0].equals(serverDaten.ownIP)){
-
-                    line = words[0] + " " + serverDaten.connectionList.size() + " 0" ;
+                for(int i = 0; i < this.serverDaten.childConnection.length; i++){
+                    if (this.serverDaten.childConnection[i] == null) {
+                        
+                        // Speichert Verbindung als Kind
+                        this.serverDaten.childConnection[i] = verbindung ;
+                        
+                        // Starte Thread, der die Verbindung zu anderen Servern testet
+                        new VerbindungstestsThread(this.serverDaten, verbindung).start();
+                        // Ergänzt die ID des Kindes
+                        //this.serverDaten.childCount[i] = String.valueOf(i) + "#";
+                        
+                        //Ausgabe im Terminal
+                         System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.childConnection[i] + " " + ip +  " hergestellt!");
+                         
+                         result = true;
+                         
+                         break;
+                    }else if(result == false) {
+                        result = false; 
+                        //Ausgabe im Terminal            
+                        System.out.println("LOG * ---> Verbindung zu KindServer Fehler!"); 
+                    }
                 }
-                inputBuffer.append(line);
-                inputBuffer.append('\n');    
-            }
+            
+            /*
+            //testet ob server noch kein linkes Kind hat
+            if(this.serverDaten.leftchild == null){
+                //speichert Verbinung als linkes Kind
+                this.serverDaten.leftchild = verbindung;
+                //Starte Threads, die die Verbindung zu anderen Servern testen
+                new VerbindungstestsThread(this.serverDaten, verbindung).start();
 
-            bufferedReader.close();
-            fileOut = new OutputStreamWriter(url.openConnection().getOutputStream());
-            fileOut.write(inputBuffer.toString());;
-            fileOut.close();
-            
-            
-            return true;
+                //Ausgabe im Terminal            
+                System.out.println("LOG * ---> Verbindung zu linkem Kind " + ip + " hergestellt!"); 
+            }
+            //testet ob Server noch kein rechtes Kind had
+            else if(this.serverDaten.rightchild == null){
+                //speichert Verbindung als rechtes Kind
+                this.serverDaten.rightchild = verbindung;
+                //Starte Threads, die die Verbindung zu anderen Servern testen
+                new VerbindungstestsThread(this.serverDaten, verbindung).start();
+
+                //Ausgabe im Terminal            
+                System.out.println("LOG * ---> Verbindung zu rechtem Kind " + ip + " hergestellt!"); 
+            }           
+            else{
+                //Server hat schon 2 Kinder => fehler
+                result = false;
+            }
+            */
+            return result;
         } catch (NotBoundException | IOException e) {
             return false;
         }
@@ -87,12 +106,20 @@ public class ServerStubImpl implements ServerStub {
      */
     @Override
     public boolean ping(String senderIP) throws RemoteException {
-        for(Verbindung verbindung : serverDaten.connectionList){
-            if(verbindung.getIP().equals(senderIP)){
-                return true;
+        boolean result = false;
+        
+        
+        for (Verbindung childConnection : this.serverDaten.childConnection) {
+            if (childConnection != null && childConnection.getIP().equals(senderIP)) {
+                result = true;
             }
         }
-        return false;
+        if(this.serverDaten.parent != null 
+            && this.serverDaten.parent.getIP().equals(senderIP)){
+            result = true;           
+        }
+        
+        return result;
     }   
     
 }

@@ -14,6 +14,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,30 +25,48 @@ import java.util.logging.Logger;
  */
 public class ServerDaten {
     
-    public Verbindung parent; 
+    public Verbindung parent;
     public Verbindung leftchild;
     public Verbindung rightchild;
     public DBHandler datenbank;
     public final String ownIP;
     public final String parentIP;
-    public final String serverID;
-    private String childCount[];
+    public String serverID;
+    public final String[] childCount;
+    public Verbindung[] childConnection;
 
-    public ServerDaten(String[] args) {
+
+    public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
+
         this.parent = null;
-        this.leftchild = null;
-        this.rightchild = null;
+        //this.leftchild = null;
+        //this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
         this.childCount = new String[10];
-        
-        
+        this.childConnection = new Verbindung[10];
+
         if (parentIP.equals("root"))
             this.serverID = "0";
         else
             this.serverID = null;
-        
-        datenbank = null;      
+
+        datenbank = null;
+    }
+
+    /**
+     * Methode um anhand der parentIP die serverID zu bekommen.
+     * @param parentIP
+     * @return
+     */
+
+    private String getID(String parentIP){
+        for(int i = 0; i <= childCount.length; i++){
+            if(childCount[i].equals(parentIP)){
+
+            }
+        }
+        return serverID;
     }
 
     /**
@@ -70,17 +90,16 @@ public class ServerDaten {
         else //Die obigen checks schlugen fehl, also ist der gesuchte Server ein Kind
             return childCount[Character.getNumericValue(serverID.charAt(this.serverID.length()))];
     }
-
     /**
      * baut Verbindungen zu einem anderen Server auf
      * 
      * @throws RemoteException
      * @throws IOException 
      */
-    public void connectToParent() throws IOException {
+    public void connectToParent() throws IOException{
         ServerStub serverStub;
         Registry registry;
-        
+
         try {
             //baut Verbindung zu Server auf
             registry = LocateRegistry.getRegistry(parentIP, 1100);
@@ -95,7 +114,8 @@ public class ServerDaten {
                 System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
 
                 //Starte Threads, die die Verbindung zu anderen Servern testen
-                new VerbindungstestsThread(this, this.parent).start();                
+                new VerbindungstestsThread(this , this.parent).start();
+
             }
             else{
                 //TODO: Fehlermeldung anpassen && Server beenden lassen
@@ -104,20 +124,20 @@ public class ServerDaten {
 
         } catch (RemoteException | NotBoundException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-        }                           
+        }
     }
-    
+
     public void ladeDatenbank() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
-        datenbank = new DBHandler(); 
-        datenbank.getConnection(); 
+        datenbank = new DBHandler();
+        datenbank.getConnection();
     }
 
     void ladeDatenbankFromParent() {
         //TODO: lade DB von Parent (mit Stub-Methode)
         //this.parent.ladeDB();
     }
-    
-    
+
+
 
  
 }
