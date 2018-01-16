@@ -98,7 +98,7 @@ public class ServerDaten {
 
                 //Ausgabe im Terminal
                 System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
-
+                System.out.println("LOG * ---> Server wurde die ServerID: " + this.serverID + " zugewiesen!");
                 //Starte Threads, die die Verbindung zu anderen Servern testen
                 new VerbindungstestsThread(this , this.parent).start();
 

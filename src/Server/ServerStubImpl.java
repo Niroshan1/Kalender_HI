@@ -49,7 +49,7 @@ public class ServerStubImpl implements ServerStub {
                         new VerbindungstestsThread(this.serverDaten, verbindung).start();
 
                         //Ausgabe im Terminal
-                        System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + ip + " hergestellt!");
+                        System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.serverID + String.valueOf(i) + " hergestellt!");
 
                         return this.serverDaten.serverID + String.valueOf(i);
                     }
