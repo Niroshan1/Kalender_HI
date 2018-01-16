@@ -54,20 +54,6 @@ public class ServerDaten {
         datenbank = null;
     }
 
-    /**
-     * Methode um die serverID zu bekommen.
-     * @return serverID
-     */
-
-    private String getID(){
-        if (parent == null)
-            return null;
-
-
-
-
-        return serverID;
-    }
 
     /**
      * Methode, die anhand einer serverID den nächstbesten Server findet.
@@ -106,7 +92,7 @@ public class ServerDaten {
             serverStub = (ServerStub) registry.lookup("ServerStub");
 
             //lässt anderen Server Verbindung zu diesem aufbauen
-            if(serverStub.initConnection(this.ownIP)){
+            if((this.serverID = serverStub.initConnection(this.ownIP)) != null){
                 //fügt Verbindung zur Liste der Verbindungen hinzu
                 this.parent = new Verbindung(serverStub, parentIP);
 
@@ -119,7 +105,7 @@ public class ServerDaten {
             }
             else{
                 //TODO: Fehlermeldung anpassen && Server beenden lassen
-                System.out.println("werfe fehler");
+                System.out.println("neue ServerID wurde nicht erhalten / Max Connection?");
             }
 
         } catch (RemoteException | NotBoundException ex) {
