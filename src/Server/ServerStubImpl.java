@@ -44,15 +44,15 @@ public class ServerStubImpl implements ServerStub {
                     if (this.serverDaten.childConnection[i] == null) {
                         
                         // Speichert Verbindung als Kind
-                        this.serverDaten.childConnection[i] = verbindung ;
+                        this.serverDaten.childConnection[i] = verbindung;
                         
                         // Starte Thread, der die Verbindung zu anderen Servern testet
                         new VerbindungstestsThread(this.serverDaten, verbindung).start();
                         // TODO: Ergänzt die ID des Kindes
-                        //this.serverDaten.childCount[i] = String.valueOf(i) + "#";
+                        //String childID = this.serverDaten.serverID + String.valueOf(i);
                         
                         //Ausgabe im Terminal
-                         System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.childConnection[i] + " " + ip +  " hergestellt!");
+                         System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + ip + " hergestellt!");
                          
                          result = true;
                          

@@ -55,17 +55,17 @@ public class ServerDaten {
     }
 
     /**
-     * Methode um anhand der parentIP die serverID zu bekommen.
-     * @param parentIP
-     * @return
+     * Methode um die serverID zu bekommen.
+     * @return serverID
      */
 
-    private String getID(String parentIP){
-        for(int i = 0; i <= childCount.length; i++){
-            if(childCount[i].equals(parentIP)){
+    private String getID(){
+        if (parent == null)
+            return null;
 
-            }
-        }
+
+
+
         return serverID;
     }
 
