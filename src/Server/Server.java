@@ -65,7 +65,7 @@ public class Server {
         }
         
         System.out.println("LOG * ");
-        //initClientStub();
+        initClientStub();
 
         System.out.println("LOG * ");
         System.out.println("LOG * Server laeuft!");
