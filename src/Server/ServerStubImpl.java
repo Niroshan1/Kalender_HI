@@ -1,4 +1,3 @@
-
 package Server;
 
 import ServerThreads.VerbindungstestsThread;
@@ -18,48 +17,49 @@ import java.util.logging.Logger;
  * @author Niroshan, Vincent
  */
 public class ServerStubImpl implements ServerStub {
-    
+
     private final ServerDaten serverDaten;
-          
+
     ServerStubImpl(ServerDaten serverDaten) {
         this.serverDaten = serverDaten;
     }
 
     /**
-     * gibt Server die IP-Adresse und den Port eines Servers mit dem er sich verbinden soll
-     * dient der Erzeugung einer beidseitigen Verbindung / ungerichteten Verbindung
-     * 
+     * gibt Server die IP-Adresse und den Port eines Servers mit dem er sich
+     * verbinden soll dient der Erzeugung einer beidseitigen Verbindung /
+     * ungerichteten Verbindung
+     *
      * @param ip
      * @return childID Die neue ID wird zurückgegeben
      * @throws RemoteException
-     * @throws AccessException 
+     * @throws AccessException
      */
     @Override
-    public String initConnection(String ip) throws RemoteException{
+    public String initConnection(String ip) throws RemoteException {
         try {
 
             //baut Verbindung zu Server auf
             Registry registry = LocateRegistry.getRegistry(ip, 1100);
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, ip);
-            
-                for(int i = 0; i < this.serverDaten.childConnection.length; i++) {
-                    if (this.serverDaten.childConnection[i] == null) {
 
-                        // Speichert Verbindung als Kind
-                        this.serverDaten.childConnection[i] = verbindung;
+            for (int i = 0; i < this.serverDaten.childConnection.length; i++) {
+                if (this.serverDaten.childConnection[i] == null) {
 
-                        // Starte Thread, der die Verbindung zu anderen Servern testet
-                        new VerbindungstestsThread(this.serverDaten, verbindung).start();
+                    // Speichert Verbindung als Kind
+                    this.serverDaten.childConnection[i] = verbindung;
 
-                        //Ausgabe im Terminal
-                        System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.serverID + String.valueOf(i) + " hergestellt!");
+                    // Starte Thread, der die Verbindung zu anderen Servern testet
+                    new VerbindungstestsThread(this.serverDaten, verbindung).start();
 
-                        return this.serverDaten.serverID + String.valueOf(i);
-                    }
+                    //Ausgabe im Terminal
+                    System.out.println("LOG * ---> Verbindung zu KindServer: ID  " + this.serverDaten.serverID + String.valueOf(i) + " hergestellt!");
+
+                    return this.serverDaten.serverID + String.valueOf(i);
                 }
+            }
 
-             return null;
+            return null;
 
         } catch (NotBoundException | IOException e) {
             System.out.println("LOG * ---> Verbindung zu KindServer Fehler!");
@@ -67,50 +67,48 @@ public class ServerStubImpl implements ServerStub {
         }
     }
 
-
     /**
      * Methode um zu testen, ob noch eine Verbindung zum Server besteht
-     * 
+     *
      * @param senderIP
      * @return
-     * @throws RemoteException 
+     * @throws RemoteException
      */
     @Override
     public boolean ping(String senderIP) throws RemoteException {
         boolean result = false;
-        
-        
+
         for (Verbindung childConnection : this.serverDaten.childConnection) {
             if (childConnection != null && childConnection.getIP().equals(senderIP)) {
                 result = true;
             }
         }
-        if(this.serverDaten.parent != null 
-            && this.serverDaten.parent.getIP().equals(senderIP)){
-            result = true;           
+        if (this.serverDaten.parent != null
+                && this.serverDaten.parent.getIP().equals(senderIP)) {
+            result = true;
         }
-        
+
         return result;
     }
-    
+
     /**
-     * 
+     *
      * Gibt Anzahl der Kalender
-     * 
+     *
      * @param serverID
      * @return
-     * @throws RemoteException 
+     * @throws RemoteException
      */
     @Override
-    public int kalenderAnzahl () throws RemoteException {
+    public int kalenderAnzahl() throws RemoteException {
         try {
             return this.serverDaten.datenbank.getUserCounter();
-            
+
         } catch (SQLException | DatenbankException ex) {
             Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
-        
+
     }
-    
+
 }
