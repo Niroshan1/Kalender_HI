@@ -89,4 +89,16 @@ public class ServerStubImpl implements ServerStub {
         return result;
     }   
     
+    /**
+     * Methode ladeDB 
+     * 
+     * @param stub
+     * @return
+     * @throws RemoteException 
+     */
+    @Override
+    public String ladeDB(ServerStub stub) throws RemoteException{
+        System.out.print("Test ladeDB");
+        return null;
+    }
 }

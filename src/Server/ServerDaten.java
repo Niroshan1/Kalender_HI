@@ -34,6 +34,7 @@ public class ServerDaten {
     public String serverID;
     public final String[] childCount;
     public Verbindung[] childConnection;
+    public ServerStub stub;
 
 
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
@@ -116,11 +117,19 @@ public class ServerDaten {
     public void ladeDatenbank() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
         datenbank = new DBHandler();
         datenbank.getConnection();
+        System.out.println("LOG * ---> Verbindung zu Datenbank erfolgreich!");
     }
 
     void ladeDatenbankFromParent() {
-        //TODO: lade DB von Parent (mit Stub-Methode)
-        //this.parent.ladeDB();
+        try {
+            //TODO: lade DB von Parent (mit Stub-Methode)
+            //this.parent.ladeDB();
+            //parent.getServerStub().ladeDB((ServerStub) this);
+            //parent.getServerStub().ladeDB(stub);
+            stub.ladeDB(stub);
+        } catch (RemoteException ex) {
+            Logger.getLogger(ServerDaten.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 
