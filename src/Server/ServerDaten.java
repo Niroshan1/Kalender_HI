@@ -17,6 +17,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter; 
 /**
  *
  * @author timtim
@@ -61,6 +65,8 @@ public class ServerDaten {
 
                 //Ausgabe im Terminal
                 System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
+                //Speicherung von ServerIP und Serverid
+                System.out.println( "parentIP + ownIP  gespeichert");
 
                 //Starte Threads, die die Verbindung zu anderen Servern testen
                 new VerbindungstestsThread(this, this.parent).start();                
@@ -84,7 +90,17 @@ public class ServerDaten {
         //TODO: lade DB von Parent (mit Stub-Methode)
     }
     
-    
-
- 
+    public void serverDatenSpeicherung(){
+        PrintWriter pWriter = null;
+        try {
+            pWriter = new PrintWriter(new BufferedWriter(new FileWriter("serverIP.txt")));
+            pWriter.println(ownIP + parentIP);
+        } catch (IOException ioe) {
+        } finally {
+            if (pWriter != null){
+                pWriter.flush();
+                pWriter.close();
+            }
+        } 
+    }
 }

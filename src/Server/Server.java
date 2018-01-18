@@ -59,6 +59,7 @@ public class Server {
         if(!args[1].equals("root")){
             this.serverDaten.connectToParent();
             this.serverDaten.ladeDatenbankFromParent();
+            this.serverDaten.serverDatenSpeicherung();
         }
         else{
             this.serverDaten.ladeDatenbank();
