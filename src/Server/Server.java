@@ -68,6 +68,9 @@ public class Server {
             // Client meldet erstesmal bei root 
             System.out.println("LOG * ");
             initClientStub();
+            
+            System.out.println("LOG * ");
+            System.out.println("LOG * " + args[1] + " Server laeuft!");
 
         }
 
