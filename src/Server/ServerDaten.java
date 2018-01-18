@@ -39,8 +39,6 @@ public class ServerDaten {
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
 
         this.parent = null;
-        //this.leftchild = null;
-        //this.rightchild = null;
         this.ownIP = args[0];
         this.parentIP = args[1];
         this.childCount = new String[10];

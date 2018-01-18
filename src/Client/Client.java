@@ -34,7 +34,7 @@ public class Client {
             }
             try {
                 Registry registry = LocateRegistry.getRegistry(ipaddr);
-                ClientStub stub = (ClientStub) registry.lookup("Terminkalender");
+                ClientStub stub = (ClientStub) registry.lookup("ClientStub");
                 
                 System.out.println("Mit Server verbunden!"); 
                 

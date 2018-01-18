@@ -2,12 +2,16 @@
 package Server;
 
 import ServerThreads.VerbindungstestsThread;
+import Utilities.DatenbankException;
 import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -87,6 +91,26 @@ public class ServerStubImpl implements ServerStub {
         }
         
         return result;
-    }   
+    }
+    
+    /**
+     * 
+     * Gibt Anzahl der Kalender
+     * 
+     * @param serverID
+     * @return
+     * @throws RemoteException 
+     */
+    @Override
+    public int kalenderAnzahl () throws RemoteException {
+        try {
+            return this.serverDaten.datenbank.getUserCounter();
+            
+        } catch (SQLException | DatenbankException ex) {
+            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+        
+    }
     
 }
