@@ -11,6 +11,7 @@ import java.rmi.registry.Registry;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.omg.CORBA.portable.RemarshalException;
 
 /**
  *
@@ -110,5 +111,15 @@ public class ServerStubImpl implements ServerStub {
         return 0;
 
     }
-
+    
+    /**
+     * Gibt die ID des Servers zurueck
+     * @return
+     * @throws RemarshalException 
+     */
+    @Override
+     public String getServerID() throws RemarshalException{
+        return this.serverDaten.serverID;
+         
+     }
 }

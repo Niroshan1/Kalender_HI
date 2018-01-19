@@ -7,6 +7,7 @@ package Server;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import org.omg.CORBA.portable.RemarshalException;
 
 /**
  *
@@ -17,6 +18,7 @@ public interface ServerStub extends Remote{
     public String initConnection(String ip) throws RemoteException;
     public boolean ping(String senderIP) throws RemoteException;
     public int kalenderAnzahl () throws RemoteException;
+    public String getServerID() throws RemarshalException; 
     
     
     // public .... ladeDB(...) throws RemoteException;
