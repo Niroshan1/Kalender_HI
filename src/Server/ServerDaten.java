@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.omg.CORBA.portable.RemarshalException;
 
 /**
  *
@@ -58,7 +59,7 @@ public class ServerDaten {
      * @param serverID Die ID des gesuchten Servers
      * @return serverIP , ownIP Bei gleicher serverID ist es die eigene IP
      */
-    private String findServer(String serverID) {
+    public String findServer(String serverID) {
         int length = this.serverID.length();
 
         //Ist die übergebene serverID kleiner der eigenen steht der gesuchte Server im Baum weiter oben.
@@ -119,17 +120,33 @@ public class ServerDaten {
         datenbank.getConnection();
     }
 
-    public void kalenderAnzahlBewerten() throws RemoteException {
+    public String serverKalenderAnzahlBewerten() throws RemoteException, RemarshalException {
         int anzahlKalender = 0;
         int kleineKalenderAnzahl = 0;
+        /**
+         * Diese Variable bekommt im if-Zweig folgende Daten zugewiesen:
+         * ServerID, ServerIP, Stelle der Kinderverbindung
+         * 
+         */
+        String verbindungsDaten = null;
+        String serverID = null;
+        String serverIP = null;
         
         for (int i=0 ; i < this.childConnection.length; i++) {
             anzahlKalender = this.childConnection[i].getServerStub().kalenderAnzahl();
             
             if (kleineKalenderAnzahl >= anzahlKalender) {
+                verbindungsDaten = null;
+                
                 kleineKalenderAnzahl = anzahlKalender;
+                serverID = this.childConnection[i].getServerStub().getServerID();
+                serverIP = this.childConnection[i].getIP();  
+                
+                verbindungsDaten = serverID + "/" + serverIP + "/" + i;
             }
         }
+        
+        return verbindungsDaten;
     }
-
+    
 }
