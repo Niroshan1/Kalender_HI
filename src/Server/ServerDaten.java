@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * @author timtim
  */
 public class ServerDaten {
-    
+
     public Verbindung parent;
     public Verbindung leftchild;
     public Verbindung rightchild;
@@ -35,8 +35,7 @@ public class ServerDaten {
     public final String[] childCount;
     public Verbindung[] childConnection;
 
-
-    public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
+    public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
 
         this.parent = null;
         this.ownIP = args[0];
@@ -44,17 +43,18 @@ public class ServerDaten {
         this.childCount = new String[10];
         this.childConnection = new Verbindung[10];
 
-        if (parentIP.equals("root"))
+        if (parentIP.equals("root")) {
             this.serverID = "0";
-        else
+        } else {
             this.serverID = null;
+        }
 
         datenbank = null;
     }
 
-
     /**
      * Methode, die anhand einer serverID den nächstbesten Server findet.
+     *
      * @param serverID Die ID des gesuchten Servers
      * @return serverIP , ownIP Bei gleicher serverID ist es die eigene IP
      */
@@ -67,20 +67,24 @@ public class ServerDaten {
         }
 
         //Triviale Lösung
-        if (serverID.equals(this.serverID))
+        if (serverID.equals(this.serverID)) {
             return ownIP;
-        else if (serverID.length() == length) //Der gesuchte Server ist in einem anderen Zweig.
+        } else if (serverID.length() == length) //Der gesuchte Server ist in einem anderen Zweig.
+        {
             return parentIP;
-        else //Die obigen checks schlugen fehl, also ist der gesuchte Server ein Kind
+        } else //Die obigen checks schlugen fehl, also ist der gesuchte Server ein Kind
+        {
             return childCount[Character.getNumericValue(serverID.charAt(this.serverID.length()))];
+        }
     }
+
     /**
      * baut Verbindungen zu einem anderen Server auf
-     * 
+     *
      * @throws RemoteException
-     * @throws IOException 
+     * @throws IOException
      */
-    public void connectToParent() throws IOException{
+    public void connectToParent() throws IOException {
         ServerStub serverStub;
         Registry registry;
 
@@ -90,7 +94,7 @@ public class ServerDaten {
             serverStub = (ServerStub) registry.lookup("ServerStub");
 
             //lässt anderen Server Verbindung zu diesem aufbauen
-            if((this.serverID = serverStub.initConnection(this.ownIP)) != null){
+            if ((this.serverID = serverStub.initConnection(this.ownIP)) != null) {
                 //fügt Verbindung zur Liste der Verbindungen hinzu
                 this.parent = new Verbindung(serverStub, parentIP);
 
@@ -98,10 +102,9 @@ public class ServerDaten {
                 System.out.println("LOG * ---> Verbindung zu Parent " + parentIP + " hergestellt!");
                 System.out.println("LOG * ---> Server wurde die ServerID: " + this.serverID + " zugewiesen!");
                 //Starte Threads, die die Verbindung zu anderen Servern testen
-                new VerbindungstestsThread(this , this.parent).start();
+                new VerbindungstestsThread(this, this.parent).start();
 
-            }
-            else{
+            } else {
                 //TODO: Fehlermeldung anpassen && Server beenden lassen
                 System.out.println("neue ServerID wurde nicht erhalten / Max Connection?");
             }
@@ -111,17 +114,22 @@ public class ServerDaten {
         }
     }
 
-    public void ladeDatenbank() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException{
+    public void ladeDatenbank() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
         datenbank = new DBHandler();
         datenbank.getConnection();
     }
 
-    void ladeDatenbankFromParent() {
-        //TODO: lade DB von Parent (mit Stub-Methode)
-        //this.parent.ladeDB();
+    public void kalenderAnzahlBewerten() throws RemoteException {
+        int anzahlKalender = 0;
+        int kleineKalenderAnzahl = 0;
+        
+        for (int i=0 ; i < this.childConnection.length; i++) {
+            anzahlKalender = this.childConnection[i].getServerStub().kalenderAnzahl();
+            
+            if (kleineKalenderAnzahl >= anzahlKalender) {
+                kleineKalenderAnzahl = anzahlKalender;
+            }
+        }
     }
 
-
-
- 
 }

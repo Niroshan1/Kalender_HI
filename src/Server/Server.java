@@ -58,8 +58,7 @@ public class Server {
         //baut Verbindung zu Parent auf
         if (!args[1].equals("root")) {
             this.serverDaten.connectToParent();
-            this.serverDaten.ladeDatenbankFromParent();
-
+            
         }
 
         else {
