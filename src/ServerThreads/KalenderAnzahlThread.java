@@ -6,14 +6,8 @@
 package ServerThreads;
 
 import Server.ClientStub;
-import Server.ServerStub;
-import java.rmi.RemoteException;
 import Server.ServerDaten;
-import Utilities.DatenbankException;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.omg.CORBA.portable.RemarshalException;
+
 
 /**
  *
@@ -21,9 +15,7 @@ import org.omg.CORBA.portable.RemarshalException;
  */
 public class KalenderAnzahlThread extends Thread{
     
-    //private final ServerStub serverStub;
     private final ClientStub clientStub;
-    //private final Counter counter;
     private final ServerDaten serverDaten;
     
     public KalenderAnzahlThread(ClientStub clientStub, ServerDaten serverDaten){

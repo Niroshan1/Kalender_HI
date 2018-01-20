@@ -68,6 +68,7 @@ public class Server {
 
         } else {
             this.serverDaten.ladeDatenbank();
+            rootServerManagement();
 
             System.out.println("LOG * ");
             System.out.println("LOG * " + args[1] + " Server laeuft!");
@@ -80,15 +81,14 @@ public class Server {
     }
 
     private void rootServerManagement() throws RemoteException, RemarshalException, AlreadyBoundException, SQLException, DatenbankException {
-        
-        ClientStub stub = null;
+        //initialisiere Stubs für Neue Clients
+        ClientStub stub = initTMPClientStub();
 
         // Client meldet erstesmal bei root ueber TMPstub
         System.out.println("LOG * ");
-        
-        //initialisiere Stubs für Neue Clients
-        stub = initTMPClientStub();
-        new KalenderAnzahlThread(stub, this.serverDaten).run();
+                        
+        //Nach initialisierung aktualisiert Root ueber thread
+        new KalenderAnzahlThread(stub, this.serverDaten).start();
         
     }
 
@@ -114,6 +114,22 @@ public class Server {
      * @throws SQLException
      * @throws DatenbankException
      */
+    private void initClientStub() throws RemoteException, AlreadyBoundException, SQLException, DatenbankException {
+        ClientStubImpl clientLauncher = new ClientStubImpl(this.serverDaten.datenbank);
+        ClientStub clientStub = (ClientStub) UnicastRemoteObject.exportObject(clientLauncher, 0);
+        Registry clientRegistry = LocateRegistry.createRegistry(1099);
+        clientRegistry.bind(this.serverDaten.serverID, clientStub);
+        System.out.println("LOG * ClientStub initialisiert!");
+    }
+    
+    /**
+     * initialisiert den Stub für die Clients
+     *
+     * @throws RemoteException
+     * @throws AlreadyBoundException
+     * @throws SQLException
+     * @throws DatenbankException
+     */
     private ClientStub initTMPClientStub() throws RemoteException, AlreadyBoundException, SQLException, DatenbankException {
         ClientStubImpl clientLauncherTMP = new ClientStubImpl(this.serverDaten.tmpDatenbank);
         ClientStub clientStubTMP = (ClientStub) UnicastRemoteObject.exportObject(clientLauncherTMP, 0);
@@ -123,12 +139,5 @@ public class Server {
 
         return clientStubTMP;
     }
-
-    private void initClientStub() throws RemoteException, AlreadyBoundException, SQLException, DatenbankException {
-        ClientStubImpl clientLauncher = new ClientStubImpl(this.serverDaten.datenbank);
-        ClientStub clientStub = (ClientStub) UnicastRemoteObject.exportObject(clientLauncher, 0);
-        Registry clientRegistry = LocateRegistry.createRegistry(1099);
-        clientRegistry.bind("ClientStub", clientStub);
-        System.out.println("LOG * ClientStub initialisiert!");
-    }
+    
 }

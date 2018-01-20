@@ -49,18 +49,22 @@ public class ClientStubImpl implements ClientStub{
     }
     
 
+    @Override
     public String getServerID() {
         return serverID;
     }
 
+    @Override
     public void setServerID(String serverID) {
         this.serverID = serverID;
     }
 
+    @Override
     public String getServerIP() {
         return ServerIP;
     }
 
+    @Override
     public void setServerIP(String ServerIP) {
         this.ServerIP = ServerIP;
     }
