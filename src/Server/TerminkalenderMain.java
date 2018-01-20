@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.omg.CORBA.portable.RemarshalException;
 
 /**
  * test
@@ -24,8 +25,9 @@ public class TerminkalenderMain {
 
     /**
      * @param args the command line arguments
+     * @throws org.omg.CORBA.portable.RemarshalException
      */
-    public static void main(String[] args){        
+    public static void main(String[] args) throws RemarshalException{        
         try {  
             if(args.length == 2){
                 Server server = new Server(args);

@@ -12,6 +12,7 @@ import Utilities.Teilnehmer;
 import Utilities.Termin;
 import Utilities.TerminException;
 import Utilities.Zeit;
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
@@ -33,12 +34,35 @@ public class ClientStubImpl implements ClientStub{
     private final LinkedList<Sitzung> aktiveSitzungen;
     private int sitzungscounter;
     private final DBHandler datenbank;
+    private String serverID;
+    private String ServerIP;
+    
     
     public ClientStubImpl(DBHandler datenbank) throws SQLException, DatenbankException{
         this.datenbank = datenbank;
         benutzerliste = new BenutzerListe(datenbank.getUserCounter());
         aktiveSitzungen = new LinkedList<>();
         sitzungscounter = 1;
+        serverID = null;
+        ServerIP = null;
+        
+    }
+    
+
+    public String getServerID() {
+        return serverID;
+    }
+
+    public void setServerID(String serverID) {
+        this.serverID = serverID;
+    }
+
+    public String getServerIP() {
+        return ServerIP;
+    }
+
+    public void setServerIP(String ServerIP) {
+        this.ServerIP = ServerIP;
     }
 
     /**
@@ -678,6 +702,8 @@ public class ClientStubImpl implements ClientStub{
     private boolean existsUser(){
         return true;
     }
+
+    
     
     
 }

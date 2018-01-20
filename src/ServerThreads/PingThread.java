@@ -8,6 +8,11 @@ package ServerThreads;
 import Server.ServerStub;
 import java.rmi.RemoteException;
 import Server.ServerDaten;
+import Utilities.DatenbankException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.omg.CORBA.portable.RemarshalException;
 
 /**
  *
@@ -31,6 +36,15 @@ public class PingThread extends Thread{
             if(this.serverStub.ping(serverDaten.ownIP)){
                 //pingtest kam an, alles gut, resete counter
                 counter.resetCounter();
+                
+                if(this.serverDaten.ownIP.equals(this.serverDaten.parentIP)) {
+                    // Anzahl mit wenige Kalender Server mit ID notieren
+                    this.serverDaten.serverIDvonKind = this.serverDaten.serverKalenderAnzahlBewerten();
+                    
+                    // Server IP adresse mitspeichern
+                    this.serverDaten.serverIPvonKind = this.serverDaten.findServer(this.serverDaten.serverIDvonKind);
+                    
+                }
             }
             else{
                 //pingtest kam an, aber der andere Server 
@@ -38,6 +52,8 @@ public class PingThread extends Thread{
                 counter.setNegativ();
             }
         } catch (RemoteException ex) {
+        } catch (RemarshalException | SQLException | DatenbankException ex) {
+            Logger.getLogger(PingThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

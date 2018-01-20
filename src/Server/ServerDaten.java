@@ -7,6 +7,7 @@ package Server;
 
 import ServerThreads.VerbindungstestsThread;
 import Utilities.DBHandler;
+import Utilities.DatenbankException;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -27,14 +28,17 @@ import org.omg.CORBA.portable.RemarshalException;
 public class ServerDaten {
 
     public Verbindung parent;
-    public Verbindung leftchild;
-    public Verbindung rightchild;
     public DBHandler datenbank;
+    public DBHandler tmpDatenbank;
     public final String ownIP;
     public final String parentIP;
     public String serverID;
     public final String[] childCount;
     public Verbindung[] childConnection;
+    
+    //Hier wird der ID und IP von Kind mit kleinste Kalender anzahl gespeichert
+    public String serverIDvonKind;
+    public String serverIPvonKind;
 
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
 
@@ -43,6 +47,8 @@ public class ServerDaten {
         this.parentIP = args[1];
         this.childCount = new String[10];
         this.childConnection = new Verbindung[10];
+        this.serverIDvonKind = null;
+        this.serverIPvonKind = null;
 
         if (parentIP.equals("root")) {
             this.serverID = "0";
@@ -51,6 +57,7 @@ public class ServerDaten {
         }
 
         datenbank = null;
+        tmpDatenbank = null;
     }
 
     /**
@@ -119,34 +126,34 @@ public class ServerDaten {
         datenbank = new DBHandler();
         datenbank.getConnection();
     }
+    
+    public void ladetmpDatenbank() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
+        tmpDatenbank = new DBHandler();
+        tmpDatenbank.getConnection();
+    }
 
-    public String serverKalenderAnzahlBewerten() throws RemoteException, RemarshalException {
+    public String serverKalenderAnzahlBewerten() throws RemoteException, RemarshalException, SQLException, DatenbankException {
         int anzahlKalender = 0;
         int kleineKalenderAnzahl = 0;
-        /**
-         * Diese Variable bekommt im if-Zweig folgende Daten zugewiesen:
-         * ServerID, ServerIP, Stelle der Kinderverbindung
-         * 
-         */
-        String verbindungsDaten = null;
-        String serverID = null;
-        String serverIP = null;
+        int verbindungID = 0;
         
-        for (int i=0 ; i < this.childConnection.length; i++) {
+
+        for (int i = 0; i < this.childConnection.length; i++) {
             anzahlKalender = this.childConnection[i].getServerStub().kalenderAnzahl();
-            
+
             if (kleineKalenderAnzahl >= anzahlKalender) {
-                verbindungsDaten = null;
-                
                 kleineKalenderAnzahl = anzahlKalender;
-                serverID = this.childConnection[i].getServerStub().getServerID();
-                serverIP = this.childConnection[i].getIP();  
-                
-                verbindungsDaten = serverID + "/" + serverIP + "/" + i;
+                verbindungID = i;
             }
+
         }
-        
-        return verbindungsDaten;
+
+        // Prueft ob root weniger Kalender hat
+        if (kleineKalenderAnzahl < this.datenbank.getUserCounter()) {
+            return this.childConnection[verbindungID].getServerStub().getServerID();
+        }
+
+        return this.serverID;
     }
-    
+
 }
