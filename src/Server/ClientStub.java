@@ -71,9 +71,9 @@ public interface ClientStub extends Remote{
     public LinkedList<String> getProfil(String username) throws RemoteException, BenutzerException;
     
     // Hier werden die ID und IP von Kind Server mit wenige Kalender gespeichert
-    public String getServerID();
-    public void setServerID(String serverID);
-    public String getServerIP();
-    public void setServerIP(String serverIP);
+    public String getServerID() throws RemoteException;
+    public void setServerID(String serverID) throws RemoteException;
+    public String getServerIP() throws RemoteException;
+    public void setServerIP(String serverIP) throws RemoteException;
     
 }

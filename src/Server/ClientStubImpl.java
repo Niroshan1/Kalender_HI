@@ -50,22 +50,22 @@ public class ClientStubImpl implements ClientStub{
     
 
     @Override
-    public String getServerID() {
+    public String getServerID() throws RemoteException{
         return serverID;
     }
 
     @Override
-    public void setServerID(String serverID) {
+    public void setServerID(String serverID) throws RemoteException{
         this.serverID = serverID;
     }
 
     @Override
-    public String getServerIP() {
+    public String getServerIP() throws RemoteException{
         return ServerIP;
     }
 
     @Override
-    public void setServerIP(String ServerIP) {
+    public void setServerIP(String ServerIP) throws RemoteException{
         this.ServerIP = ServerIP;
     }
 

@@ -115,10 +115,11 @@ public class ServerStubImpl implements ServerStub {
     /**
      * Gibt die ID des Servers zurueck
      * @return
+     * @throws java.rmi.RemoteException
      * @throws RemarshalException 
      */
     @Override
-     public String getServerID() throws RemarshalException{
+     public String getServerID() throws  RemoteException, RemarshalException{
         return this.serverDaten.serverID;
          
      }

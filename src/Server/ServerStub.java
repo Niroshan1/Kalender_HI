@@ -18,7 +18,7 @@ public interface ServerStub extends Remote{
     public String initConnection(String ip) throws RemoteException;
     public boolean ping(String senderIP) throws RemoteException;
     public int kalenderAnzahl () throws RemoteException;
-    public String getServerID() throws RemarshalException; 
+    public String getServerID() throws RemoteException, RemarshalException; 
     
     
     // public .... ladeDB(...) throws RemoteException;
