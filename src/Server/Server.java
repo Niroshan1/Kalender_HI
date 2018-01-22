@@ -73,7 +73,6 @@ public class Server {
             //initialisiere Stubs für Clients
             System.out.println("LOG * ");
             rootServerManagement();
-
             System.out.println("LOG * ");
             System.out.println("LOG * " + args[1] + " Server laeuft!");
 

@@ -7,6 +7,9 @@ package ServerThreads;
 
 import Server.ClientStub;
 import Server.ServerDaten;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -26,7 +29,11 @@ public class KalenderAnzahlThread extends Thread{
     
     @Override 
     public void run(){
-        clientStub.setServerID(this.serverDaten.serverIDvonKind); 
-        clientStub.setServerIP(this.serverDaten.serverIPvonKind); 
+        try { 
+            clientStub.setServerID("1");
+            clientStub.setServerIP("1"); 
+        } catch (RemoteException ex) {
+            Logger.getLogger(KalenderAnzahlThread.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

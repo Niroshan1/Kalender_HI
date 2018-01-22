@@ -35,7 +35,7 @@ public class ClientStubImpl implements ClientStub{
     private int sitzungscounter;
     private final DBHandler datenbank;
     private String serverID;
-    private String ServerIP;
+    private String serverIP;
     
     
     public ClientStubImpl(DBHandler datenbank) throws SQLException, DatenbankException{
@@ -44,7 +44,7 @@ public class ClientStubImpl implements ClientStub{
         aktiveSitzungen = new LinkedList<>();
         sitzungscounter = 1;
         serverID = null;
-        ServerIP = null;
+        serverIP = null;
         
     }
     
@@ -61,12 +61,12 @@ public class ClientStubImpl implements ClientStub{
 
     @Override
     public String getServerIP() throws RemoteException{
-        return ServerIP;
+        return serverIP;
     }
 
     @Override
     public void setServerIP(String ServerIP) throws RemoteException{
-        this.ServerIP = ServerIP;
+        this.serverIP = ServerIP;
     }
 
     /**

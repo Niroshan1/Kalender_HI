@@ -39,10 +39,10 @@ public class PingThread extends Thread{
                 
                 if(this.serverDaten.ownIP.equals(this.serverDaten.parentIP)) {
                     // Anzahl mit wenige Kalender Server mit ID notieren
-                    this.serverDaten.serverIDvonKind = this.serverDaten.serverKalenderAnzahlBewerten();
+                    this.serverDaten.serverIDKind = this.serverDaten.serverKalenderAnzahlBewerten();
                     
                     // Server IP adresse mitspeichern
-                    this.serverDaten.serverIPvonKind = this.serverDaten.findServer(this.serverDaten.serverIDvonKind);
+                    this.serverDaten.serverIPKind = this.serverDaten.findServer(this.serverDaten.serverIDKind);
                     
                 }
             }

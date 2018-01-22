@@ -15,8 +15,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.ListIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.omg.CORBA.portable.RemarshalException;
@@ -37,8 +35,8 @@ public class ServerDaten {
     public Verbindung[] childConnection;
     
     //Hier wird der ID und IP von Kind mit kleinste Kalender anzahl gespeichert
-    public String serverIDvonKind;
-    public String serverIPvonKind;
+    public String serverIDKind;
+    public String serverIPKind;
 
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
 
@@ -47,8 +45,8 @@ public class ServerDaten {
         this.parentIP = args[1];
         this.childCount = new String[10];
         this.childConnection = new Verbindung[10];
-        this.serverIDvonKind = null;
-        this.serverIPvonKind = null;
+        this.serverIDKind = null;
+        this.serverIPKind = null;
 
         if (parentIP.equals("root")) {
             this.serverID = "0";

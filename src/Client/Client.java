@@ -6,6 +6,7 @@
 package Client;
 
 import Server.ClientStub;
+import Server.Server;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.*;
@@ -19,11 +20,12 @@ public class Client {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException, NotBoundException {
         Client start = new Client();
         ClientStub stub = null;
         /* IP-Adresse des Servers */
         String ipaddr = "localhost";
+        
 
         if ((args.length > 2)) {
             System.err.println("java -jar Client_Terminkalender.jar <Server-IP-Adresse>");
@@ -34,21 +36,24 @@ public class Client {
                 System.out.println("IP-Adresse des Servers auf: " + ipaddr + " gesetzt!");
             }
             stub = start.askRootServer(ipaddr);
-            start.clientStart(stub);
+           // start.clientStart(stub);
 
         }
         
         
     }
 
-    public ClientStub askRootServer (String ipaddr) {
+    public ClientStub askRootServer (String ipaddr) throws RemoteException, NotBoundException {
         try {
+            ClientStub stub = null;
             Registry registry = LocateRegistry.getRegistry(ipaddr);
-            ClientStub stub = (ClientStub) registry.lookup("ClientStubTMP");
-
+            stub = (ClientStub) registry.lookup("ClientStubTMP");
             System.out.println("Mit Root Server verbunden!");
             
+            System.out.println(stub.getServerIP());
+            System.out.println(stub.getServerID());
             return stub;
+                
 
         } catch (NotBoundException | RemoteException e) {
             System.out.println("Exception: " + e.getMessage());
@@ -59,6 +64,7 @@ public class Client {
     
     public void clientStart(ClientStub stubAkt) {
         try {
+            
             String ipaddr = stubAkt.getServerIP();
             String serverID = stubAkt.getServerID();
             
