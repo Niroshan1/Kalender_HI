@@ -52,9 +52,10 @@ public class TerminkalenderMain {
                     String[] parts = line.split(" ");
                     System.out.println("OwnIP: " + parts[0]);
                     System.out.println("ParentIP: " + parts[1]);
-                    Server server = new Server(args);
-                    server.start();
+                    
                 }
+                Server server = new Server(args);
+                server.start();
             } else if (args.length == 2) {
                 System.out.println("Datei wird neu angelegt!");
                 bw = new BufferedWriter(new FileWriter("serverIP.txt"));
