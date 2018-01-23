@@ -41,25 +41,24 @@ public class TerminkalenderMain {
         BufferedWriter bw = null;
 
         try {
-            if(args[1] == "root"){
-                Server server = new Server(args);
-                server.start();
-            }else if (file.exists()) {
-                System.out.println("Datei wird ausgelesen!");
+            if (file.exists()) {
+                System.out.println("LOG * ");
+                System.out.println("LOG * Datei wird ausgelesen!");
                 br = new BufferedReader(new FileReader(new File("serverIP.txt")));
                 String line = null;
                 while ((line = br.readLine()) != null) {
                     // Ganze Zeile:
                     // System.out.println(line);               
                     String[] parts = line.split(" ");
-                    System.out.println("OwnIP: " + parts[0]);
+                    System.out.println("LOG * LOG * OwnIP: " + parts[0]);
                     System.out.println("ParentIP: " + parts[1]);
                     
                 }
                 Server server = new Server(args);
                 server.start();
             } else if (args.length == 2) {
-                System.out.println("Datei wird neu angelegt!");
+                System.out.println("LOG * ");
+                System.out.println("LOG * Datei wird neu angelegt!");
                 bw = new BufferedWriter(new FileWriter("serverIP.txt"));
                 bw.write(args[0] + " " + args[1]);
 
