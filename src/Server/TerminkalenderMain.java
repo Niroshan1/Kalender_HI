@@ -52,6 +52,7 @@ public class TerminkalenderMain {
                     String[] parts = line.split(" ");
                     System.out.println("LOG * LOG * OwnIP: " + parts[0]);
                     System.out.println("ParentIP: " + parts[1]);
+                    System.out.println("LOG * ");
                     
                 }
                 Server server = new Server(args);
@@ -61,6 +62,8 @@ public class TerminkalenderMain {
                 System.out.println("LOG * Datei wird neu angelegt!");
                 bw = new BufferedWriter(new FileWriter("serverIP.txt"));
                 bw.write(args[0] + " " + args[1]);
+                
+                System.out.println("LOG * ");
 
                 Server server = new Server(args);
                 server.start();
