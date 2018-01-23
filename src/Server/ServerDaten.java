@@ -8,7 +8,10 @@ package Server;
 import ServerThreads.VerbindungstestsThread;
 import Utilities.DBHandler;
 import Utilities.DatenbankException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -153,5 +156,18 @@ public class ServerDaten {
 
         return this.serverID;
     }
-
+    
+    public void serverDatenSpeicherung(){
+        PrintWriter pWriter = null;
+        try {
+            pWriter = new PrintWriter(new BufferedWriter(new FileWriter("serverIP.txt")));
+            pWriter.println(ownIP + " " + parentIP);
+        } catch (IOException ioe) {
+        } finally {
+            if (pWriter != null){
+                pWriter.flush();
+                pWriter.close();
+            }
+        } 
+    }
 }
