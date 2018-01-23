@@ -41,8 +41,10 @@ public class TerminkalenderMain {
         BufferedWriter bw = null;
 
         try {
-
-            if (file.exists()) {
+            if(args[1] == "root"){
+                Server server = new Server(args);
+                server.start();
+            }else if (file.exists()) {
                 System.out.println("Datei wird ausgelesen!");
                 br = new BufferedReader(new FileReader(new File("serverIP.txt")));
                 String line = null;

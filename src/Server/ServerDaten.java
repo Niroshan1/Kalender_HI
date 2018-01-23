@@ -157,7 +157,7 @@ public class ServerDaten {
         return this.serverID;
     }
     
-    public void serverDatenSpeicherung(){
+    /*public void serverDatenSpeicherung(){
         PrintWriter pWriter = null;
         try {
             pWriter = new PrintWriter(new BufferedWriter(new FileWriter("serverIP.txt")));
@@ -169,5 +169,5 @@ public class ServerDaten {
                 pWriter.close();
             }
         } 
-    }
+    }*/
 }
