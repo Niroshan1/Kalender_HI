@@ -62,6 +62,8 @@ public class Server {
 
         //baut Verbindung zu Parent auf
         if (!args[1].equals("root")) {
+            
+            //this.serverDaten.serverDatenSpeicherung();
             this.serverDaten.connectToParent();
             this.serverDaten.ladeDatenbank();
             //initialisiere Stubs für Clients
