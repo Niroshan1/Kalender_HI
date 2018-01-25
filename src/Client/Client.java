@@ -66,15 +66,19 @@ public class Client {
             
             String ipaddr = stubAkt.getServerIP();
             String serverID = stubAkt.getServerID();
-            System.out.println(ipaddr + "Client");
-            System.out.println(serverID + "Client");
+            
+            System.out.println(ipaddr + " Client");
+            System.out.println(serverID + " Client");
+            
             Registry registry = LocateRegistry.getRegistry(ipaddr);
-            ClientStub stub = stubAkt;
-            stub = (ClientStub) registry.lookup(serverID);
+            ClientStub stub = (ClientStub) registry.lookup(serverID);
 
             System.out.println("Mit Server verbunden!");
 
-            stub.setServerIP("Client hat bekommen");
+            stubAkt.setServerIP("Client hat bekommen");
+            stubAkt = null;
+            
+            System.out.println("Client hat gesetet");
             
             GUI gui = new GUI(stub);
             gui.startGUI();

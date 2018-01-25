@@ -5,7 +5,7 @@
  */
 package Server;
 
-import ServerThreads.KalenderAnzahlThread;
+import ServerThreads.KalenderInfoThread;
 import Utilities.DatenbankException;
 import java.io.IOException;
 import java.net.UnknownHostException;
@@ -79,7 +79,7 @@ public class Server {
             //initialisiere Stubs für Clients
             System.out.println("LOG * ");
             //Nach initialisierung aktualisiert Root ueber thread
-            new KalenderAnzahlThread(clientStub, this.serverDaten, serverStub).start();
+            new KalenderInfoThread(clientStub, this.serverDaten, serverStub).start();
             
             
             System.out.println("LOG * ");

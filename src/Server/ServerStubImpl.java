@@ -103,7 +103,7 @@ public class ServerStubImpl implements ServerStub {
     }
     
     @Override
-    public void setKalenderAnzahl () throws RemoteException{
+    public void setKalenderAnzahlHoch () throws RemoteException{
         this.serverDaten.kalenderAnzahl++;
     }
     

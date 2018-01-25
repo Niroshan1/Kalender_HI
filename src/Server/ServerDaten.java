@@ -8,10 +8,7 @@ package Server;
 import ServerThreads.VerbindungstestsThread;
 import Utilities.DBHandler;
 import Utilities.DatenbankException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -37,7 +34,7 @@ public class ServerDaten {
     public final String[] childCount;
     public Verbindung[] childConnection;
     public int kalenderAnzahl;
-    
+
     //Hier wird der ID und IP von Kind mit kleinste Kalender anzahl gespeichert
     public String serverIDKind;
     public String serverIPKind;
@@ -129,30 +126,33 @@ public class ServerDaten {
         datenbank = new DBHandler();
         datenbank.getConnection();
     }
-    
-        
+
     public String serverKalenderAnzahlBewerten() throws RemoteException, RemarshalException, SQLException, DatenbankException {
         int anzahlKalender = 0;
         int kleineKalenderAnzahl = 0;
         int verbindungID = 0;
-        
-        if(this.childConnection.length == 0) {
-            for (int i = 0; i < this.childConnection.length; i++) {
+
+        // Prueft ob root weniger Kalender hat
+        for (int i = 0; i < this.childConnection.length; i++) {
+
+            if (this.childConnection[i] != null) {
                 anzahlKalender = this.childConnection[i].getServerStub().getkalenderAnzahl();
 
                 if (kleineKalenderAnzahl >= anzahlKalender) {
                     kleineKalenderAnzahl = anzahlKalender;
                     verbindungID = i;
                 }
-
             }
+            
+            
+        }
 
-            // Prueft ob root weniger Kalender hat
-            if (kleineKalenderAnzahl < this.kalenderAnzahl) {
+        if (this.childConnection[verbindungID] != null) {
+            if (kleineKalenderAnzahl >= this.kalenderAnzahl) {
                 return this.childConnection[verbindungID].getServerStub().getServerID();
             }
         }
-        
+
         return this.serverID;
     }
     /*public void serverDatenSpeicherung(){
