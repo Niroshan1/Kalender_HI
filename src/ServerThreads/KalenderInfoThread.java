@@ -54,7 +54,7 @@ public class KalenderInfoThread extends Thread {
                 serverIP = this.clientStub.getServerIP();
                 System.out.println("momentan ID " + serverID);
                 System.out.println("momentan IP " + serverIP);
-                if (serverID.equals(null)) {
+                if (serverID == null) {
 
                     serverID = this.serverDaten.serverKalenderAnzahlBewerten();
                     serverIP = this.serverDaten.findServer(serverID);
@@ -68,7 +68,7 @@ public class KalenderInfoThread extends Thread {
                     //Thread.sleep(5000);
                 }
 
-                if (serverIP.equals("Client hat bekommen") && serverID.equals(this.clientStub.getServerID())) {
+                if (serverIP.equals("Client hat bekommen")) {
                     serverID = this.clientStub.getServerID();
                     System.out.println("Client hat sich gemeldet " + serverID);
                     System.out.println("ServerID: " + serverIP);
