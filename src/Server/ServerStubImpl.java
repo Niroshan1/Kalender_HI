@@ -1,16 +1,12 @@
 package Server;
 
 import ServerThreads.VerbindungstestsThread;
-import Utilities.DatenbankException;
 import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.omg.CORBA.portable.RemarshalException;
 
 /**
@@ -101,15 +97,14 @@ public class ServerStubImpl implements ServerStub {
      * @throws RemoteException
      */
     @Override
-    public int kalenderAnzahl() throws RemoteException {
-        try {
-            return this.serverDaten.datenbank.getUserCounter();
+    public int getkalenderAnzahl() throws RemoteException {
+        return this.serverDaten.kalenderAnzahl;
 
-        } catch (SQLException | DatenbankException ex) {
-            Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 0;
-
+    }
+    
+    @Override
+    public void setKalenderAnzahl () throws RemoteException{
+        this.serverDaten.kalenderAnzahl++;
     }
     
     /**

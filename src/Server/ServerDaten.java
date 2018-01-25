@@ -36,6 +36,7 @@ public class ServerDaten {
     public String serverID;
     public final String[] childCount;
     public Verbindung[] childConnection;
+    public int kalenderAnzahl;
     
     //Hier wird der ID und IP von Kind mit kleinste Kalender anzahl gespeichert
     public String serverIDKind;
@@ -59,6 +60,7 @@ public class ServerDaten {
 
         datenbank = null;
         tmpDatenbank = null;
+        kalenderAnzahl = 0;
     }
 
     /**
@@ -128,35 +130,31 @@ public class ServerDaten {
         datenbank.getConnection();
     }
     
-    public void ladetmpDatenbank() throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
-        tmpDatenbank = new DBHandler();
-        tmpDatenbank.getConnection();
-    }
-
+        
     public String serverKalenderAnzahlBewerten() throws RemoteException, RemarshalException, SQLException, DatenbankException {
         int anzahlKalender = 0;
         int kleineKalenderAnzahl = 0;
         int verbindungID = 0;
         
+        if(this.childConnection.length == 0) {
+            for (int i = 0; i < this.childConnection.length; i++) {
+                anzahlKalender = this.childConnection[i].getServerStub().getkalenderAnzahl();
 
-        for (int i = 0; i < this.childConnection.length; i++) {
-            anzahlKalender = this.childConnection[i].getServerStub().kalenderAnzahl();
+                if (kleineKalenderAnzahl >= anzahlKalender) {
+                    kleineKalenderAnzahl = anzahlKalender;
+                    verbindungID = i;
+                }
 
-            if (kleineKalenderAnzahl >= anzahlKalender) {
-                kleineKalenderAnzahl = anzahlKalender;
-                verbindungID = i;
             }
 
+            // Prueft ob root weniger Kalender hat
+            if (kleineKalenderAnzahl < this.kalenderAnzahl) {
+                return this.childConnection[verbindungID].getServerStub().getServerID();
+            }
         }
-
-        // Prueft ob root weniger Kalender hat
-        if (kleineKalenderAnzahl < this.datenbank.getUserCounter()) {
-            return this.childConnection[verbindungID].getServerStub().getServerID();
-        }
-
+        
         return this.serverID;
     }
-    
     /*public void serverDatenSpeicherung(){
         PrintWriter pWriter = null;
         try {

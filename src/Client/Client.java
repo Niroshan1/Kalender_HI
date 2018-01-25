@@ -36,7 +36,8 @@ public class Client {
                 System.out.println("IP-Adresse des Servers auf: " + ipaddr + " gesetzt!");
             }
             stub = start.askRootServer(ipaddr);
-           // start.clientStart(stub);
+            
+            start.clientStart(stub);
 
         }
         
@@ -47,11 +48,9 @@ public class Client {
         try {
             ClientStub stub = null;
             Registry registry = LocateRegistry.getRegistry(ipaddr);
-            stub = (ClientStub) registry.lookup("ClientStubTMP");
+            stub = (ClientStub) registry.lookup("0");
             System.out.println("Mit Root Server verbunden!");
             
-            System.out.println(stub.getServerIP());
-            System.out.println(stub.getServerID());
             return stub;
                 
 
@@ -67,13 +66,16 @@ public class Client {
             
             String ipaddr = stubAkt.getServerIP();
             String serverID = stubAkt.getServerID();
-            
+            System.out.println(ipaddr + "Client");
+            System.out.println(serverID + "Client");
             Registry registry = LocateRegistry.getRegistry(ipaddr);
             ClientStub stub = stubAkt;
             stub = (ClientStub) registry.lookup(serverID);
 
             System.out.println("Mit Server verbunden!");
 
+            stub.setServerIP("Client hat bekommen");
+            
             GUI gui = new GUI(stub);
             gui.startGUI();
 

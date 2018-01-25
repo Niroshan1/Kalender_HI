@@ -7,6 +7,7 @@ package ServerThreads;
 
 import Server.ClientStub;
 import Server.ServerDaten;
+import Server.ServerStub;
 import Utilities.DatenbankException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -14,56 +15,67 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.omg.CORBA.portable.RemarshalException;
 
-
 /**
  *
  * @author timtim
  */
-public class KalenderAnzahlThread extends Thread{
-    
-    private final ClientStub clientStub;
-    private final ServerDaten serverDaten;
-    
-    public KalenderAnzahlThread(ClientStub clientStub, ServerDaten serverDaten){
-        //this.serverStub = serverStub;
+public class KalenderAnzahlThread extends Thread {
+
+    ClientStub clientStub;
+    ServerDaten serverDaten;
+    ServerStub serverStub;
+
+    /**
+     *
+     * @param clientStub
+     * @param serverDaten
+     * @param serverStub
+     */
+    public KalenderAnzahlThread(ClientStub clientStub, ServerDaten serverDaten, ServerStub serverStub) {
         this.clientStub = clientStub;
         this.serverDaten = serverDaten;
-    }    
-    
+        this.serverStub = serverStub;
+    }
+
     @Override
     public void run() {
-        Counter counter = new Counter();
+
         boolean serverUp = true;
+        String serverID = null;
+        String serverIP = null;
 
         while (serverUp) {
             try {
-                //if(this.serverDaten.datenbank.getUserCounter() == 0)
-                   // System.out.println("Keine Kalender!");
-                //else
-                    //System.out.println("Anzahl: " + this.serverDaten.datenbank.getUserCounter());
-                // Anzahl mit wenige Kalender Server mit ID notieren
-                //this.serverDaten.serverIDKind = this.serverDaten.serverKalenderAnzahlBewerten();
+                Thread.sleep(5000);
+                serverID = this.clientStub.getServerID();
+                System.out.println(serverID);
+                if (serverID == null) {
 
-                // Server IP adresse mitspeichern
-                //this.serverDaten.serverIPKind = this.serverDaten.findServer(this.serverDaten.serverIDKind);
-               
+                    serverID = this.serverDaten.serverKalenderAnzahlBewerten();
+                    serverIP = this.serverDaten.findServer(serverID);
 
-                //System.out.println("Server hat " + this.serverDaten.serverKalenderAnzahlBewerten());
-                //Thread.sleep(5000);
-                System.out.println("OwnIP: " + this.serverDaten.ownIP);
-                System.out.println("ParentIP: " + this.serverDaten.parentIP);
-                System.out.println("ServerID: " + this.serverDaten.serverID);
-                System.out.println("ServerIDKind: " + this.serverDaten.serverIDKind);
-                System.out.println("ServerIPKind: " + this.serverDaten.serverIPKind);
-//                System.out.println("Server hat " + this.serverDaten.serverKalenderAnzahlBewerten() + " Kalender");
-                System.out.println("");
-                System.out.println("");
+                    System.out.println(serverID);
+                    System.out.println(serverIP);
+                    
+                    this.clientStub.setServerID(serverID);
+                    this.clientStub.setServerIP(serverIP);
 
-                Thread.sleep(20000);
+                    Thread.sleep(20000);
+                } else if (serverIP.equals("Client hat bekommen")) {
+                    serverID = this.clientStub.getServerID();
+                    
+                    for (int i = 0; i < this.serverDaten.childConnection.length; i++) {
+                        if (serverID.equals(this.serverDaten.childConnection[i].getServerStub().getServerID())) {
+                            this.serverDaten.childConnection[i].getServerStub().setKalenderAnzahl();
+                            serverID = null;
+                            serverIP = null;
+                            this.clientStub.setServerID(serverID);
+                            this.clientStub.setServerIP(serverIP);
+                        }
+                    }
+                }
 
-                //beende Schleife
-                //serverUp = false;
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException | RemoteException | RemarshalException | SQLException | DatenbankException ex) {
                 Logger.getLogger(KalenderAnzahlThread.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
