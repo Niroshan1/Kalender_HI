@@ -125,22 +125,4 @@ public class Server {
         return clientStub;
     }
     
-    /**
-     * initialisiert den Stub für die Clients
-     *
-     * @throws RemoteException
-     * @throws AlreadyBoundException
-     * @throws SQLException
-     * @throws DatenbankException
-     */
-    private ClientStub initTMPClientStub() throws RemoteException, AlreadyBoundException, SQLException, DatenbankException {
-        ClientStubImpl clientLauncherTMP = new ClientStubImpl(this.serverDaten.tmpDatenbank);
-        ClientStub clientStubTMP = (ClientStub) UnicastRemoteObject.exportObject(clientLauncherTMP, 0);
-        Registry clientRegistry = LocateRegistry.createRegistry(1099);
-        clientRegistry.bind("ClientStubTMP", clientStubTMP);
-        System.out.println("LOG * ClientStub fuer neuer Client initialisiert!");
-
-        return clientStubTMP;
-    }
-    
 }

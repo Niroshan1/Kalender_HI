@@ -39,10 +39,10 @@ public class PingThread extends Thread{
                 
                 if(this.serverDaten.ownIP.equals(this.serverDaten.parentIP)) {
                     // Anzahl mit wenige Kalender Server mit ID notieren
-                    this.serverDaten.serverIDKind = this.serverDaten.serverKalenderAnzahlBewerten();
+                    //this.serverDaten.serverIDKind = this.serverDaten.serverKalenderAnzahlBewerten();
                     
                     // Server IP adresse mitspeichern
-                    this.serverDaten.serverIPKind = this.serverDaten.findServer(this.serverDaten.serverIDKind);
+                    //this.serverDaten.serverIPKind = this.serverDaten.findServer(this.serverDaten.serverIDKind);
                     
                 }
             }
@@ -52,8 +52,6 @@ public class PingThread extends Thread{
                 counter.setNegativ();
             }
         } catch (RemoteException ex) {
-        } catch (RemarshalException | SQLException | DatenbankException ex) {
-            Logger.getLogger(PingThread.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

@@ -36,8 +36,8 @@ public class ServerDaten {
     public int kalenderAnzahl;
 
     //Hier wird der ID und IP von Kind mit kleinste Kalender anzahl gespeichert
-    public String serverIDKind;
-    public String serverIPKind;
+    //public String serverIDKind;
+    //public String serverIPKind;
 
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
 
@@ -46,8 +46,8 @@ public class ServerDaten {
         this.parentIP = args[1];
         this.childCount = new String[10];
         this.childConnection = new Verbindung[10];
-        this.serverIDKind = null;
-        this.serverIPKind = null;
+        //this.serverIDKind = null;
+        //this.serverIPKind = null;
 
         if (parentIP.equals("root")) {
             this.serverID = "0";
