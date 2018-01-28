@@ -55,24 +55,6 @@ public class DBHandler {
         }       
     }
     
-    public void deleteDB(int serverID) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {       
-        if(con == null){
-            Class.forName("org.sqlite.JDBC");
-            con = DriverManager.getConnection("jdbc:sqlite:Kalender.db");
-            
-            Statement state = con.createStatement();            
-            state.executeUpdate("DROP TABLE benutzer");
-            state.executeUpdate("DROP TABLE termine");
-            state.executeUpdate("DROP TABLE terminkalender");
-            state.executeUpdate("DROP TABLE kontaktliste");
-            state.executeUpdate("DROP TABLE meldungen");
-            state.executeUpdate("DROP TABLE anfragen");
-            state.executeUpdate("DROP TABLE counters");
-            
-            initialise(serverID);  
-        }       
-    }
-    
     /**
      * erstellt die Datenbank, bzw einzelne Tabellen falls noch nicht vorhanden
      * 

@@ -5,8 +5,12 @@
  */
 package Server;
 
+import Utilities.Anfrage;
+import Utilities.Termin;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
+import java.util.LinkedList;
 
 /**
  *
@@ -17,8 +21,19 @@ public interface ServerStub extends Remote{
     public String initConnection(String ip) throws RemoteException;
     public boolean ping(String senderIP) throws RemoteException;
     public String getServerID() throws RemoteException; 
+    public int getAnzahlUser() throws RemoteException;
     
+    //Datensuche
+    public int findIdForUser(String username) throws RemoteException, SQLException;
+    public LinkedList<String> findUserProfil(int userID) throws RemoteException, SQLException;
     
-    
-    // public .... ladeDB(...) throws RemoteException;
+    //Datenmanipulation
+    public void changeEditierrechte(String ownIP, int requestCounter, Termin termin) throws RemoteException, SQLException;
+    public void updateTermin(String originIP, int requestCounter, Termin termin) throws RemoteException, SQLException;
+    public void addTeilnehmer(String originIP, int requestCounter, int terminID, int userID, String username) throws RemoteException, SQLException;
+    public void addTermin(String originIP, int requestCounter, int userID, Anfrage anfrage, String sendername) throws RemoteException, SQLException;
+    public void deleteTermin(String originIP, int requestCounter, Termin termin, String meldungsText) throws RemoteException, SQLException;
+    public void removeTeilnehmerFromTermin(String originIP, int requestCounter, Termin termin, String username, int userID) throws RemoteException, SQLException;
+    public void teilnehmerChangeStatus(String originIP, int requestCounter, Termin termin, String username, boolean status, String meldungstext) throws RemoteException, SQLException; 
+
 }

@@ -76,40 +76,23 @@ public class ClientStubImpl implements ClientStub{
      * @return true, falls client am richtigen server, false falls server nicht
      * vorhanden, sonst die ip des servers an dem die db liegt
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public String findServerForUser(String username) throws SQLException{
-        if(serverDaten.datenbank.userExists(username)){
-            return "true";          
-        }
-        //wenn user nicht vorhanden--> Flooding weiterleitung
-        else{
-            LinkedList<String> resultList = new LinkedList<>();
-            int anzahlThreads = 0;
-            for(Verbindung connection : serverDaten.connectionList){             
-                new FindUserDataFlooding(resultList, this.serverDaten.primitiveDaten.ownIP, this.serverDaten.primitiveDaten.requestCounter, username, connection).start();
-                anzahlThreads++;
+    public String findServerForUser(String username) throws SQLException, RemoteException{
+        int tmp;
+        int min = this.serverDaten.aktiveSitzungen.size();
+        String minServerIP = this.serverDaten.primitiveDaten.ownIP ;
+        
+        for(Verbindung child : this.serverDaten.childConnection){
+            tmp = child.getServerStub().getAnzahlUser();
+            if(tmp < min){
+                min = tmp;
+                minServerIP = child.getIP();
             }
-            this.serverDaten.primitiveDaten.requestCounter++;
-            while(resultList.size() < anzahlThreads){
-                for(String result : resultList){
-                    if(result != null && !result.equals("false")){
-                        return result;
-                    }
-                }
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            for(String result : resultList){
-                if(result != null && !result.equals("false")){
-                    return result;                   
-                }              
-            }            
         }
-        return "false";
+        
+        return minServerIP;
     }
     
     /**

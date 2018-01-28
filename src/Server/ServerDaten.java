@@ -16,7 +16,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,7 +37,7 @@ public class ServerDaten {
     //Liste mit aktiven Sitzungen (eingeloggte User des Servers)
     public final LinkedList<Sitzung> aktiveSitzungen; 
     public PrimitiveServerDaten primitiveDaten;
-
+    
     //Hier wird der ID und IP von Kind mit kleinste Kalender anzahl gespeichert
     //public String serverIDKind;
     //public String serverIPKind;
@@ -48,10 +50,11 @@ public class ServerDaten {
         if (args[1].equals("root")) {
             primitiveDaten = new PrimitiveServerDaten(args[0], "0");
             datenbank = new DBHandler(aktiveSitzungen, childConnection, primitiveDaten);
-            datenbank.getConnection(0);          
+            datenbank.getConnection(0); 
         } else {
             primitiveDaten = new PrimitiveServerDaten(args[0], null);
-            datenbank = null;
+            datenbank = null; 
+            userProServerListe = null;
         }
 
         
@@ -85,10 +88,8 @@ public class ServerDaten {
             
             //Starte Threads, die die Verbindung zu anderen Servern testen
             new VerbindungstestsParentThread(this, this.parent).start();
-            
-            datenbank = new DBHandler(aktiveSitzungen, childConnection, primitiveDaten);
-            datenbank.deleteDB(Integer.parseInt(primitiveDaten.serverID));         
-        } catch (ClassNotFoundException | SQLException | NoSuchAlgorithmException | NotBoundException ex) {
+                 
+        } catch (NotBoundException ex) {
             Logger.getLogger(ServerDaten.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
