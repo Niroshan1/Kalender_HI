@@ -127,8 +127,6 @@ public class DBHandler {
                 Statement stateKontaktliste = con.createStatement();
                 stateKontaktliste.execute("CREATE TABLE kontaktliste(userID integer,"
                         + "kontaktname varchar(60),"
-                        + "foreign key(userID) references benutzer(userID),"
-                        + "foreign key(kontaktname) references benutzer(username),"
                         + "primary key(userID, kontaktname))");
             }
             
