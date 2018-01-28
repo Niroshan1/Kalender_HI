@@ -37,7 +37,7 @@ public class VerbindungstestsParentThread extends Thread{
             try {
                 Thread.sleep(3000);
                        
-                System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
+                //System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
                 counter.decrement();               
                 
                 //starte Thread der Server anpingt               

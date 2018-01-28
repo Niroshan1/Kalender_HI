@@ -64,7 +64,7 @@ public class LoginFenster extends javax.swing.JFrame {
                     Registry registry = LocateRegistry.getRegistry(result, 1099);                   
                     try {
                         stub = (ClientStub) registry.lookup("ClientStub");
-                        System.out.println("neue verbindung hergestellt");
+                        System.out.println("-> Neue Verbindung zu " + result + " hergestellt");
                     } catch (NotBoundException | AccessException ex) {
 
                     }                   
