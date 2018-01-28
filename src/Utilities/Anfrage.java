@@ -11,7 +11,8 @@ import java.io.Serializable;
  *
  * @author Tim Meyer
  */
-public class Anfrage extends Meldungen implements Serializable{
+public class Anfrage extends Meldung implements Serializable{
+    
     private final Termin termin;
     private final String absender;
     
@@ -31,6 +32,6 @@ public class Anfrage extends Meldungen implements Serializable{
     
     @Override
     public String getText(){
-        return text + ": " + termin.getTitel() + " am " + termin.getDatum().toString();
+        return absender + " lädt sie zu dem Termin " + termin.getTitel() + " am " + termin.getDatum() + " ein.";
     }
 }

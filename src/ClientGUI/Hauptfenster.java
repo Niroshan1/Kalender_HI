@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -6,14 +7,17 @@
 package ClientGUI;
 
 import Server.ClientStub;
+import Server.ClientStubImpl;
+import Utilities.Anfrage;
 import Utilities.BenutzerException;
 import Utilities.Datum;
-import Utilities.Meldungen;
+import Utilities.Meldung;
 import Utilities.Termin;
 import Utilities.TerminException;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -28,6 +32,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -43,9 +48,10 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     DefaultListModel listModel = new DefaultListModel();
     DefaultListModel termineListeModel = new DefaultListModel();
     //DefaultListModel event = new DefaultListModel();
-    Fenster fenster;
+    LoginFenster fenster;
     DefaultListModel meldungModel = new DefaultListModel();
     LinkedList<Termin> dieserMonat;
+    private int meldungssize ;
 
     //Niros globale Variablen
     LocalDate ld = LocalDate.now();
@@ -57,6 +63,7 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     JButton[] button = new JButton[42];
     int[] tagBekommen = new int[42];
     int daySelector;
+    Timer timer;
 
     /**
      * Creates new form HauptFenster
@@ -65,13 +72,14 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
      * @param sitzungsID
      * @param fenster
      */
-    public Hauptfenster(ClientStub stub, int sitzungsID, Fenster fenster) {
+    public Hauptfenster(ClientStub stub, int sitzungsID, LoginFenster fenster) {
         initComponents();
 
         this.stub = stub;
         this.sitzungsID = sitzungsID;
         this.fenster = fenster;
-
+        this.meldungssize = 0;
+        
         jList1.setModel(listModel);
         termineListe.setModel(termineListeModel);
         daySelector = 0;
@@ -81,9 +89,29 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         } catch (RemoteException | BenutzerException ex) {
             Logger.getLogger(Hauptfenster.class.getName()).log(Level.SEVERE, null, ex);
         }
+              
+        ActionListener taskPerformer = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                refresh();
+            }
+        };
+        timer = new Timer(1000, taskPerformer);
+        timer.start();
+        
     }
 
     private void initKalender() {
+        /*String tag = day;
+        int count = 1;
+        String tay2 = new String();
+        for (int i = 0; i <= 41; i++){
+            int count2 = count + i;
+            String cast = String.valueOf(count2);
+            tay2 = tag + cast;
+            JButton jbatton = (JButton) tay2;
+            button[i] = jbatton;
+        }*/
         button[0] = day1;
         button[1] = day2;
         button[2] = day3;
@@ -304,7 +332,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             //set title
             //d.setTitle("Date Picker");
         } catch (RemoteException | TerminException | BenutzerException ex) {
-            Logger.getLogger(CalenderPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -403,7 +430,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         jPanel7 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
         calendarPanel = new javax.swing.JPanel();
         headerPanel = new javax.swing.JPanel();
         dateLabel = new javax.swing.JLabel();
@@ -512,6 +538,7 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        jList1.setToolTipText("");
         jList1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jList1MouseClicked(evt);
@@ -545,9 +572,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         showAddKontakt.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 showAddKontaktMouseClicked(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                showAddKontaktMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 showAddKontaktMouseReleased(evt);
@@ -585,9 +609,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         showRemoveKontakt.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 showRemoveKontaktMouseClicked(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                showRemoveKontaktMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 showRemoveKontaktMouseReleased(evt);
@@ -661,11 +682,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             }
         });
         jPanel7.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 30, 150, -1));
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(240, 240, 240));
-        jLabel3.setText("MADE BY ZUSE TEAM 2017");
-        jPanel7.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 180, -1));
 
         jPanel6.add(jPanel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 200, 100));
 
@@ -1206,9 +1222,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jLabel16MouseEntered(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel16MousePressed(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jLabel16MouseReleased(evt);
             }
@@ -1246,9 +1259,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         jLabel17.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel17MouseClicked(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel17MousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jLabel17MouseReleased(evt);
@@ -1324,9 +1334,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel12MouseClicked(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel12MousePressed(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jLabel12MouseReleased(evt);
             }
@@ -1364,9 +1371,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         jLabel13.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel13MouseClicked(evt);
-            }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jLabel13MousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 jLabel13MouseReleased(evt);
@@ -1441,9 +1445,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 zumProfilMouseClicked(evt);
             }
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                zumProfilMousePressed(evt);
-            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 zumProfilMouseReleased(evt);
             }
@@ -1492,9 +1493,16 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     }//GEN-LAST:event_jList1ComponentShown
 
     private void benachListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benachListMouseClicked
-        int size = meldungModel.getSize();
-        if (!(size == 0)) {
-            new EventDet(benachList.getSelectedValue(), stub, sitzungsID, benachList.getSelectedIndex(), this).setVisible(true);
+        if(evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1){
+            int size = meldungModel.getSize();
+            if (!(size == 0)) {
+                try {
+                    Meldung meldung = stub.getMeldungen(sitzungsID).get(meldungssize - 1 - benachList.getSelectedIndex());
+                    new AnfragenMeldungenFenster(stub, sitzungsID, meldung, this).setVisible(true);
+                } catch (RemoteException | BenutzerException ex) {
+                    Logger.getLogger(Hauptfenster.class.getName()).log(Level.SEVERE, null, ex);
+                }           
+            }
         }
     }//GEN-LAST:event_benachListMouseClicked
 
@@ -1527,12 +1535,15 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     }//GEN-LAST:event_day25ActionPerformed
 
     private void jList1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jList1MouseClicked
-        KontaktProfil profil;
-        try {
-            profil = new KontaktProfil(stub, sitzungsID, jList1.getSelectedValue());
-            profil.setVisible(true);
-        } catch (RemoteException | BenutzerException ex) {
-            Logger.getLogger(Hauptfenster.class.getName()).log(Level.SEVERE, null, ex);
+        if(evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1){
+            KontaktProfilFenster profil;
+            
+            try {
+                profil = new KontaktProfilFenster(stub, sitzungsID, jList1.getSelectedValue());
+                profil.setVisible(true);
+            } catch (RemoteException | BenutzerException | SQLException ex) {
+                Logger.getLogger(Hauptfenster.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }//GEN-LAST:event_jList1MouseClicked
@@ -1600,17 +1611,16 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     }//GEN-LAST:event_termineListeMouseEntered
 
     private void termineListeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_termineListeMouseClicked
-        int size = termineListeModel.getSize();
-        if (!(size == 0)) {
-            try {
-                final int selection = daySelector;
-                int terminID = stub.getTermineAmTag(new Datum(tagBekommen[selection], month + 1, year), sitzungsID).get(termineListe.getSelectedIndex()).getID();
-
-                new TerminInhalt(terminID, stub, sitzungsID).setVisible(true);
-            } catch (RemoteException | BenutzerException | TerminException | Datum.DatumException ex) {
-                JOptionPane.showMessageDialog(null, ex.getMessage(), "Hauptfenster", JOptionPane.ERROR_MESSAGE);
+        if(evt.getClickCount() == 2 && evt.getButton() == MouseEvent.BUTTON1){
+            if (termineListeModel.getSize() > 0) {
+                try {                                             
+                    int terminID = stub.getTermineAmTag(new Datum(tagBekommen[daySelector], month + 1, year), sitzungsID).get(termineListe.getSelectedIndex()).getID();                   
+                    new TerminAnzeigenFenster(terminID, stub, sitzungsID, this).setVisible(true);
+                } catch (RemoteException | BenutzerException | TerminException | Datum.DatumException ex) {
+                    JOptionPane.showMessageDialog(null, ex.getMessage(), "Hauptfenster", JOptionPane.ERROR_MESSAGE);
+                }
             }
-        }
+        }     
     }//GEN-LAST:event_termineListeMouseClicked
 
     private void jPanel10MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel10MouseClicked
@@ -1620,15 +1630,22 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     private void jLabel12MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MouseClicked
         // TODO add your handling code here:
         jLabel12.setForeground(Color.white);
-        TerminAnlegen startTA = new TerminAnlegen(stub, sitzungsID, this);
+        TerminAnlegenFenster startTA = new TerminAnlegenFenster(stub, sitzungsID, this);
         startTA.setVisible(true);
     }//GEN-LAST:event_jLabel12MouseClicked
 
     private void jLabel13MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MouseClicked
-        // TODO add your handling code here:
-        jLabel13.setForeground(Color.white);
-        fillMeldList();
-        displayDate();
+        try {
+            // TODO add your handling code here:
+            for(String kontakte : stub.getKontakte(sitzungsID)){
+                System.out.println(kontakte);
+            }
+        } catch (BenutzerException ex) {
+            Logger.getLogger(Hauptfenster.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (RemoteException ex) {
+            Logger.getLogger(Hauptfenster.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        refresh();
     }//GEN-LAST:event_jLabel13MouseClicked
 
     private void jPanel11MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel11MouseClicked
@@ -1648,8 +1665,8 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     private void zumProfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zumProfilMouseClicked
         // TODO add your handling code here:
         zumProfil.setForeground(Color.white);
-        YourProfil profil;
-        profil = new YourProfil(stub, sitzungsID);
+        ProfilFenster profil;
+        profil = new ProfilFenster(stub, sitzungsID);
         profil.fillProfil();
         profil.setVisible(true);
     }//GEN-LAST:event_zumProfilMouseClicked
@@ -1722,48 +1739,13 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         // TODO add your handling code here:
     }//GEN-LAST:event_contactUsernameFieldActionPerformed
 
-    private void showAddKontaktMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showAddKontaktMousePressed
-        // TODO add your handling code here:
-        showAddKontakt.setForeground(Color.gray);
-    }//GEN-LAST:event_showAddKontaktMousePressed
-
-    private void showRemoveKontaktMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_showRemoveKontaktMousePressed
-        // TODO add your handling code here:
-        showRemoveKontakt.setForeground(Color.gray);
-    }//GEN-LAST:event_showRemoveKontaktMousePressed
-
-    private void jLabel16MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MousePressed
-        // TODO add your handling code here:
-        jLabel16.setForeground(Color.gray);
-    }//GEN-LAST:event_jLabel16MousePressed
-
     private void jLabel16MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel16MouseEntered
         // TODO add your handling code here:
     }//GEN-LAST:event_jLabel16MouseEntered
 
-    private void jLabel12MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel12MousePressed
-        // TODO add your handling code here:
-        jLabel12.setForeground(Color.gray);
-    }//GEN-LAST:event_jLabel12MousePressed
-
-    private void jLabel17MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel17MousePressed
-        // TODO add your handling code here:
-        jLabel17.setForeground(Color.gray);
-    }//GEN-LAST:event_jLabel17MousePressed
-
-    private void jLabel13MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel13MousePressed
-        // TODO add your handling code here:
-        jLabel13.setForeground(Color.gray);
-    }//GEN-LAST:event_jLabel13MousePressed
-
-    private void zumProfilMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_zumProfilMousePressed
-        // TODO add your handling code here:
-        zumProfil.setForeground(Color.gray);
-    }//GEN-LAST:event_zumProfilMousePressed
-
     private void jLabel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel1MouseClicked
         // TODO add your handling code here:
-        Version startVersion = new Version();
+        VersionsFenster startVersion = new VersionsFenster();
         startVersion.setVisible(true);
     }//GEN-LAST:event_jLabel1MouseClicked
 
@@ -1774,6 +1756,8 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             //this.setVisible(false);
             this.dispose();
             this.fenster.setVisible(true);
+            
+            this.timer.stop();
             /*GUI out = new GUI();
             out.startGUI();         */
         } catch (RemoteException ex) {
@@ -1800,27 +1784,27 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     /**
      * Fuele Meldung liste auf
      */
-    public void fillMeldList() {
-        meldungModel = new DefaultListModel();
-        int i = 0;
+    public void fillMeldList() { 
         try {
-            for (Meldungen meldung : stub.getMeldungen(sitzungsID)) {
-                i++;
-                if (meldung.getStatus()) {
-                    meldungModel.addElement(i + "-" + meldung.getText());
-
-                } else {
-                    meldungModel.addElement(i + "-" + meldung.getText());
+            meldungModel = new DefaultListModel();
+            LinkedList<Meldung> meldungen = stub.getMeldungen(sitzungsID);            
+            meldungssize = meldungen.size();
+            Meldung meldung;
+            
+            for (int i = meldungssize - 1; i >= 0; i--) {
+                meldung = meldungen.get(i);
+                if(meldung instanceof Anfrage){
+                    meldungModel.addElement("Einladung von " + ((Anfrage) meldung).getAbsender());
+                    //TODO: färbe hintergrund in anderer farbe
                 }
-
+                else{
+                    meldungModel.addElement(meldung.getText().substring(0, 25) + "...");
+                }
             }
 
-        } catch (RemoteException ex) {
-            JOptionPane.showMessageDialog(null, ex.getMessage(), "Benachrichtigungen aktualisierung", JOptionPane.ERROR_MESSAGE);
-        } catch (BenutzerException ex) {
+        } catch (RemoteException | BenutzerException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Benachrichtigungen aktualisierung", JOptionPane.ERROR_MESSAGE);
         }
-
         benachList.setModel(meldungModel);
     }
 
@@ -1868,6 +1852,12 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         java.awt.EventQueue.invokeLater(() -> {
             new Hauptfenster().setVisible(true);
         });
+    }
+    
+    public void refresh(){
+        jLabel13.setForeground(Color.white);
+        fillMeldList();
+        displayDate();
     }
 
 
@@ -1931,7 +1921,6 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JList<String> jList1;

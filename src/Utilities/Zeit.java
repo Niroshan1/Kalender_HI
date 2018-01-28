@@ -49,6 +49,23 @@ public class Zeit implements Serializable{
         return minute;
     }
     
+    public String getStundeAsString(){
+        if(stunde < 10){
+            return "0" + Integer.toString(stunde);
+        }
+        else{
+            return Integer.toString(stunde);
+        }
+    }
+    public String getMinuteAsString(){
+        if(minute < 10){
+            return "0" + Integer.toString(minute);
+        }
+        else{
+            return Integer.toString(minute);
+        }
+    }
+    
     @Override
     public String toString(){
         if(this.minute < 10){

@@ -29,7 +29,7 @@ public class Counter {
         value--;
     }
     
-    public void setNegativ(){
-        value = -1;
+    public void setZero(){
+        value = 0;
     }
 }

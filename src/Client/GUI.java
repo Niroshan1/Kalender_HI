@@ -5,7 +5,7 @@
  */
 package Client;
 
-import ClientGUI.Fenster;
+import ClientGUI.LoginFenster;
 import Server.ClientStub;
 import Utilities.BenutzerException;
 import Utilities.Datum;
@@ -68,7 +68,7 @@ public class GUI {
      * @throws Terminkalender.Zeit.ZeitException 
      */
     private void anmeldenGUI() throws RemoteException, BenutzerException, TerminException, Datum.DatumException, Zeit.ZeitException, SQLException{ 
-        Fenster start = new Fenster(stub);
+        LoginFenster start = new LoginFenster(stub);
         start.setVisible(true);
         
     }

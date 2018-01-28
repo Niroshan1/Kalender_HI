@@ -5,7 +5,7 @@
  */
 package Server;
 
-import Utilities.DatenbankException;
+import Server.Utilities.DatenbankException;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,7 +13,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -34,6 +33,15 @@ public class TerminkalenderMain {
     /**
      * @param args the command line arguments
      * @throws org.omg.CORBA.portable.RemarshalException
+     * @throws java.io.FileNotFoundException
+     * @throws java.rmi.RemoteException
+     * @throws java.rmi.NotBoundException
+     * @throws java.rmi.AlreadyBoundException
+     * @throws java.net.UnknownHostException
+     * @throws Server.Utilities.DatenbankException
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
+     * @throws java.security.NoSuchAlgorithmException
      */
     public static void main(String[] args) throws RemarshalException, FileNotFoundException, IOException, RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException, ClassNotFoundException, NoSuchAlgorithmException {
         File file = new File("serverIP.txt");
@@ -46,16 +54,17 @@ public class TerminkalenderMain {
                 System.out.println("LOG * Datei wird ausgelesen!");
                 br = new BufferedReader(new FileReader(new File("serverIP.txt")));
                 String line = null;
+                String[] parts = null;
                 while ((line = br.readLine()) != null) {
                     // Ganze Zeile:
                     // System.out.println(line);               
-                    String[] parts = line.split(" ");
+                    parts = line.split(" ");
                     System.out.println("LOG * LOG * OwnIP: " + parts[0]);
                     System.out.println("ParentIP: " + parts[1]);
                     System.out.println("LOG * ");
                     
                 }
-                Server server = new Server(args);
+                Server server = new Server(parts);
                 server.start();
             } else if (args.length == 2) {
                 System.out.println("LOG * ");
@@ -70,7 +79,7 @@ public class TerminkalenderMain {
             } else {
                 System.out.println("Eingabeparameter: <Eigene IP> <Parent IP>");
             }
-        } catch (RemoteException | AlreadyBoundException | NotBoundException | UnknownHostException | DatenbankException | SQLException ex) {
+        } catch (RemoteException | AlreadyBoundException | NotBoundException | UnknownHostException | SQLException ex) {
             Logger.getLogger(TerminkalenderMain.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             if (bw != null) {

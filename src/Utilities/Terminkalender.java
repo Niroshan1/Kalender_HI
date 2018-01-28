@@ -15,18 +15,16 @@ import java.util.LinkedList;
 public class Terminkalender implements Serializable{
 
     private final LinkedList<Termin> terminkalender;
-    private int terminCounter;
     
-    Terminkalender(int terminCounter){
-        terminkalender = new LinkedList<>();
-        this.terminCounter = terminCounter;
+    Terminkalender(){
+        this.terminkalender = new LinkedList<>();
     }
        
     /**
      * 
      * @param id
      * @return 
-     * @throws Terminkalender.TerminException 
+     * @throws Utilities.TerminException 
      */
     public Termin getTerminByID(int id) throws TerminException{
         for(Termin termin : terminkalender){
@@ -38,25 +36,9 @@ public class Terminkalender implements Serializable{
     }
     
     /**
-     * 
-     * @param datum
-     * @param beginn
-     * @param ende
-     * @param titel
-     * @param username
-     * @return 
-     * @throws TerminException 
-     */
-    public int addTermin(Datum datum, Zeit beginn, Zeit ende, String titel, String username) throws TerminException{
-        terminkalender.add(new Termin(datum, beginn, ende, titel, terminCounter, username));
-        terminCounter++;
-        return terminCounter - 1;
-    }
-    
-    /**
      * Hilfsmethode für getTerminImMonat und getTerminInWoche
      * 
-     * @param termin 
+     * @param termin der hinzugefügt werden soll 
      */
     public void addTermin(Termin termin){
         terminkalender.add(termin);
@@ -65,10 +47,10 @@ public class Terminkalender implements Serializable{
     /**
      * gibt alle Termine im Monat 'monat' in LinkedList zurück
      * 
-     * @param monat
-     * @param jahr
-     * @return 
-     * @throws Terminkalender.TerminException 
+     * @param monat Monat der gesucht wird
+     * @param jahr Jeweiliges Jahr
+     * @return Auszug der Termine in einem Monat
+     * @throws Utilities.TerminException 
      */
     public LinkedList<Termin> getTermineImMonat(int monat, int jahr) throws TerminException{
         LinkedList<Termin> monatsauszug = new LinkedList<>();
@@ -82,9 +64,9 @@ public class Terminkalender implements Serializable{
     }
     
     /**
-     * 
-     * @param datum
-     * @return
+     * Gibt die Termine an einem Tag zurück 
+     * @param datum Das datum mit dem Tag dessen Termine gesucht werden
+     * @return Auszug der Termine an einem Tag 
      * @throws TerminException 
      */
     public LinkedList<Termin> getTermineAmTag(Datum datum) throws TerminException{
@@ -101,9 +83,9 @@ public class Terminkalender implements Serializable{
     /**
      * gibt alle Termine der übergebenen Kalenderwoche in LinkedList zurück
      * 
-     * @param kalenderwoche
-     * @param jahr
-     * @return 
+     * @param kalenderwoche Kalenderwoche aus der die Termine Angezeigt werden
+     * @param jahr jeweiliges Jahr
+     * @return Auszug der Termine an einer Woche
      */
     public LinkedList<Termin> getTermineInWoche(int kalenderwoche, int jahr) {
         LinkedList<Termin> wochenauszug = new LinkedList<>();
@@ -116,17 +98,36 @@ public class Terminkalender implements Serializable{
         return wochenauszug;
     }
 
-    /**
-     * 
-     * @param id 
-     * @throws Terminkalender.TerminException 
-     */
-    public void removeTerminByID(int id) throws TerminException{
-        terminkalender.remove(getTerminByID(id));
+    public boolean updateTermin(Termin termin, String username, int userID) throws TerminException{
+        for(Termin alterTermin : terminkalender){
+            if(alterTermin.getID() == termin.getID()){
+                try{
+                    alterTermin.setBeginn(termin.getBeginn(), username);
+                    alterTermin.setEnde(termin.getEnde(), username);
+                }
+                catch(TerminException ex){                    
+                    alterTermin.setEnde(termin.getEnde(), username);
+                    alterTermin.setBeginn(termin.getBeginn(), username);
+                }
+                alterTermin.setDatum(termin.getDatum(), username);
+                alterTermin.setNotiz(termin.getNotiz(), username);
+                alterTermin.setOrt(termin.getOrt(), username);
+                alterTermin.setTitel(termin.getTitel(), username);              
+                return true;
+            }
+        }
+        return false;
     }
     
-    public int getTerminCounter(){
-        return terminCounter;
+    /**
+     * Entfernt einen Termin
+     * @param id ID des Termins der netfernt werden soll
+     * @throws Utilities.TerminException 
+     */
+    public void removeTerminByID(int id) throws TerminException{
+        if(terminkalender.contains(getTerminByID(id))){
+            terminkalender.remove(getTerminByID(id));
+        }
     }
     
 }

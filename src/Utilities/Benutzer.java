@@ -5,6 +5,7 @@
  */
 package Utilities;
 
+import Server.Utilities.EMailService;
 import java.util.LinkedList;
 import java.io.Serializable;
 import java.security.SecureRandom;
@@ -15,61 +16,38 @@ import java.security.SecureRandom;
  */
 public class Benutzer implements Serializable{
     
-    private int userID;
+    private final int userID;
     private final String username;
     private String vorname;
     private String nachname;
     private String email;
     private String passwort;
-    private Terminkalender terminkalender;
+    
+    private final Terminkalender terminkalender;
     private LinkedList<String> kontaktliste; 
-    private LinkedList<Meldungen> meldungen;
-    private int meldungsCounter;
+    private LinkedList<Meldung> meldungen;   
     
     /**
+     * Konstruktor, genutzt von der DB
      * 
      * @param username
      * @param passwort
      * @param email
-     * @throws BenutzerException 
+     * @param userID
+     * @param vorname
+     * @param nachname
      */
-    Benutzer(String username, String passwort, String email, int userID) throws BenutzerException{
-        if(username.length() < 4 || username.length() > 12){
-            throw new BenutzerException("Der Username sollte zwischen 4 und 12 Zeichen lang sein");
-        }
-        if(passwort.length() < 4 || passwort.length() > 12){
-            throw new BenutzerException("Das Passwort sollte zwischen 4 und 12 Zeichen lang sein");
-        }
-        
-        this.userID = userID;
-        this.email = email;
-        this.username = username;
-        this.passwort = passwort;
-        this.nachname = "";
-        this.vorname = "";
-        this.terminkalender = new Terminkalender(userID * 1000000 + 1);
-        this.kontaktliste = new LinkedList<>();
-        this.meldungen = new LinkedList<>();
-        this.meldungsCounter = 1 + userID * 1000000;
-    } 
-    
-    /**
-     * 
-     * @param username
-     * @param passwort
-     * @param email
-     */
-    Benutzer(String username, String passwort, String email, int userID, String vorname, String nachname, int meldungsCounter, int terminIDCounter){        
+    public Benutzer(String username, String passwort, String email, int userID, String vorname, String nachname){        
         this.userID = userID;
         this.email = email;
         this.username = username;
         this.passwort = passwort;
         this.nachname = nachname;
         this.vorname = vorname;
-        this.terminkalender = new Terminkalender(terminIDCounter);
+        
+        this.terminkalender = new Terminkalender();
         this.kontaktliste = new LinkedList<>();
-        this.meldungen = new LinkedList<>();
-        this.meldungsCounter = meldungsCounter;
+        this.meldungen = new LinkedList<>();      
     }
     
     //Getter:
@@ -88,24 +66,17 @@ public class Benutzer implements Serializable{
     public String getEmail(){
         return email;
     } 
-    public int getMeldungsCounter(){
-        return meldungsCounter;
-    }
     public Terminkalender getTerminkalender(){
         return terminkalender;
     }
     public final LinkedList<String> getKontaktliste(){
         return kontaktliste;
     }
-    public LinkedList<Meldungen> getMeldungen(){
+    public LinkedList<Meldung> getMeldungen(){
         return meldungen;
-    }
-    
+    }    
     public int getUserID(){
         return this.userID;
-    }
-    public int getTerminCounter(){
-        return terminkalender.getTerminCounter();
     }
     
     //Setter:
@@ -127,12 +98,16 @@ public class Benutzer implements Serializable{
     public void setKontaktliste(LinkedList<String> kontaktliste){
         this.kontaktliste = kontaktliste;
     }
-    public void setMeldungen(LinkedList<Meldungen> meldungen){
+    public void setMeldungen(LinkedList<Meldung> meldungen){
         this.meldungen = meldungen;
     }
     
     
-    
+    /**
+     * Sendet eine Email an den User mit einem neuen Passwort
+     * 
+     * @return passwort das neu erstellt worden ist.
+     */
     public String resetPasswort(){
         String message;
         EMailService emailService = new EMailService();
@@ -164,13 +139,14 @@ public class Benutzer implements Serializable{
     /**
      * 
      * @param username 
-     * @throws Terminkalender.BenutzerException 
+     * @throws Utilities.BenutzerException 
      */
     public void addKontakt(String username) throws BenutzerException{
         if(username.equals(this.username)){
             throw new BenutzerException("Du kannst dich nicht selbst hinzufügen!");
         }
         for(String kontakt : kontaktliste){
+            System.out.println(kontakt + " + user: " + username);
             if(kontakt.equals(username)){
                 throw new BenutzerException(username + " bereits in der Kontaktliste vorhanden!");
             }
@@ -181,7 +157,7 @@ public class Benutzer implements Serializable{
     /**
      * 
      * @param username 
-     * @throws Terminkalender.BenutzerException 
+     * @throws Utilities.BenutzerException 
      */
     public void removeKontakt(String username) throws BenutzerException{
         boolean inListe = false;
@@ -195,20 +171,6 @@ public class Benutzer implements Serializable{
         }
         kontaktliste.remove(username);
     }
-
-    /**
-     * 
-     * @param datum
-     * @param beginn
-     * @param ende
-     * @param titel
-     * @return 
-     * @throws TerminException 
-     */
-    public int addTermin(Datum datum, Zeit beginn, Zeit ende, String titel) throws TerminException{
-        return terminkalender.addTermin(datum, beginn, ende, titel, username);
-    }
-
     
     /**
      * 
@@ -220,33 +182,58 @@ public class Benutzer implements Serializable{
     
     /**
      * 
-     * @param termin
-     * @param text
-     * @param absender 
-     * @return  
+     * @param anfrage  
      */
-    public int addAnfrage(Termin termin, String text, String absender){
-        meldungen.add(new Anfrage(text ,termin, absender, meldungsCounter));
-        meldungsCounter++;
-        return meldungsCounter - 1;
+    public void addAnfrage(Anfrage anfrage){
+        meldungen.add(anfrage);
     }
     
     /**
      *
      * @param meldung
-     * @return 
      */
-    public int addMeldung(String meldung){
-        meldungen.add(new Meldungen(meldung, meldungsCounter));
-        meldungsCounter++;
-        return meldungsCounter - 1;
+    public void addMeldung(Meldung meldung){
+        meldungen.add(meldung);
     }
     
     /**
      * 
-     * @param index 
+     * @param meldungsID 
      */
-    public void deleteMeldung(int index){
+    public void deleteMeldung(int meldungsID) throws BenutzerException{
+        int counter = 0;
+        int index = -1;
+        for(Meldung meldung : meldungen){
+            if(meldung.meldungsID == meldungsID){
+                index = counter;
+            }
+            counter++;
+        } 
+        if(index == -1){
+            throw new BenutzerException("Meldung mit ID: " + meldungsID + " nicht auf Server vorhanden");
+        }
+        meldungen.remove(index);
+    }
+    
+    /**
+     * entfernt eine Anfrage mit Hilfe der TerminID
+     * 
+     * @param terminID 
+     */
+    public void deleteAnfrage(int terminID) throws BenutzerException{  
+        int counter = 0;
+        int index = 0;
+        for(Meldung meldung : meldungen){
+            if(meldung instanceof Anfrage){
+                if(((Anfrage) meldung).getTermin().getID() == terminID){
+                    index = counter;
+                }
+            }
+            counter++;
+        } 
+        if(index == -1){
+            throw new BenutzerException("Anfrage zu Termin mit ID: " + terminID + " nicht auf Server vorhanden");
+        }
         meldungen.remove(index);
     }
     
