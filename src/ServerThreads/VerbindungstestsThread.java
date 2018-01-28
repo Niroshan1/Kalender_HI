@@ -30,42 +30,59 @@ public class VerbindungstestsThread extends Thread{
         Counter counter = new Counter();
         boolean serverUp = true;
         
-        while(serverUp){
+        while (serverUp) {
             try {
                 Thread.sleep(3000);
-                       
+
                 System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
-                counter.decrement();               
-                
+                counter.decrement();
+
                 //starte Thread der Server anpingt               
                 new PingThread(this.verbindung.getServerStub(), counter, serverDaten).start();
-                
+
                 //test ob keine verbindung mehr zu anderem server
-                if(counter.getValue() <= 0){
-                    
-                    //Wenn Verbindung zu Parent war, versuche erneut Verbindung zu diesem aufzubauen                                    
-                    if(this.serverDaten.leftchild != null 
-                            && this.serverDaten.leftchild.getIP().equals(this.verbindung.getIP())){          
-                        //evtl TODO
-                        this.serverDaten.leftchild = null;
+                if (counter.getValue() <= 0) {
 
-                    } else if(this.serverDaten.rightchild != null 
-                            && this.serverDaten.rightchild.getIP().equals(this.verbindung.getIP())){ 
-                        //evtl TODO
-                        this.serverDaten.rightchild = null;
+                    /**
+                     * //Wenn Verbindung zu Parent war, versuche erneut
+                     * Verbindung zu diesem aufzubauen
+                     * if(this.serverDaten.leftchild != null &&
+                     * this.serverDaten.leftchild.getIP().equals(this.verbindung.getIP())){
+                     * //evtl TODO this.serverDaten.leftchild = null;
+                     *
+                     * } else if(this.serverDaten.rightchild != null &&
+                     * this.serverDaten.rightchild.getIP().equals(this.verbindung.getIP())){
+                     * //evtl TODO this.serverDaten.rightchild = null;
+                     *
+                     * } else if(this.serverDaten.parent != null &&
+                     * this.serverDaten.parent.getIP().equals(this.verbindung.getIP())){
+                     * System.out.println("--->> Versuche neue Verbindung zu
+                     * Parent aufzubauen"); this.serverDaten.connectToParent();
+                     * }
+                     *
+                     */
+                    for (int i = 1; i < this.serverDaten.childConnection.length; i++) {
+                        //Wenn Verbindung zu Parent war, versuche erneut Verbindung zu diesem aufzubauen   
+                        if (this.serverDaten.childConnection[i] != null
+                                && this.serverDaten.childConnection[i].getIP().equals(this.verbindung.getIP())) {
 
-                    } else if(this.serverDaten.parent != null 
-                            && this.serverDaten.parent.getIP().equals(this.verbindung.getIP())){
-                        System.out.println("--->> Versuche neue Verbindung zu Parent aufzubauen");
-                        this.serverDaten.connectToParent();          
+                            this.serverDaten.childConnection[i] = null;
+                        }
+
                     }
                     
+                    if (this.serverDaten.parent != null
+                            && this.serverDaten.parent.getIP().equals(this.verbindung.getIP())) {
+                        System.out.println("--->> Versuche neue Verbindung zu Parent aufzubauen");
+                        this.serverDaten.connectToParent();
+                    }
+
                     //beende Schleife
                     serverUp = false;
-                }                
+                }
             } catch (InterruptedException | IOException ex) {
                 Logger.getLogger(VerbindungstestsThread.class.getName()).log(Level.SEVERE, null, ex);
-            }   
+            }
         }
     }
 }
