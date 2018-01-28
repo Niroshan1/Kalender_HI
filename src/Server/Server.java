@@ -38,15 +38,12 @@ public class Server {
      *
      * @throws RemoteException
      * @throws AlreadyBoundException
-     * @throws NotBoundException
      * @throws UnknownHostException
      * @throws SQLException
+     * @throws Server.Utilities.DatenbankException
      * @throws IOException
-     * @throws java.lang.ClassNotFoundException
-     * @throws java.security.NoSuchAlgorithmException
-     * @throws org.omg.CORBA.portable.RemarshalException
      */
-    public void start() throws RemoteException, AlreadyBoundException, NotBoundException, UnknownHostException, SQLException, DatenbankException, IOException, ClassNotFoundException, NoSuchAlgorithmException, RemarshalException {
+    public void start() throws RemoteException, AlreadyBoundException, SQLException, IOException, DatenbankException {
         
         System.out.println("LOG * Starte Server");
         System.out.println("LOG * Server-IP: " + serverDaten.primitiveDaten.ownIP);
