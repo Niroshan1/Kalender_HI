@@ -1,14 +1,20 @@
 package Server;
 
+import Server.Utilities.DatenbankException;
+import Server.Utilities.ServerIdUndAnzahlUser;
 import Server.Utilities.Sitzung;
+import Server.Utilities.UserAnServer;
 import Server.Utilities.Verbindung;
 import ServerThreads.VerbindungstestsChildsThread;
 import Utilities.Anfrage;
+import Utilities.Benutzer;
 import Utilities.BenutzerException;
+import Utilities.Datum;
 import Utilities.Meldung;
 import Utilities.Teilnehmer;
 import Utilities.Termin;
 import Utilities.TerminException;
+import Utilities.Zeit;
 import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -114,6 +120,26 @@ public class ServerStubImpl implements ServerStub {
         return this.serverDaten.aktiveSitzungen.size();
     }      
     
+    @Override
+    public ServerIdUndAnzahlUser findServerForUser() throws RemoteException{
+        int tmp;
+        int min = this.serverDaten.aktiveSitzungen.size();
+        String minServerIP = this.serverDaten.primitiveDaten.ownIP ;
+        String serverID = this.serverDaten.primitiveDaten.serverID;
+        
+        //suche server mit wenigstern usern und gib ip dessen zurück
+        for(Verbindung child : this.serverDaten.childConnection){
+            tmp = child.getServerStub().getAnzahlUser();
+            if(tmp < min){
+                min = tmp;
+                minServerIP = child.getIP();
+                serverID = child.getID();
+            }
+        }
+        
+        return new ServerIdUndAnzahlUser(min, minServerIP, serverID);
+    }
+    
     /**
      * sucht den server mit der db eines bestimmten users und gibt die id des users zurück
      * 
@@ -147,6 +173,149 @@ public class ServerStubImpl implements ServerStub {
         }
         else{
             return this.serverDaten.parent.getServerStub().findUserProfil(userID);
+        }
+    }
+    
+    /**
+     * falls root: gibt userdaten zurück
+     * sonst: frage parent nach userdaten
+     * 
+     * @param username
+     * @return
+     * @throws RemoteException
+     * @throws SQLException
+     * @throws DatenbankException 
+     */
+    @Override
+    public Benutzer getUser(String username) throws RemoteException, SQLException, DatenbankException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            return this.serverDaten.datenbank.getBenutzer(username);
+        }
+        else{
+            return this.serverDaten.parent.getServerStub().getUser(username);
+        }
+    }
+    
+    @Override
+    public void changePasswort(String passwort, String username) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.changePasswort(username, passwort);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().changePasswort(passwort, username);
+        }           
+    }
+    
+    @Override
+    public void changeVorname(String vorname, String username) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.changeVorname(vorname, username);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().changeVorname(username, vorname);
+        }           
+    }
+    
+    @Override
+    public void changeNachname(String nachname, String username) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.changeNachname(nachname, username);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().changeNachname(nachname, username);
+        }           
+    }
+    
+    @Override
+    public void changeEmail(String email, String username) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.changeEmail(email, username);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().changeEmail(email, username);
+        }           
+    }
+    
+    @Override
+    public void addKontakt(String kontaktname, int userID) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.addKontakt(userID, kontaktname);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().addKontakt(kontaktname, userID);
+        }    
+    }
+    
+    @Override
+    public void removeKontakt(String kontaktname, int userID) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.removeKontakt(userID, kontaktname);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().removeKontakt(kontaktname, userID);
+        }    
+    }
+    
+    @Override
+    public void deleteMeldung(int meldungsID) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.deleteMeldung(meldungsID);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().deleteMeldung(meldungsID);
+        }    
+    }
+    
+    @Override
+    public void setMeldungenGelesen(int meldungsID) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            this.serverDaten.datenbank.setMeldungenGelesen(meldungsID);
+        }
+        else{
+            this.serverDaten.parent.getServerStub().setMeldungenGelesen(meldungsID);
+        }    
+    }
+    
+    @Override
+    public int addNewTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int userID) throws RemoteException, SQLException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            int terminID = this.serverDaten.datenbank.getTerminIdCounter();
+            this.serverDaten.datenbank.addNewTermin(datum, beginn, ende, titel, userID, terminID);
+            return terminID;           
+        }
+        else{
+            return this.serverDaten.parent.getServerStub().addNewTermin(datum, beginn, ende, titel, userID);
+        }
+    }
+    
+    /**
+     * falls root: entferne user aus UserAnServerListe
+     * sonst: gebe an parent weiter
+     * 
+     * @param username
+     * @throws RemoteException 
+     * @throws Utilities.BenutzerException 
+     */
+    @Override
+    public void removeUserFromRootList(String username) throws RemoteException, BenutzerException{
+        if(this.serverDaten.primitiveDaten.serverID.equals("0")){
+            int index = -1, counter = 0;
+            for(UserAnServer uas : this.serverDaten.userAnServerListe){
+                if(uas.username.equals(username)){
+                    //wenn ja, gibt ip dieses servers zurück
+                    index = counter;
+                }
+                counter++;
+            }
+            if(index == -1){
+                throw new BenutzerException("ClientStubImpl Line 179 index == -1 // username nicht in UserAnServerListe");
+            }
+            else{
+                this.serverDaten.userAnServerListe.remove(index);
+            }
+        }
+        else{
+            this.serverDaten.parent.getServerStub().removeUserFromRootList(username);
         }
     }
     

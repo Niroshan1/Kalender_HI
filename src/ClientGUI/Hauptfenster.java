@@ -6,8 +6,8 @@
  */
 package ClientGUI;
 
+import Client.GUI;
 import Server.ClientStub;
-import Server.ClientStubImpl;
 import Utilities.Anfrage;
 import Utilities.BenutzerException;
 import Utilities.Datum;
@@ -18,7 +18,14 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -42,7 +49,7 @@ import javax.swing.event.ListSelectionListener;
  */
 public class Hauptfenster extends javax.swing.JFrame implements ListSelectionListener {
 
-    private final ClientStub stub;
+    private ClientStub stub;
     private int sitzungsID;
     //private DefaultListModel listModel;
     DefaultListModel listModel = new DefaultListModel();
@@ -1753,6 +1760,7 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         try {
 
             stub.ausloggen(sitzungsID);
+            verbindeMitRoot();
             //this.setVisible(false);
             this.dispose();
             this.fenster.setVisible(true);
@@ -1762,9 +1770,55 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             out.startGUI();         */
         } catch (RemoteException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Hauptfenster", JOptionPane.ERROR_MESSAGE);
+        } catch (BenutzerException ex) {
+            Logger.getLogger(Hauptfenster.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    private void verbindeMitRoot(){
+        Registry registry;     
+                
+        String rootIP;
+        String line;            
+        BufferedReader bufferedReader = null;
+
+        //liest IP-Adressen aller Server aus File und speichert sie in LinkedList
+        File file = new File(".\\src\\data\\serverlist.txt"); 
+        //für mac-pcs
+        if (!file.canRead() || !file.isFile()){
+            file = new File("./src/data/severlist.txt"); 
+        }
+        try { 
+            bufferedReader = new BufferedReader(new FileReader(file));  
+            if((line = bufferedReader.readLine()) != null) { 
+                rootIP = line;
+                
+                try {
+                    //baut Verbindung zu Server auf
+                    registry = LocateRegistry.getRegistry(rootIP, 1099);
+                    this.stub = (ClientStub) registry.lookup("ClientStub");
+                    System.out.println("LOG * ---> Verbindung zu Root-Server mit IP " + rootIP + " hergestellt!");
+
+                } catch (RemoteException | NotBoundException ex) {
+                    System.out.println("LOG * ---> Verbindung zu Root-Server mit IP " + rootIP + " konnte nicht hergestellt werden!");  
+                }
+            }      
+            else{
+                System.out.println("LOG * ---> Verbindung zu Root-Server konnte nicht hergestellt werden!");
+            }
+        } catch (IOException e) { 
+            e.printStackTrace(); 
+        } 
+        // zum schließen des readers
+        finally { 
+            if (bufferedReader != null) 
+                try { 
+                    bufferedReader.close(); 
+                } catch (IOException e) { 
+            } 
+        }  
+    }
+    
     /**
      * Fuele Kontaktliste auf
      */

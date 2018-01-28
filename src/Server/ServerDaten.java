@@ -7,6 +7,7 @@ package Server;
 
 import Server.Utilities.DBHandler;
 import Server.Utilities.Sitzung;
+import Server.Utilities.UserAnServer;
 import Server.Utilities.Verbindung;
 import ServerThreads.VerbindungstestsParentThread;
 import java.io.IOException;
@@ -16,9 +17,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,10 +36,8 @@ public class ServerDaten {
     //Liste mit aktiven Sitzungen (eingeloggte User des Servers)
     public final LinkedList<Sitzung> aktiveSitzungen; 
     public PrimitiveServerDaten primitiveDaten;
-    
-    //Hier wird der ID und IP von Kind mit kleinste Kalender anzahl gespeichert
-    //public String serverIDKind;
-    //public String serverIPKind;
+        
+    public final LinkedList<UserAnServer> userAnServerListe; 
 
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
         this.parent = null;
@@ -51,12 +48,12 @@ public class ServerDaten {
             primitiveDaten = new PrimitiveServerDaten(args[0], "0");
             datenbank = new DBHandler(aktiveSitzungen, childConnection, primitiveDaten);
             datenbank.getConnection(0); 
+            userAnServerListe = new LinkedList<>();
         } else {
             primitiveDaten = new PrimitiveServerDaten(args[0], null);
             datenbank = null; 
-            userProServerListe = null;
+            userAnServerListe = null;
         }
-
         
     }
 

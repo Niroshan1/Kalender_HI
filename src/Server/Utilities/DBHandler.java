@@ -252,13 +252,13 @@ public class DBHandler {
      * ändert den vornamen eines users
      * 
      * @param neuerVorname neuer vorname
-     * @param userID id des users
+     * @param username name des users
      * @throws SQLException 
      */
-    public void changeVorname(String neuerVorname, int userID) throws SQLException{
-        PreparedStatement prepChangeVorname = con.prepareStatement("UPDATE benutzer SET name = ? WHERE userID = ?");
+    public void changeVorname(String neuerVorname, String username) throws SQLException{
+        PreparedStatement prepChangeVorname = con.prepareStatement("UPDATE benutzer SET name = ? WHERE username = ?");
         prepChangeVorname.setString(1, neuerVorname);
-        prepChangeVorname.setInt(2, userID);
+        prepChangeVorname.setString(2, username);
         prepChangeVorname.execute(); 
     }
     
@@ -266,13 +266,13 @@ public class DBHandler {
      * ändert den nachnamen eines users
      * 
      * @param neuerNachname neuer Nachname
-     * @param userID ID des Users
+     * @param username username des Users
      * @throws SQLException 
      */
-    public void changeNachname(String neuerNachname, int userID) throws SQLException{
-        PreparedStatement prepChangeNachname = con.prepareStatement("UPDATE benutzer SET lastname = ? WHERE userID = ?");
+    public void changeNachname(String neuerNachname, String username) throws SQLException{
+        PreparedStatement prepChangeNachname = con.prepareStatement("UPDATE benutzer SET lastname = ? WHERE username = ?");
         prepChangeNachname.setString(1, neuerNachname);
-        prepChangeNachname.setInt(2, userID);
+        prepChangeNachname.setString(2, username);
         prepChangeNachname.execute(); 
     }
     
@@ -280,13 +280,13 @@ public class DBHandler {
      * Ändert die Email Adresse eines Users
      * 
      * @param neueEmail neue Email Adresse
-     * @param userID ID des Users
+     * @param username username des Users
      * @throws SQLException 
      */
-    public void changeEmail(String neueEmail, int userID) throws SQLException{
-        PreparedStatement prepChangeEmail = con.prepareStatement("UPDATE benutzer SET email = ? WHERE userID = ?");
+    public void changeEmail(String neueEmail, String username) throws SQLException{
+        PreparedStatement prepChangeEmail = con.prepareStatement("UPDATE benutzer SET email = ? WHERE username = ?");
         prepChangeEmail.setString(1, neueEmail);
-        prepChangeEmail.setInt(2, userID);
+        prepChangeEmail.setString(2, username);
         prepChangeEmail.execute(); 
     }
     

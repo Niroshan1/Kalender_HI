@@ -3,7 +3,9 @@ package Server;
 import Server.Utilities.Verbindung;
 import Server.Utilities.DatenbankException;
 import Server.Utilities.EMailService;
+import Server.Utilities.ServerIdUndAnzahlUser;
 import Server.Utilities.Sitzung;
+import Server.Utilities.UserAnServer;
 import Utilities.Anfrage;
 import Utilities.Benutzer;
 import Utilities.BenutzerException;
@@ -34,20 +36,6 @@ public class ClientStubImpl implements ClientStub{
         this.serverDaten = serverDaten;
        // benutzerliste = new BenutzerListe(serverDaten.datenbank.getUserCounter());
     }
-
-    /**
-     * Methode zum Ausloggen eines Users
-     * 
-     * @param sitzungsID wird benötigt um die Sitzung zu identifizieren
-     */
-    @Override
-    public void ausloggen(int sitzungsID){
-        for(Sitzung sitzung : serverDaten.aktiveSitzungen){
-            if(sitzung.compareWithSitzungsID(sitzungsID)){
-                serverDaten.aktiveSitzungen.remove(sitzung);
-            }
-        }
-    }
     
     /**
      * Methode um einen neuen User anzulegen
@@ -57,16 +45,22 @@ public class ClientStubImpl implements ClientStub{
      * @param email email des neuen users
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void createUser(String username, String passwort, String email) throws BenutzerException, SQLException{
-        //existiert User auf diesem Server oder auf anderem Server?      
-        if(!findServerForUser(username).equals("false")){
-            throw new BenutzerException("Benutzer existiert bereits!");
+    public void createUser(String username, String passwort, String email) throws BenutzerException, SQLException, RemoteException{
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            //existiert User auf diesem Server oder auf anderem Server? 
+            if(serverDaten.datenbank.userExists(username)){
+                throw new BenutzerException("Benutzer existiert bereits!");
+            }
+
+            //lege User in DB an
+            serverDaten.datenbank.addUser(username, passwort, email);
         }
-        
-        //lege User in DB an
-        serverDaten.datenbank.addUser(username, passwort, email);
+        else{
+            throw new BenutzerException("Client nicht mit dem Root-Server verbunden!");
+        }
     }
     
     /**
@@ -80,19 +74,29 @@ public class ClientStubImpl implements ClientStub{
      */
     @Override
     public String findServerForUser(String username) throws SQLException, RemoteException{
-        int tmp;
-        int min = this.serverDaten.aktiveSitzungen.size();
-        String minServerIP = this.serverDaten.primitiveDaten.ownIP ;
+        ServerIdUndAnzahlUser tmp;
+        ServerIdUndAnzahlUser min = this.serverDaten.childConnection.getFirst().getServerStub().findServerForUser();  
         
-        for(Verbindung child : this.serverDaten.childConnection){
-            tmp = child.getServerStub().getAnzahlUser();
-            if(tmp < min){
-                min = tmp;
-                minServerIP = child.getIP();
+        //teste ob user schon irgendwo eingeloggt
+        for(UserAnServer uas : this.serverDaten.userAnServerListe){
+            if(uas.username.equals(username)){
+                //wenn ja, gibt ip dieses servers zurück
+                return uas.serverIP;
             }
         }
         
-        return minServerIP;
+        //suche server mit wenigstern usern und gib ip dessen zurück
+        for(Verbindung child : this.serverDaten.childConnection){
+            if(!this.serverDaten.childConnection.getFirst().equals(child)){
+                tmp = child.getServerStub().findServerForUser();
+                if(tmp.anzahlUser < min.anzahlUser){
+                    min = tmp;
+                }
+            }           
+        }
+        
+        this.serverDaten.userAnServerListe.add(new UserAnServer(min.serverID, username, min.serverIP));
+        return min.serverIP;
     }
     
     /**
@@ -106,9 +110,10 @@ public class ClientStubImpl implements ClientStub{
      * @throws Utilities.BenutzerException  
      * @throws java.sql.SQLException   
      * @throws Server.Utilities.DatenbankException   
+     * @throws java.rmi.RemoteException   
      */
     @Override
-    public int einloggen(String username, String passwort) throws BenutzerException, SQLException, DatenbankException{
+    public int einloggen(String username, String passwort) throws BenutzerException, SQLException, DatenbankException, RemoteException{
         int sitzungsID = 10000000 * serverDaten.primitiveDaten.sitzungscounter + (int)(Math.random() * 1000000 + 1);
         serverDaten.primitiveDaten.sitzungscounter++;
         Benutzer user;
@@ -119,7 +124,12 @@ public class ClientStubImpl implements ClientStub{
         }
         catch(BenutzerException ex){
             //falls user noch nicht eingeloggt, wird er aus der db geladen
-            user = this.serverDaten.datenbank.getBenutzer(username);
+            if(this.serverDaten.primitiveDaten.serverID.equals("0")){
+                user = this.serverDaten.datenbank.getBenutzer(username);
+            }
+            else{
+                user = this.serverDaten.parent.getServerStub().getUser(username);
+            }
         }       
         if(user.istPasswort(passwort)){
             serverDaten.aktiveSitzungen.add(new Sitzung(user, sitzungsID));
@@ -127,6 +137,55 @@ public class ClientStubImpl implements ClientStub{
         }      
         //werfe fehler
         return -1;
+    }
+    
+    /**
+     * Methode zum Ausloggen eines Users
+     * 
+     * @param sitzungsID wird benötigt um die Sitzung zu identifizieren
+     * @throws Utilities.BenutzerException
+     * @throws java.rmi.RemoteException
+     */
+    @Override
+    public void ausloggen(int sitzungsID) throws BenutzerException, RemoteException{        
+        String username = this.getUsername(sitzungsID);
+        boolean remove = true;
+        
+        //entferne sitzung aus liste
+        for(Sitzung sitzung : serverDaten.aktiveSitzungen){
+            if(sitzung.compareWithSitzungsID(sitzungsID)){
+                serverDaten.aktiveSitzungen.remove(sitzung);
+            }
+        }
+        
+        //falls user nicht mehr an dem server eingeloggt (auch nicht mit anderen sitzungen)
+        //entferne ihn aus der userAnServerListe
+        for(Sitzung sitzung : serverDaten.aktiveSitzungen){
+            if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
+                remove = false;
+            }
+        }
+        if(remove){
+            if(this.serverDaten.primitiveDaten.serverID.equals("0")){
+                int index = -1, counter = 0;
+                for(UserAnServer uas : this.serverDaten.userAnServerListe){
+                    if(uas.username.equals(username)){
+                        //wenn ja, gibt ip dieses servers zurück
+                        index = counter;
+                    }
+                    counter++;
+                }
+                if(index == -1){
+                    throw new BenutzerException("ClientStubImpl Line 179 index == -1 // username nicht in UserAnServerListe");
+                }
+                else{
+                    this.serverDaten.userAnServerListe.remove(index);
+                }
+            }
+            else{
+                this.serverDaten.parent.getServerStub().removeUserFromRootList(username);
+            }
+        }
     }
     
     /**
@@ -139,36 +198,42 @@ public class ClientStubImpl implements ClientStub{
      * @throws SQLException 
      */
     @Override
-    public void resetPassword(String username) throws BenutzerException, SQLException{         
-        if(this.serverDaten.datenbank.userExists(username)){       
-            String message;
-            EMailService emailService = new EMailService();
-            String allowedChars = "0123456789abcdefghijklmnopqrstuvwABCDEFGHIJKLMNOP!?";
-            SecureRandom random = new SecureRandom();
-            StringBuilder pass = new StringBuilder(10);
+    public void resetPassword(String username) throws BenutzerException, SQLException{ 
+        if(serverDaten.primitiveDaten.serverID.equals("0")){
+            if(this.serverDaten.datenbank.userExists(username)){       
+                String message;
+                EMailService emailService = new EMailService();
+                String allowedChars = "0123456789abcdefghijklmnopqrstuvwABCDEFGHIJKLMNOP!?";
+                SecureRandom random = new SecureRandom();
+                StringBuilder pass = new StringBuilder(10);
 
-            //zufälliges Passwort generieren (10 Zeichen)
-            for (int i = 0; i < 10; i++) {
-                pass.append(allowedChars.charAt(random.nextInt(allowedChars.length())));
+                //zufälliges Passwort generieren (10 Zeichen)
+                for (int i = 0; i < 10; i++) {
+                    pass.append(allowedChars.charAt(random.nextInt(allowedChars.length())));
+                }
+
+                String passwort = pass.toString();
+
+                //Sende email
+                message = "Ihr neues Passwort lautet: " + passwort ;
+                emailService.sendMail(serverDaten.datenbank.getEmail(username), "Terminkalender: Passwort zurückgesetzt", message);
+
+                //aktuallisiere DB
+                serverDaten.datenbank.changePasswort(passwort, username);
+                try{
+                    Benutzer user = istEingeloggt(username);
+                    user.setPasswort(passwort);
+                }
+                catch(BenutzerException ex){ }
             }
-
-            String passwort = pass.toString();
-
-            //Sende email
-            message = "Ihr neues Passwort lautet: " + passwort ;
-            emailService.sendMail(serverDaten.datenbank.getEmail(username), "Terminkalender: Passwort zurückgesetzt", message);
-
-            //aktuallisiere DB
-            serverDaten.datenbank.changePasswort(passwort, username);
-            try{
-                Benutzer user = istEingeloggt(username);
-                user.setPasswort(passwort);
+            else{
+                throw new BenutzerException("User existiert nicht!");
             }
-            catch(BenutzerException ex){ }
         }
         else{
-            throw new BenutzerException("User existiert nicht!");
-        }
+            throw new BenutzerException("Client nicht mit dem Root-Server verbunden!");
+        }         
+        
     }
     
     /**
@@ -218,11 +283,10 @@ public class ClientStubImpl implements ClientStub{
      */
     @Override
     public void addTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int sitzungsID) throws BenutzerException, TerminException, SQLException{
-        Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);        
-        int terminID = this.serverDaten.datenbank.getTerminIdCounter();
+        Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);     
+        
+        int terminID = this.serverDaten.parent.getServerStub().addNewTermin(datum, beginn, ende, titel, eingeloggterBenutzer.getUserID());
         eingeloggterBenutzer.addTermin(new Termin(datum, beginn, ende, titel, terminID, eingeloggterBenutzer.getUsername()));
-        serverDaten.datenbank.addNewTermin(datum, beginn, ende, titel, eingeloggterBenutzer.getUserID(), terminID);
-    }
     
     /**
      * entfernt den termin mit angegebener id
@@ -701,15 +765,17 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void changePasswort(String altesPW, String neuesPW, int sitzungsID) throws BenutzerException, SQLException{
+    public void changePasswort(String altesPW, String neuesPW, int sitzungsID) throws BenutzerException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
         if(!eingeloggterBenutzer.istPasswort(altesPW)){
             throw new BenutzerException("altes Passwort war falsch!");
         }
         eingeloggterBenutzer.setPasswort(neuesPW);
-        serverDaten.datenbank.changePasswort(neuesPW, eingeloggterBenutzer.getUsername());
+        
+        serverDaten.parent.getServerStub().changePasswort(neuesPW, eingeloggterBenutzer.getUsername());
     }
     
     /**
@@ -719,12 +785,14 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void changeVorname(String neuerVorname, int sitzungsID) throws BenutzerException, SQLException{
+    public void changeVorname(String neuerVorname, int sitzungsID) throws BenutzerException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
         eingeloggterBenutzer.setVorname(neuerVorname);
-        serverDaten.datenbank.changeVorname(neuerVorname, eingeloggterBenutzer.getUserID());
+        
+        serverDaten.parent.getServerStub().changeVorname(neuerVorname, eingeloggterBenutzer.getUsername());
     }
     
     /**
@@ -734,12 +802,14 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void changeNachname(String neuerNachname, int sitzungsID) throws BenutzerException, SQLException{
+    public void changeNachname(String neuerNachname, int sitzungsID) throws BenutzerException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
         eingeloggterBenutzer.setNachname(neuerNachname);
-        serverDaten.datenbank.changeNachname(neuerNachname, eingeloggterBenutzer.getUserID());
+        
+        serverDaten.parent.getServerStub().changeNachname(neuerNachname, eingeloggterBenutzer.getUsername());
     }
     
     /**
@@ -749,12 +819,14 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void changeEmail(String neueEmail, int sitzungsID) throws BenutzerException, SQLException{
+    public void changeEmail(String neueEmail, int sitzungsID) throws BenutzerException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
         eingeloggterBenutzer.setEmail(neueEmail);
-        serverDaten.datenbank.changeEmail(neueEmail, eingeloggterBenutzer.getUserID());
+        
+        serverDaten.parent.getServerStub().changeEmail(neueEmail, eingeloggterBenutzer.getUsername());
     }
     
     /**
@@ -765,18 +837,15 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws Utilities.BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void addKontakt(String username, int sitzungsID) throws BenutzerException, SQLException{       
-        int kontaktID = findUserID(username);
-        
-        if(kontaktID == -1){
-            throw new BenutzerException("Username: " + username + " nicht vorhanden!");
-        }
-        
-        Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);    
+    public void addKontakt(String username, int sitzungsID) throws BenutzerException, SQLException, RemoteException{       
+        this.serverDaten.parent.getServerStub().findIdForUser(username);
+        Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);            
         eingeloggterBenutzer.addKontakt(username);
-        serverDaten.datenbank.addKontakt(eingeloggterBenutzer.getUserID(), username);
+        
+        serverDaten.parent.getServerStub().addKontakt(username, eingeloggterBenutzer.getUserID());
     }
 
     /**
@@ -786,16 +855,15 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void removeKontakt(String username, int sitzungsID) throws BenutzerException, SQLException{
-        int kontaktID = findUserID(username); 
-        if(kontaktID == -1){
-            throw new BenutzerException(username + " nicht in deiner Liste vorhanden!");
-        }
+    public void removeKontakt(String username, int sitzungsID) throws BenutzerException, SQLException, RemoteException{
+        this.serverDaten.parent.getServerStub().findIdForUser(username);
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
         eingeloggterBenutzer.removeKontakt(username);
-        serverDaten.datenbank.removeKontakt(eingeloggterBenutzer.getUserID(), username);
+        
+        serverDaten.parent.getServerStub().addKontakt(username, eingeloggterBenutzer.getUserID());
     }
     
     /**
@@ -929,12 +997,14 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void deleteMeldung(int meldungsID, int sitzungsID) throws BenutzerException, SQLException{
+    public void deleteMeldung(int meldungsID, int sitzungsID) throws BenutzerException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);       
-        serverDaten.datenbank.deleteMeldung(meldungsID);
         eingeloggterBenutzer.deleteMeldung(meldungsID);
+        
+        serverDaten.parent.getServerStub().deleteMeldung(meldungsID);
     }
     
     /**
@@ -944,11 +1014,11 @@ public class ClientStubImpl implements ClientStub{
      * @param sitzungsID authentifiziert den benutzer
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void setMeldungenGelesen(int meldungsID, int sitzungsID) throws BenutzerException, SQLException{
+    public void setMeldungenGelesen(int meldungsID, int sitzungsID) throws BenutzerException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
-        serverDaten.datenbank.setMeldungenGelesen(meldungsID);
         LinkedList<Meldung> meldungen = eingeloggterBenutzer.getMeldungen();
         for(Meldung meldung : meldungen){
             if(meldungsID == meldung.meldungsID){
@@ -956,6 +1026,8 @@ public class ClientStubImpl implements ClientStub{
                 break;
             }     
         }
+        
+        serverDaten.parent.getServerStub().setMeldungenGelesen(meldungsID);
     }
     
     /**
@@ -965,46 +1037,12 @@ public class ClientStubImpl implements ClientStub{
      * @return
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public LinkedList<String> getProfil(String username) throws BenutzerException, SQLException{
-        LinkedList<String> profil = new LinkedList<>();
-
-        int userID = findUserID(username);
-        
-        //suche in db nach username
-        if(serverDaten.datenbank.userExists(username)){
-            profil = serverDaten.datenbank.getProfil(userID);
-        }
-        //wenn user nicht vorhanden--> Flooding weiterleitung
-        else{
-            LinkedList<LinkedList<String>> resultList = new LinkedList<>();
-            int anzahlThreads = 0;
-            for(Verbindung connection : serverDaten.connectionList){             
-                new FindUserProfilFloodingThread(resultList, serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, userID, connection).start();
-                anzahlThreads++;
-            }
-            this.serverDaten.primitiveDaten.requestCounter++;
-            while(resultList.size() < anzahlThreads){
-                for(LinkedList<String> result : resultList){
-                    if(result.size() > 0){
-                        profil = result;
-                    }
-                }
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        
-        if(profil.size() > 0){
-            return profil;
-        }
-        else{
-            throw new BenutzerException("Username: " + username + " existiert nicht!");
-        }
+    public LinkedList<String> getProfil(String username) throws BenutzerException, SQLException, RemoteException{
+        int userID = this.serverDaten.parent.getServerStub().findIdForUser(username);
+        return this.serverDaten.parent.getServerStub().findUserProfil(userID);
     }
     
     
@@ -1041,52 +1079,6 @@ public class ClientStubImpl implements ClientStub{
         }
         throw new BenutzerException("ungültige Sitzungs-ID");
     }
-    
-    /**
-     * Methode die die UserID eines Users durch bekannten username
-     * 
-     * @param username
-     * @return userID 
-     * @throws SQLException
-     * @throws BenutzerException 
-     */
-    private int findUserID(String username) throws SQLException, BenutzerException{
-        int userID = -1;
-        //ist kontakt auf db des selben servers hinterlegt?
-        if(serverDaten.datenbank.userExists(username)){
-            userID = serverDaten.datenbank.getUserID(username);
-        }
-        //wenn user nicht vorhanden--> Flooding weiterleitung
-        else{
-            LinkedList<Integer> resultList = new LinkedList<>();
-            int anzahlThreads = 0;
-            for(Verbindung connection : serverDaten.connectionList){             
-                new FindIdForUserFloodingThread(resultList, serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, username, connection).start();
-                anzahlThreads++;
-            }
-            this.serverDaten.primitiveDaten.requestCounter++;
-            while(resultList.size() < anzahlThreads){
-                for(int result : resultList){
-                    if(result >= 0){
-                        userID = result;
-                    }
-                }
-                try {
-                    Thread.sleep(30);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-            for(int result : resultList){
-                if(result != -1){
-                    userID = result;                   
-                }              
-            }   
-        }
-        if(userID == -1){
-           throw new BenutzerException("Username: " + username + " existiert nicht"); 
-        }
-        return userID;
-    }
+   
      
 }
