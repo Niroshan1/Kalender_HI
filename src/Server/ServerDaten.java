@@ -10,6 +10,7 @@ import Server.Utilities.Sitzung;
 import Server.Utilities.UserAnServer;
 import Server.Utilities.Verbindung;
 import ServerThreads.VerbindungstestsParentThread;
+import Utilities.BenutzerException;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -89,5 +90,14 @@ public class ServerDaten {
         } catch (NotBoundException ex) {
             Logger.getLogger(ServerDaten.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+        
+    public String getServerIdByUsername(String username) throws BenutzerException{
+        for(UserAnServer uas : userAnServerListe){
+            if(uas.username.equals(username)){
+                return uas.serverID;
+            }
+        }
+        throw new BenutzerException("Username nicht in userAnServerListe");
     }
 }

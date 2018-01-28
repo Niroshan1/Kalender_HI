@@ -11,6 +11,7 @@ import Utilities.Anfrage;
 import Utilities.Benutzer;
 import Utilities.BenutzerException;
 import Utilities.Datum;
+import Utilities.Meldung;
 import Utilities.Termin;
 import Utilities.Zeit;
 import java.rmi.Remote;
@@ -50,13 +51,22 @@ public interface ServerStub extends Remote{
     
     public int addNewTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int userID) throws RemoteException, SQLException;
     
+    public void changeEditierrechteDB(Termin termin, int userID) throws RemoteException, SQLException, BenutzerException;
+    public void changeEditierrechte(Termin termin, String serverID, String username) throws RemoteException, SQLException;
+     
+    public void changeTerminDB(Termin termin, int userID) throws RemoteException, SQLException, BenutzerException;
+    public void updateTermin(Termin termin, String serverID, String username) throws RemoteException, SQLException;
     
-        public void changeEditierrechte(String ownIP, int requestCounter, Termin termin) throws RemoteException, SQLException;
-        public void updateTermin(String originIP, int requestCounter, Termin termin) throws RemoteException, SQLException;
-        public void addTeilnehmer(String originIP, int requestCounter, int terminID, int userID, String username) throws RemoteException, SQLException;
-        public void addTermin(String originIP, int requestCounter, int userID, Anfrage anfrage, String sendername) throws RemoteException, SQLException;
-        public void deleteTermin(String originIP, int requestCounter, Termin termin, String meldungsText) throws RemoteException, SQLException;
-        public void removeTeilnehmerFromTermin(String originIP, int requestCounter, Termin termin, String username, int userID) throws RemoteException, SQLException;
-        public void teilnehmerChangeStatus(String originIP, int requestCounter, Termin termin, String username, boolean status, String meldungstext) throws RemoteException, SQLException; 
+    public void addTerminTeilnehmerDB(Termin termin, String username, String einlader) throws RemoteException, SQLException, BenutzerException;
+    public void addTeilnehmer(int terminID, String username, String serverID) throws RemoteException, SQLException;
+    public void addTermin(Anfrage anfrage, String serverID, String username) throws RemoteException, SQLException;
+           
+    public void deleteTerminNichtOwner(Termin termin, String username, String text) throws RemoteException, SQLException, BenutzerException;  
+    public void deleteTerminAlsOwner(Termin termin, String username, String text) throws RemoteException, SQLException;
+    public void removeTeilnehmer(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException;
+    public void removeTermin(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException;
+        
+    public void teilnehmerNimmtTeil(Termin termin, String username, String text) throws RemoteException, SQLException; 
+    public void setNimmtTeil(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException;
 
 }

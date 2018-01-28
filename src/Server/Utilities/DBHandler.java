@@ -669,6 +669,32 @@ public class DBHandler {
     }
     
     /**
+     * löscht eine meldung
+     * 
+     * @param terminID id des termins zu dem die anfrage gehört
+     * @throws SQLException 
+     */
+    public void deleteAnfrageByTerminID(int terminID) throws SQLException{
+        PreparedStatement deleteAnfrage, deleteMeldung;
+        Statement state = con.createStatement();
+        ResultSet resSet = state.executeQuery("Select * From anfragen " +
+                    "Where terminID = " + terminID);
+        
+        while(resSet.next()){
+            int meldungsID = resSet.getInt("meldungsID");
+        
+            deleteAnfrage = con.prepareStatement("DELETE FROM anfragen WHERE meldungsID = ?");
+            deleteAnfrage.setInt(1, meldungsID);
+            deleteAnfrage.execute();
+
+
+            deleteMeldung = con.prepareStatement("DELETE FROM meldungen WHERE meldungsID = ?");
+            deleteMeldung.setInt(1, meldungsID);
+            deleteMeldung.execute();
+        }     
+    }
+    
+    /**
      * setzt eine meldung als gelesen
      * 
      * @param meldungsID id der meldung
@@ -694,6 +720,24 @@ public class DBHandler {
         statement.setString(2, username);
         statement.setInt(3, 0);      
         statement.execute(); 
+    }
+    
+    public void removeAnfrageForUserByTerminID(int terminID, String username) throws SQLException{
+        Statement state = con.createStatement();
+        ResultSet resSet = state.executeQuery("Select * FROM meldungen JOIN anfragen ON " +
+                "meldungen.meldungsID = anfragen.meldungsID " +
+                "Where meldungen.username = \"" + username + "\" AND anfragen.terminID = " + terminID);
+        
+        if(resSet.next()){
+            PreparedStatement removeStatement = con.prepareStatement("DELETE FROM meldungen WHERE meldungsID = ?;");      
+            removeStatement.setInt(1, resSet.getInt("meldungsID"));
+            removeStatement.execute(); 
+
+            removeStatement = con.prepareStatement("DELETE FROM anfragen WHERE meldungsID = ?;");      
+            removeStatement.setInt(1, terminID);
+            removeStatement.setInt(2, resSet.getInt("meldungsID"));
+            removeStatement.execute(); 
+        }  
     }
     
     /**
@@ -722,9 +766,7 @@ public class DBHandler {
             removeStatement.setInt(1, terminID);
             removeStatement.setInt(2, resSet.getInt("meldungsID"));
             removeStatement.execute(); 
-        } 
-        
-        
+        }    
     }
     
     /**

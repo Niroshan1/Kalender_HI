@@ -47,29 +47,26 @@ public interface ClientStub extends Remote{
 
     /* alles zu Terminen */
     public Termin getTermin(int TerminID, int sitzungsID) throws RemoteException, BenutzerException, TerminException;
-        public void addTermin(Termin termin, int sitzungsID) throws RemoteException, BenutzerException, TerminException, SQLException; /* notwendig? */
-        public void addTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int sitzungsID) throws RemoteException, BenutzerException, TerminException, SQLException;
-        public void removeTermin(int terminID, int sitzungsID) throws RemoteException, BenutzerException, TerminException, SQLException;
+    public void addTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int sitzungsID) throws RemoteException, BenutzerException, TerminException, SQLException;
+    public void removeTermin(int terminID, int sitzungsID) throws RemoteException, BenutzerException, TerminException, SQLException;
 
+    public void changeEditierrechte(Termin termin, int sitzungsID) throws TerminException, BenutzerException, RemoteException, SQLException;        
+    /*
+    public void changeTerminort(int terminID, String neuerOrt, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
+    public void changeTermintitel(int terminID, String neuerTitel, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
+    public void changeTerminnotiz(int terminID, String neueNotiz, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
+    public void changeTerminende(int terminID, Zeit neuesEnde, int sitzungsID) throws BenutzerException, TerminException, RemoteException, SQLException;
+    public void changeTerminbeginn(int terminID, Zeit neuerBeginn, int sitzungsID) throws BenutzerException, TerminException, RemoteException, SQLException;  
+    public void changeTermindatum(int terminID, Datum neuesDatum, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
+    */
+    public void changeTermin(Termin termin, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
 
-        public void changeEditierrechte(Termin termin, int sitzungsID) throws TerminException, BenutzerException, RemoteException, SQLException;
-        /*
-        public void changeTerminort(int terminID, String neuerOrt, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
-        public void changeTermintitel(int terminID, String neuerTitel, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
-        public void changeTerminnotiz(int terminID, String neueNotiz, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
-        public void changeTerminende(int terminID, Zeit neuesEnde, int sitzungsID) throws BenutzerException, TerminException, RemoteException, SQLException;
-        public void changeTerminbeginn(int terminID, Zeit neuerBeginn, int sitzungsID) throws BenutzerException, TerminException, RemoteException, SQLException;  
-        public void changeTermindatum(int terminID, Datum neuesDatum, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
-        */
-
-        public void changeTermin(Termin termin, int sitzungsID) throws BenutzerException, RemoteException, TerminException, SQLException;
-
-        public void addTerminteilnehmer(int terminID, String username, int sitzungsID) throws RemoteException, BenutzerException, TerminException, SQLException;
+    public void addTerminteilnehmer(int terminID, String username, int sitzungsID) throws RemoteException, BenutzerException, TerminException, SQLException;
     public LinkedList<Termin> getTermineInKalenderwoche(int kalenderwoche, int jahr, int sitzungsID) throws RemoteException, BenutzerException;
     public LinkedList<Termin> getTermineInMonat(int monat, int jahr, int sitzungsID) throws RemoteException, TerminException, BenutzerException;
     public LinkedList<Termin> getTermineAmTag(Datum datum, int sitzungsID) throws RemoteException, TerminException, BenutzerException;
-        public void terminAnnehmen(int terminID, int sitzungsID) throws RemoteException, TerminException, BenutzerException, SQLException;
-        public void terminAblehnen(int terminID, int sitzungsID) throws RemoteException, TerminException, BenutzerException, SQLException;
+    public void terminAnnehmen(int terminID, int sitzungsID) throws RemoteException, TerminException, BenutzerException, SQLException;
+    public void terminAblehnen(int terminID, int sitzungsID) throws RemoteException, TerminException, BenutzerException, SQLException;
 
     /* alles zu ausstehenden Meldung */ 
     public LinkedList<Meldung> getMeldungen(int sitzungsID) throws RemoteException, BenutzerException;

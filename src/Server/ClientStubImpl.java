@@ -253,21 +253,7 @@ public class ClientStubImpl implements ClientStub{
     
     
     
-    /**
-     * Legt einen neuen Termin an
-     * 
-     * @param termin termin der angelegt werden soll
-     * @param sitzungsID authentifiziert den benutzer
-     * @throws BenutzerException
-     * @throws TerminException 
-     * @throws java.sql.SQLException 
-     */
-    @Override
-    public void addTermin(Termin termin, int sitzungsID) throws BenutzerException, TerminException, SQLException{
-        Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
-        eingeloggterBenutzer.getTerminkalender().addTermin(termin);
-        serverDaten.datenbank.addTerminToUser(termin.getID(), 0, eingeloggterBenutzer.getUsername());
-    }
+
    
     /**
      * fügt dem eingeloggten Benutzer den Termin mit den übergebenen Parametern hinzu
@@ -280,13 +266,15 @@ public class ClientStubImpl implements ClientStub{
      * @throws BenutzerException
      * @throws TerminException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void addTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int sitzungsID) throws BenutzerException, TerminException, SQLException{
+    public void addTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int sitzungsID) throws BenutzerException, TerminException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);     
         
         int terminID = this.serverDaten.parent.getServerStub().addNewTermin(datum, beginn, ende, titel, eingeloggterBenutzer.getUserID());
         eingeloggterBenutzer.addTermin(new Termin(datum, beginn, ende, titel, terminID, eingeloggterBenutzer.getUsername()));
+    }
     
     /**
      * entfernt den termin mit angegebener id
@@ -296,13 +284,13 @@ public class ClientStubImpl implements ClientStub{
      * @throws BenutzerException 
      * @throws Utilities.TerminException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void removeTermin(int terminID, int sitzungsID) throws BenutzerException, TerminException, SQLException{
+    public void removeTermin(int terminID, int sitzungsID) throws BenutzerException, TerminException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
            
         if (eingeloggterBenutzer.getUsername().equals(eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getOwner())) {
-
             String text = eingeloggterBenutzer.getUsername() 
                             + " hat den Termin '" 
                             + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getTitel()
@@ -310,47 +298,9 @@ public class ClientStubImpl implements ClientStub{
                             + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getDatum().toString()
                             + " gelöscht";
             
-            //Flooding weiterleitung
-            for (Verbindung connection : serverDaten.connectionList) {
-                new Thread(() -> {
-                    try {
-                        connection.getServerStub().deleteTermin(serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID),text);
-                    } catch (TerminException | RemoteException | SQLException ex) {
-                        Logger.getLogger(ClientStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }).start();
-            }
-            serverDaten.primitiveDaten.requestCounter ++;
-            
-            //entferne Termin aus DB + alle Anfragen werden auf DB entfernt
-            serverDaten.datenbank.deleteTermin(terminID);
-
-            //für alle Teilnehmer des Termin...
-            for (Teilnehmer teilnehmer : eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getTeilnehmerliste()){
-                //... prüfe ob diese zu diesem Server gehören
-                if(serverDaten.datenbank.userExists(teilnehmer.getUsername())){
-                    //jeder bekommt eine Meldung, dass der Termin gelöscht wurde
-                    int meldungsID = serverDaten.datenbank.addMeldung(teilnehmer.getUsername(), text, false);
-                    //für alle eingeloggten User...
-                    for(Sitzung sitzung : serverDaten.aktiveSitzungen){
-                        //... teste ob diese Teilnehmer des Termins sind...
-                        if(teilnehmer.getUsername().equals(sitzung.getEingeloggterBenutzer().getUsername())){
-                            try {
-                                //... wenn ja entferne den Termin aus dem Kaldender auf dem Server
-                                sitzung.getEingeloggterBenutzer().getTerminkalender().removeTerminByID(terminID);
-                                //und füge ihm eine Meldung auf dem Server hinzu
-                                sitzung.getEingeloggterBenutzer().addMeldung(new Meldung(text, meldungsID));
-                                //und entferne falls vorhanden die Anfrage zu diesem Termin
-                                sitzung.getEingeloggterBenutzer().deleteAnfrage(terminID);
-                            }catch (TerminException ex) {}
-
-                        }
-                    }
-                }
-            }
-            
+            this.serverDaten.parent.getServerStub().deleteTerminAlsOwner(eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID), eingeloggterBenutzer.getUsername(), text);    
         }
-        else{          
+        else{  
             String text = eingeloggterBenutzer.getUsername() 
                             + " nimmt nicht mehr an dem  Termin '" 
                             + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getTitel()
@@ -358,36 +308,9 @@ public class ClientStubImpl implements ClientStub{
                             + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getDatum().toString()
                             + " teil";
             
-            //Flooding weiterleitung
-            for (Verbindung connection : serverDaten.connectionList) {
-                new Thread(() -> {
-                    try {
-                        connection.getServerStub().removeTeilnehmerFromTermin(serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter,
-                                eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID),eingeloggterBenutzer.getUsername(), eingeloggterBenutzer.getUserID());
-                    } catch (TerminException | RemoteException | SQLException ex) {
-                        Logger.getLogger(ClientStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }).start();
-            }
-            serverDaten.primitiveDaten.requestCounter ++;
-               
-            serverDaten.datenbank.removeTeilnehmer(eingeloggterBenutzer.getUsername(), terminID);
-            for (Teilnehmer teilnehmer : eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getTeilnehmerliste()){
-                if(serverDaten.datenbank.userExists(teilnehmer.getUsername())){
-                    int meldungsID = serverDaten.datenbank.addMeldung(teilnehmer.getUsername(), text, false);
-                    for(Sitzung sitzung : serverDaten.aktiveSitzungen){
-                        if(teilnehmer.getUsername().equals(sitzung.getEingeloggterBenutzer().getUsername())){
-                            try {
-                                sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).removeTeilnehmer(eingeloggterBenutzer.getUsername());
-                                sitzung.getEingeloggterBenutzer().addMeldung(new Meldung(text, meldungsID));
-                            }catch (TerminException ex) {}
-                        }
-                    }
-                }
-            }
-            eingeloggterBenutzer.getTerminkalender().removeTerminByID(terminID);
-            //und entferne falls vorhanden die Anfrage zu diesem Termin
+            this.serverDaten.parent.getServerStub().deleteTerminNichtOwner(eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID), eingeloggterBenutzer.getUsername(), text);
             eingeloggterBenutzer.deleteAnfrage(terminID);
+            eingeloggterBenutzer.getTerminkalender().removeTerminByID(terminID);
         }  
     }
     
@@ -399,34 +322,13 @@ public class ClientStubImpl implements ClientStub{
      * @throws TerminException 
      * @throws Utilities.BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void changeEditierrechte(Termin termin, int sitzungsID) throws TerminException, BenutzerException, SQLException{
+    public void changeEditierrechte(Termin termin, int sitzungsID) throws TerminException, BenutzerException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
- 
-        //ändere Termin bei user (testet ob user editierrechte hat)
-        eingeloggterBenutzer.getTerminkalender().getTerminByID(termin.getID()).setEditierbar(termin.getEditierbar(), eingeloggterBenutzer.getUsername());
-        eingeloggterBenutzer.getTerminkalender().getTerminByID(termin.getID()).incTimestemp();
-        eingeloggterBenutzer.getTerminkalender().getTerminByID(termin.getID()).setEditorID(eingeloggterBenutzer.getUserID());
-        
-        //trage aktuallisierte Daten ein
-        serverDaten.datenbank.changeEditierrechte(termin.getEditierbar(), termin.getID());
-        //erneure zeitstempel und editorID
-        serverDaten.datenbank.incTimestemp(termin.getID());
-        serverDaten.datenbank.updateEditorID(termin.getID(), eingeloggterBenutzer.getUserID());
-        
-        //teste ob weitere Benutzer am Termin teilnehmen
-        if(termin.getTeilnehmerliste().size() > 1){
-            //Flooding weiterleitung
-            for(Verbindung connection : serverDaten.connectionList){             
-                new Thread(() ->{
-                    try {
-                        connection.getServerStub().changeEditierrechte(serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, eingeloggterBenutzer.getTerminkalender().getTerminByID(termin.getID()));
-                    } catch (RemoteException | SQLException | TerminException ex) { }
-                }).start();
-            }     
-            this.serverDaten.primitiveDaten.requestCounter++;
-        }  
+   
+        this.serverDaten.parent.getServerStub().changeEditierrechteDB(termin, eingeloggterBenutzer.getUserID());            
     }
     
     /**
@@ -539,39 +441,13 @@ public class ClientStubImpl implements ClientStub{
      * @throws BenutzerException
      * @throws TerminException
      * @throws SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void changeTermin(Termin termin, int sitzungsID) throws BenutzerException, TerminException, SQLException{
+    public void changeTermin(Termin termin, int sitzungsID) throws BenutzerException, TerminException, SQLException, RemoteException{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
  
-        //ändere Termin bei user (testet ob user editierrechte hat)
-        eingeloggterBenutzer.getTerminkalender().updateTermin(termin, eingeloggterBenutzer.getUsername(), eingeloggterBenutzer.getUserID());
-        eingeloggterBenutzer.getTerminkalender().getTerminByID(termin.getID()).incTimestemp();
-        eingeloggterBenutzer.getTerminkalender().getTerminByID(termin.getID()).setEditorID(eingeloggterBenutzer.getUserID());
-        
-        //trage aktuallisierte Daten ein
-        serverDaten.datenbank.changeTerminbeginn(termin.getID(), termin.getBeginn());
-        serverDaten.datenbank.changeTerminende(termin.getID(), termin.getEnde());
-        serverDaten.datenbank.changeTerminnotiz(termin.getID(), termin.getNotiz());
-        serverDaten.datenbank.changeTerminort(termin.getID(), termin.getOrt());
-        serverDaten.datenbank.changeTermintitel(termin.getID(), termin.getTitel());
-        serverDaten.datenbank.changeTermindatum(termin.getID(), termin.getDatum());
-        //erneure zeitstempel und editorID
-        serverDaten.datenbank.incTimestemp(termin.getID());
-        serverDaten.datenbank.updateEditorID(termin.getID(), eingeloggterBenutzer.getUserID());
-        
-        //teste ob weitere Benutzer am Termin teilnehmen
-        if(termin.getTeilnehmerliste().size() > 1){
-            //Flooding weiterleitung
-            for(Verbindung connection : serverDaten.connectionList){             
-                new Thread(() ->{
-                    try {
-                        connection.getServerStub().updateTermin(serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, eingeloggterBenutzer.getTerminkalender().getTerminByID(termin.getID()));
-                    } catch (RemoteException | SQLException | TerminException ex) { }
-                }).start();
-            }     
-            this.serverDaten.primitiveDaten.requestCounter++;
-        }              
+        this.serverDaten.parent.getServerStub().changeTerminDB(termin, eingeloggterBenutzer.getUserID());            
     }
     
     /**
@@ -583,61 +459,13 @@ public class ClientStubImpl implements ClientStub{
      * @throws BenutzerException 
      * @throws Utilities.TerminException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void addTerminteilnehmer(int terminID, String username, int sitzungsID) throws BenutzerException, TerminException, SQLException{
-        Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);    
-        String text = eingeloggterBenutzer.getUsername() + " lädt sie zu einem Termin am ";
+    public void addTerminteilnehmer(int terminID, String username, int sitzungsID) throws BenutzerException, TerminException, SQLException, RemoteException{
+        Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);   
         
-        //Schritt 1: Teilnehmer zu Termin hinzufügen
-        //teste ob user existiert & speichere seine id für später
-        int kontaktID = findUserID(username);
-
-        //suche in db nach termin           
-        if(serverDaten.datenbank.terminExists(terminID)){
-            serverDaten.datenbank.addTeilnehmer(terminID, username);
-            eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).addTeilnehmer(username);
-        }
-        //Flooding weiterleitung
-        for(Verbindung connection : serverDaten.connectionList){             
-            new Thread(() ->{
-                try {
-                    connection.getServerStub().addTeilnehmer(serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, terminID, kontaktID, username);
-                } catch (RemoteException | SQLException ex) { }
-            }).start();
-        }  
-        this.serverDaten.primitiveDaten.requestCounter++;
-            
-        //Schritt 2: Dem Teilnehmer den Termin & eine Anfrage hinzufügen
-        Anfrage anfrage = new Anfrage(text, eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID), eingeloggterBenutzer.getUsername(), this.serverDaten.datenbank.getMeldungsCounter());
-
-        //ist kontakt auf eigener db?
-        if(serverDaten.datenbank.userExists(kontaktID)){               
-            //füge die anfrage der db hinzu
-            serverDaten.datenbank.addAnfrage(username, anfrage.getTermin().getID(), eingeloggterBenutzer.getUsername(), anfrage.getText());
-
-            //suche auf server nach dem user
-            for(Sitzung sitzung : serverDaten.aktiveSitzungen){                   
-                if(sitzung.getEingeloggterBenutzer().getUserID() == kontaktID){
-                    //füge dem user den termin hinzu
-                    sitzung.getEingeloggterBenutzer().getTerminkalender().addTermin(anfrage.getTermin());
-                    //füge dem user die anfrage hinzu
-                    sitzung.getEingeloggterBenutzer().addAnfrage(anfrage);
-                }     
-            }
-        }    
-        //fall nicht:
-        else{
-            //Flooding weiterleitung
-            for(Verbindung connection : serverDaten.connectionList){  
-                new Thread(() ->{
-                    try {
-                        connection.getServerStub().addTermin(this.serverDaten.primitiveDaten.ownIP, this.serverDaten.primitiveDaten.requestCounter, kontaktID, anfrage, eingeloggterBenutzer.getUsername());
-                    } catch (RemoteException | SQLException ex) { }
-                }).start();
-            } 
-            this.serverDaten.primitiveDaten.requestCounter++;
-        }
+        this.serverDaten.parent.getServerStub().addTerminTeilnehmerDB(eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID), username, eingeloggterBenutzer.getUsername());  
     }
     
     /**
@@ -648,54 +476,23 @@ public class ClientStubImpl implements ClientStub{
      * @throws TerminException
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void terminAnnehmen(int terminID, int sitzungsID) throws TerminException, BenutzerException, SQLException{
+    public void terminAnnehmen(int terminID, int sitzungsID) throws TerminException, BenutzerException, SQLException, RemoteException{
         //Ist Sitzungsid gültig? Wenn ja, lade user dazu
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
-        
-        //Setze 'User nimmt Teil' auf Server
-        eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).changeTeilnehmerNimmtTeil(eingeloggterBenutzer.getUsername());
-        //Setze 'User nimmt Teil' auf DB
-        serverDaten.datenbank.nimmtTeil(terminID, eingeloggterBenutzer.getUsername());
-        
-        String meldungstext= eingeloggterBenutzer.getUsername() 
+
+        String text= eingeloggterBenutzer.getUsername() 
                             + " nimmt an dem Termin '" 
                             + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getTitel()
                             + "' am "
                             + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getDatum().toString()
                             + " teil";
         
-        Termin termin = eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID);
-        //für jeden teilnehmer des termins
-        for (Teilnehmer teilnehmer : termin.getTeilnehmerliste()){
-            //ist teilnehmer auf db?
-            if(serverDaten.datenbank.userExists(teilnehmer.getUsername()) && !teilnehmer.getUsername().equals(eingeloggterBenutzer.getUsername())){
-                //generiere dem Teilnehmer eine meldung
-                int meldungsID = serverDaten.datenbank.addMeldung(teilnehmer.getUsername(), meldungstext, false);
-                //suche auf server nach dem termin
-                for(Sitzung sitzung : serverDaten.aktiveSitzungen){    
-                    if(sitzung.getEingeloggterBenutzer().getUsername().equals(teilnehmer.getUsername())){
-                        try {
-                            //test ob eingeloggter user zu termin eingeladen ist oder daran teilnimmt
-                            sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(termin.getID());
-                            //füge den anderen teilnehmern die eingeloggt sind die meldung hinzu
-                            sitzung.getEingeloggterBenutzer().addMeldung(new Meldung(meldungstext, meldungsID));
-                        } catch (TerminException ex) { }  
-                    }                   
-                }
-            }
-        }
-        
-        //Flooding weiterleitung
-        for(Verbindung connection : serverDaten.connectionList){             
-            new Thread(() ->{
-                try {
-                    connection.getServerStub().teilnehmerChangeStatus(serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, termin, eingeloggterBenutzer.getUsername(), true, meldungstext);
-                } catch (RemoteException | SQLException ex) { }
-            }).start();
-        } 
-        serverDaten.primitiveDaten.requestCounter++;    
+        this.serverDaten.parent.getServerStub().teilnehmerNimmtTeil(eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID), eingeloggterBenutzer.getUsername(), text);
+        eingeloggterBenutzer.deleteAnfrage(terminID);
+        eingeloggterBenutzer.getTerminkalender().removeTerminByID(terminID);  
     }
      
     /**
@@ -706,54 +503,22 @@ public class ClientStubImpl implements ClientStub{
      * @throws TerminException
      * @throws BenutzerException 
      * @throws java.sql.SQLException 
+     * @throws java.rmi.RemoteException 
      */
     @Override
-    public void terminAblehnen(int terminID, int sitzungsID) throws TerminException, BenutzerException, SQLException{
+    public void terminAblehnen(int terminID, int sitzungsID) throws TerminException, BenutzerException, SQLException, RemoteException{
         //Ist Sitzungsid gültig? Wenn ja, lade user dazu
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
-        
-        //Lösche Eintrag des Users in Tabelle Terminkalener aus DB
-        serverDaten.datenbank.removeTeilnehmer(eingeloggterBenutzer.getUsername(), terminID);
            
-        String meldungstext = eingeloggterBenutzer.getUsername() 
+        String text = eingeloggterBenutzer.getUsername() 
                         + " hat den Termin '" 
                         + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getTitel()
                         + "' am "
                         + eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID).getDatum().toString()
                         + " abgelehnt";
         
-        Termin termin = eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID);
-        //für jeden teilnehmer des termins
-        for (Teilnehmer teilnehmer : termin.getTeilnehmerliste()){
-            //ist teilnehmer auf db?
-            if(serverDaten.datenbank.userExists(teilnehmer.getUsername()) && !teilnehmer.getUsername().equals(eingeloggterBenutzer.getUsername())){
-                //generiere dem Teilnehmer eine meldung
-                int meldungsID = serverDaten.datenbank.addMeldung(teilnehmer.getUsername(), meldungstext, false);
-                //suche auf server nach dem termin
-                for(Sitzung sitzung : serverDaten.aktiveSitzungen){    
-                    if(sitzung.getEingeloggterBenutzer().getUsername().equals(teilnehmer.getUsername())){
-                        try {
-                        //test ob eingeloggter user zu termin eingeladen ist oder daran teilnimmt
-                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(termin.getID());
-                        //füge den anderen teilnehmern die eingeloggt sind die meldung hinzu
-                        sitzung.getEingeloggterBenutzer().addMeldung(new Meldung(meldungstext, meldungsID));
-                    } catch (TerminException ex) { } 
-                    }                    
-                }
-            }
-        }
-        
-        //Flooding weiterleitung
-        for(Verbindung connection : serverDaten.connectionList){             
-            new Thread(() ->{
-                try {
-                    connection.getServerStub().teilnehmerChangeStatus(serverDaten.primitiveDaten.ownIP, serverDaten.primitiveDaten.requestCounter, termin, eingeloggterBenutzer.getUsername(), false, meldungstext);
-                } catch (RemoteException | SQLException ex) { }
-            }).start();
-        } 
-        serverDaten.primitiveDaten.requestCounter++;  
-        
-        //Lösche Termin des Users auf Server
+        this.serverDaten.parent.getServerStub().deleteTerminNichtOwner(eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID), eingeloggterBenutzer.getUsername(), text);
+        eingeloggterBenutzer.deleteAnfrage(terminID);
         eingeloggterBenutzer.getTerminkalender().removeTerminByID(terminID);
     }
     
