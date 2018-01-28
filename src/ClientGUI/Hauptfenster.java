@@ -1764,7 +1764,7 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
             //this.setVisible(false);
             this.dispose();
             this.fenster.setVisible(true);
-            
+            this.fenster.setStub(stub);
             this.timer.stop();
             /*GUI out = new GUI();
             out.startGUI();         */

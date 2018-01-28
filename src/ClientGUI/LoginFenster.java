@@ -18,8 +18,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -48,6 +46,9 @@ public class LoginFenster extends javax.swing.JFrame {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public void setStub(ClientStub stub){
+        this.stub = stub;
+    }
 
     public void zuweisen(String username, String password) throws RemoteException, TerminException, Datum.DatumException, Zeit.ZeitException, SQLException, DatenbankException {
 
