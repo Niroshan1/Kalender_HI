@@ -100,4 +100,5 @@ public class ServerDaten {
         }
         throw new BenutzerException("Username nicht in userAnServerListe");
     }
+   
 }

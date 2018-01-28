@@ -207,7 +207,20 @@ public class ServerStubImpl implements ServerStub {
     @Override
     public void removeUserFromRootList(String username) throws RemoteException, BenutzerException{
         if(this.serverDaten.primitiveDaten.serverID.equals("0")){
-            //TODO
+            int index = -1, counter = 0;
+            for(UserAnServer uas : this.serverDaten.userAnServerListe){
+                if(uas.username.equals(username)){
+                    //wenn ja, gibt ip dieses servers zurück
+                    index = counter;
+                }
+                counter++;
+            }
+            if(index == -1){
+                throw new BenutzerException("ClientStubImpl Line 179 index == -1 // username nicht in UserAnServerListe");
+            }
+            else{
+                this.serverDaten.userAnServerListe.remove(index);
+            }
         }
         else{
             this.serverDaten.parent.getServerStub().removeUserFromRootList(username);
