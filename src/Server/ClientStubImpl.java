@@ -51,7 +51,6 @@ public class ClientStubImpl implements ClientStub{
                 throw new BenutzerException("Benutzer existiert bereits!");
             }
 
-            System.out.println("hi");
             //lege User in DB an
             serverDaten.datenbank.addUser(username, passwort, email);
         }
