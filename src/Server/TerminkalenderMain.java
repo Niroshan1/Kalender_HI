@@ -35,19 +35,19 @@ public class TerminkalenderMain {
      */
     public static void main(String[] args)  {
         
-            if (args.length == 2) {
-                System.out.println("LOG * ");
-                               
-                try {                    
-                    Server server;
-                    server = new Server(args);
-                    server.start();
-                } catch (ClassNotFoundException | SQLException | NoSuchAlgorithmException | AlreadyBoundException | IOException | DatenbankException ex) {
-                    Logger.getLogger(TerminkalenderMain.class.getName()).log(Level.SEVERE, null, ex);
-                }              
-            } else {
-                System.out.println("Eingabeparameter: <Eigene IP> <Parent IP>");
-            }
+        if (args.length == 2) {
+            System.out.println("LOG * ");
+
+            try {                    
+                Server server;
+                server = new Server(args);
+                server.start();
+            } catch (ClassNotFoundException | SQLException | NoSuchAlgorithmException | AlreadyBoundException | IOException | DatenbankException ex) {
+                Logger.getLogger(TerminkalenderMain.class.getName()).log(Level.SEVERE, null, ex);
+            }              
+        } else {
+            System.out.println("Eingabeparameter: <Eigene IP> <Parent IP>");
+        }
 
     }
 

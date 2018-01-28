@@ -5,19 +5,12 @@
  */
 package ServerThreads;
 
-import Client.GUI;
-import Server.ClientStub;
 import Server.ServerDaten;
 import Server.Utilities.Verbindung;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +37,7 @@ public class VerbindungstestsParentThread extends Thread{
             try {
                 Thread.sleep(3000);
                        
-                //System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
+                System.out.println("Teste " + this.verbindung.getIP() + " | Counter = " + counter.getValue());
                 counter.decrement();               
                 
                 //starte Thread der Server anpingt               

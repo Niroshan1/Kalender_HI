@@ -41,6 +41,8 @@ public class ServerStubImpl implements ServerStub {
             ServerStub stub = (ServerStub) registry.lookup("ServerStub");
             Verbindung verbindung = new Verbindung(stub, childIP, childID);
 
+            this.serverDaten.childConnection.add(verbindung);
+            
             // Starte Thread, der die Verbindung zu anderen Servern testet
             new VerbindungstestsChildsThread(this.serverDaten, verbindung).start();
 
