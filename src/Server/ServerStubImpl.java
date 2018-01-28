@@ -608,6 +608,8 @@ public class ServerStubImpl implements ServerStub {
         }
     }
     
+    
+    //asd
     /**
      * Methode fügt allen Teilnehmern des Termins den neuen Teilnehmer hinzu
      * 
