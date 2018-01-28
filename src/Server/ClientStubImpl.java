@@ -149,11 +149,14 @@ public class ClientStubImpl implements ClientStub{
         boolean remove = true;
         
         //entferne sitzung aus liste
+        int index = -1, counter = 0;
         for(Sitzung sitzung : serverDaten.aktiveSitzungen){
             if(sitzung.compareWithSitzungsID(sitzungsID)){
-                serverDaten.aktiveSitzungen.remove(sitzung);
+                index = counter;
             }
+            counter++;
         }
+        serverDaten.aktiveSitzungen.remove(index);
         
         //falls user nicht mehr an dem server eingeloggt (auch nicht mit anderen sitzungen)
         //entferne ihn aus der userAnServerListe
@@ -164,7 +167,8 @@ public class ClientStubImpl implements ClientStub{
         }
         if(remove){
             if(this.serverDaten.primitiveDaten.serverID.equals("0")){
-                int index = -1, counter = 0;
+                index = -1;
+                counter = 0;
                 for(UserAnServer uas : this.serverDaten.userAnServerListe){
                     if(uas.username.equals(username)){
                         //wenn ja, gibt ip dieses servers zurück
