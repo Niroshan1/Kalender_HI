@@ -137,7 +137,7 @@ public class ServerStubImpl implements ServerStub {
             }
         }
         
-        return new ServerIdUndAnzahlUser(min, minServerIP, serverID);
+        return new ServerIdUndAnzahlUser(min, serverID, minServerIP);
     }
     
     /**
