@@ -629,7 +629,7 @@ public class ClientStubImpl implements ClientStub{
         Benutzer eingeloggterBenutzer = istEingeloggt(sitzungsID);
         eingeloggterBenutzer.removeKontakt(username);
         
-        serverDaten.parent.getServerStub().addKontakt(username, eingeloggterBenutzer.getUserID());
+        serverDaten.parent.getServerStub().removeKontakt(username, eingeloggterBenutzer.getUserID());
     }
     
     /**
