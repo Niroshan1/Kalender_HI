@@ -58,7 +58,7 @@ public interface ServerStub extends Remote{
     public void updateTermin(Termin termin, String serverID, String username) throws RemoteException, SQLException;
     
     public void addTerminTeilnehmerDB(Termin termin, String username, String einlader) throws RemoteException, SQLException, BenutzerException;
-    public void addTeilnehmer(int terminID, String username, String serverID) throws RemoteException, SQLException;
+    public void addTeilnehmer(int terminID, String username, String kontakt, String serverID) throws RemoteException, SQLException;
     public void addTermin(Anfrage anfrage, String serverID, String username) throws RemoteException, SQLException;
            
     public void deleteTerminNichtOwner(Termin termin, String username, String text) throws RemoteException, SQLException, BenutzerException;  

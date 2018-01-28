@@ -574,6 +574,7 @@ public class ServerStubImpl implements ServerStub {
     @Override
     public void addTerminTeilnehmerDB(Termin termin, String username, String einlader) throws RemoteException, SQLException, BenutzerException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
+            System.out.println(username);
             if(serverDaten.datenbank.userExists(username)){ 
                 //suche in db nach termin           
                 if(serverDaten.datenbank.terminExists(termin.getID())){
@@ -583,7 +584,7 @@ public class ServerStubImpl implements ServerStub {
                     for(Teilnehmer teilnehmer : termin.getTeilnehmerliste()){
                         for(Verbindung child : this.serverDaten.childConnection){
                             try{                               
-                                child.getServerStub().addTeilnehmer(termin.getID(), username, serverDaten.getServerIdByUsername(teilnehmer.getUsername()));
+                                child.getServerStub().addTeilnehmer(termin.getID(), teilnehmer.getUsername(), username, serverDaten.getServerIdByUsername(teilnehmer.getUsername()));
                             } catch (BenutzerException ex){}
                         }
                     }  
@@ -612,19 +613,20 @@ public class ServerStubImpl implements ServerStub {
      * 
      * @param terminID id des termins
      * @param username username des hinzuzufügenden teilnehmers
+     * @param kontakt
      * @param serverID
      * @throws RemoteException
      * @throws SQLException 
      */
     @Override
-    public void addTeilnehmer(int terminID, String username, String serverID) throws RemoteException, SQLException{
+    public void addTeilnehmer(int terminID, String username, String kontakt, String serverID) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     try {
                         //ändere Termin bei user (testet ob user editierrechte hat)
-                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).addTeilnehmer(username);                        
+                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).addTeilnehmer(kontakt);                        
                     } catch (TerminException ex) {
                         Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
                     }     
@@ -634,7 +636,7 @@ public class ServerStubImpl implements ServerStub {
         //ist man auf dem richtigen weg? (serverID ersten x ziffern gleich)
         else if(serverID.startsWith(serverDaten.primitiveDaten.serverID)){          
             for(Verbindung child : this.serverDaten.childConnection){
-                child.getServerStub().addTeilnehmer(terminID, username, serverID);
+                child.getServerStub().addTeilnehmer(terminID, username, kontakt, serverID);
             }           
         }
     }
