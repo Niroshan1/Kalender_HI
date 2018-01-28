@@ -6,12 +6,10 @@ import Server.Utilities.EMailService;
 import Server.Utilities.ServerIdUndAnzahlUser;
 import Server.Utilities.Sitzung;
 import Server.Utilities.UserAnServer;
-import Utilities.Anfrage;
 import Utilities.Benutzer;
 import Utilities.BenutzerException;
 import Utilities.Datum;
 import Utilities.Meldung;
-import Utilities.Teilnehmer;
 import Utilities.Termin;
 import Utilities.TerminException;
 import Utilities.Zeit;
@@ -19,8 +17,6 @@ import java.rmi.RemoteException;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -55,6 +51,7 @@ public class ClientStubImpl implements ClientStub{
                 throw new BenutzerException("Benutzer existiert bereits!");
             }
 
+            System.out.println("hi");
             //lege User in DB an
             serverDaten.datenbank.addUser(username, passwort, email);
         }

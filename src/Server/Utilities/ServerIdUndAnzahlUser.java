@@ -5,11 +5,13 @@
  */
 package Server.Utilities;
 
+import java.io.Serializable;
+
 /**
  *
  * @author timtim
  */
-public class ServerIdUndAnzahlUser {
+public class ServerIdUndAnzahlUser implements Serializable {
     
     public int anzahlUser;
     public String serverID;
