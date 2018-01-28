@@ -583,12 +583,12 @@ public class ServerStubImpl implements ServerStub {
                     //jedem Teilnehmer des Termins wird der neue Teilnehmer dem Termin hinzugefügt
                     for(Teilnehmer teilnehmer : termin.getTeilnehmerliste()){
                         for(Verbindung child : this.serverDaten.childConnection){
-                            try{                               
+                            try{   
                                 child.getServerStub().addTeilnehmer(termin.getID(), teilnehmer.getUsername(), username, serverDaten.getServerIdByUsername(teilnehmer.getUsername()));
                             } catch (BenutzerException ex){}
                         }
                     }  
-                                       
+                    
                     String text = einlader + " lädt sie zu einem Termin am ";
                     Anfrage anfrage = new Anfrage(text, termin, einlader, this.serverDaten.datenbank.getMeldungsCounter());
                     //Füge der DB die Anfrage hinzu
@@ -623,6 +623,7 @@ public class ServerStubImpl implements ServerStub {
     @Override
     public void addTeilnehmer(int terminID, String username, String kontakt, String serverID) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
+        System.out.println(serverID + " server: " + serverDaten.primitiveDaten.serverID);
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
@@ -659,6 +660,11 @@ public class ServerStubImpl implements ServerStub {
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     //füge dem user den termin hinzu
                     sitzung.getEingeloggterBenutzer().getTerminkalender().addTermin(anfrage.getTermin());
+                    try {
+                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(anfrage.getTermin().getID()).addTeilnehmer(username);
+                    } catch (TerminException ex) {
+                        Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     //füge dem user die anfrage hinzu
                     sitzung.getEingeloggterBenutzer().addAnfrage(anfrage);     
                 }
