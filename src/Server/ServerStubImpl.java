@@ -421,7 +421,7 @@ public class ServerStubImpl implements ServerStub {
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     try {
                         //ändere Termin bei user (testet ob user editierrechte hat)
-                        sitzung.getEingeloggterBenutzer().getTerminkalender().updateTermin(termin, username, sitzung.getEingeloggterBenutzer().getUserID());
+                        sitzung.getEingeloggterBenutzer().getTerminkalender().updateTermin(termin, termin.getOwner());
                         sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(termin.getID()).incTimestemp();
                         sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(termin.getID()).setEditorID(sitzung.getEingeloggterBenutzer().getUserID());          
                     } catch (TerminException ex) {
