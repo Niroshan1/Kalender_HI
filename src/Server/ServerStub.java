@@ -67,6 +67,6 @@ public interface ServerStub extends Remote{
     public void removeTermin(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException;
         
     public void teilnehmerNimmtTeil(Termin termin, String username, String text) throws RemoteException, SQLException; 
-    public void setNimmtTeil(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException;
+    public void setNimmtTeil(int terminID, String username, String teilnehmer, String serverID, Meldung meldung) throws RemoteException, SQLException;
 
 }

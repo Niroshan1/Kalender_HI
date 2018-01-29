@@ -706,15 +706,10 @@ public class ServerStubImpl implements ServerStub {
                 for(Teilnehmer teilnehmer : termin.getTeilnehmerliste()){
                     meldungsID = serverDaten.datenbank.addMeldung(teilnehmer.getUsername(), text, false);
                     meldung = new Meldung(text, meldungsID);
-                    
-                    System.out.println("----> " + teilnehmer.getUsername());
+
                     for(Verbindung child : this.serverDaten.childConnection){
                         try{
-                            System.out.println(">> " + child.getID());
-                            String serverID = serverDaten.getServerIdByUsername(teilnehmer.getUsername());
-                            System.out.println(">>>>");
-                            child.getServerStub().setNimmtTeil(termin.getID(), serverID, username, meldung);
-                            System.out.println("<<");
+                            child.getServerStub().setNimmtTeil(termin.getID(), teilnehmer.getUsername(), username, serverDaten.getServerIdByUsername(teilnehmer.getUsername()), meldung);
                         } catch (BenutzerException ex){}
                     }
                 }                    
@@ -726,14 +721,14 @@ public class ServerStubImpl implements ServerStub {
     }
    
     @Override
-    public void setNimmtTeil(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException{
+    public void setNimmtTeil(int terminID, String username, String teilnehmer, String serverID, Meldung meldung) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     try {
                         //setzt teilnehmer nimmt teil
-                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).changeTeilnehmerNimmtTeil(username);
+                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).changeTeilnehmerNimmtTeil(teilnehmer);
                         //fügt meldung hinzu
                         sitzung.getEingeloggterBenutzer().addMeldung(meldung);
                     } catch (TerminException ex) {
@@ -745,7 +740,7 @@ public class ServerStubImpl implements ServerStub {
         //ist man auf dem richtigen weg? (serverID ersten x ziffern gleich)
         else if(serverID.startsWith(serverDaten.primitiveDaten.serverID)){          
             for(Verbindung child : this.serverDaten.childConnection){
-                child.getServerStub().setNimmtTeil(terminID, username, serverID, meldung);
+                child.getServerStub().setNimmtTeil(terminID, username, teilnehmer, serverID, meldung);
             }           
         }
     }
