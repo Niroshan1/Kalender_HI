@@ -760,8 +760,7 @@ public class DBHandler {
             removeStatement.execute(); 
             
             removeStatement = con.prepareStatement("DELETE FROM anfragen WHERE meldungsID = ?;");      
-            removeStatement.setInt(1, terminID);
-            removeStatement.setInt(2, resSet.getInt("meldungsID"));
+            removeStatement.setInt(1, resSet.getInt("meldungsID"));
             removeStatement.execute(); 
         }    
     }
