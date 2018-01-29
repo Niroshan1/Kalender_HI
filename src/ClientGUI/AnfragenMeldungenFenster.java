@@ -263,7 +263,6 @@ public class AnfragenMeldungenFenster extends javax.swing.JFrame {
 
     private void buttonDeleteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonDeleteMouseClicked
         try {
-            System.out.println("Meldungsid in GUI: " + meldung.meldungsID);
             stub.deleteMeldung(meldung.meldungsID , sitzungsID);
             hauptfenster.fillMeldList();          
             JOptionPane.showMessageDialog(null, "Deine Benachrichtigung wurde gelöscht");

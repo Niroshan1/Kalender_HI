@@ -526,14 +526,12 @@ public class ServerStubImpl implements ServerStub {
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
-                    try {
-                        //entfernt den Teilnehmer
-                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).removeTeilnehmer(teilnehmer);
+                    try {                       
                         //fügt meldung hinzu
                         sitzung.getEingeloggterBenutzer().addMeldung(meldung);
-                    } catch (TerminException ex) {
-                        Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                    }     
+                        //entfernt den Teilnehmer
+                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).removeTeilnehmer(teilnehmer);
+                    } catch (TerminException ex) {}     
                 }
             }            
         }
@@ -575,7 +573,6 @@ public class ServerStubImpl implements ServerStub {
     @Override
     public void addTerminTeilnehmerDB(Termin termin, String username, String einlader) throws RemoteException, SQLException, BenutzerException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
-            System.out.println(username);
             if(serverDaten.datenbank.userExists(username)){ 
                 //suche in db nach termin           
                 if(serverDaten.datenbank.terminExists(termin.getID())){
@@ -624,7 +621,6 @@ public class ServerStubImpl implements ServerStub {
     @Override
     public void addTeilnehmer(int terminID, String username, String kontakt, String serverID) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
-        System.out.println(serverID + " server: " + serverDaten.primitiveDaten.serverID);
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
