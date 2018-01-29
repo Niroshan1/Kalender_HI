@@ -482,9 +482,9 @@ public class ServerStubImpl implements ServerStub {
         Meldung meldung;
         int meldungsID;
         
-        if(serverDaten.primitiveDaten.serverID.equals("0")){                       
+        if(serverDaten.primitiveDaten.serverID.equals("0")){  
             //suche in db nach termin           
-            if(serverDaten.datenbank.terminExists(termin.getID())){               
+            if(serverDaten.datenbank.terminExists(termin.getID())){  
                 //Entferne Teilnehmer von dem Termin aus DB
                 serverDaten.datenbank.deleteTermin(termin.getID());
                 //Entferne alle Anfragen zu dem Termin
@@ -499,7 +499,7 @@ public class ServerStubImpl implements ServerStub {
                     
                     for(Verbindung child : this.serverDaten.childConnection){
                         try{
-                            child.getServerStub().removeTermin(termin.getID(), serverDaten.getServerIdByUsername(teilnehmer.getUsername()), username, meldung);
+                            child.getServerStub().removeTermin(termin.getID(), username, serverDaten.getServerIdByUsername(teilnehmer.getUsername()), meldung);
                         } catch (BenutzerException ex){}
                     }
                 }                    
