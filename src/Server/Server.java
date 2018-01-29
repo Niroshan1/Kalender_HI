@@ -38,7 +38,6 @@ public class Server {
      * @throws AlreadyBoundException
      * @throws UnknownHostException
      * @throws SQLException
-     * @throws Server.Utilities.DatenbankException
      * @throws IOException
      */
     public void start() throws RemoteException, AlreadyBoundException, SQLException, IOException, DatenbankException {

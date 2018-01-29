@@ -181,7 +181,7 @@ public class DBHandler {
     }
     
     /**
-     * fügt der DB einen neuen User hinzu & erhöht den UserIdCounter in der DB um 1
+     * fügt der DB einen neuen User hinzu und erhöht den UserIdCounter in der DB um 1
      * 
      * 
      * @param username username des neuen Users
@@ -298,7 +298,7 @@ public class DBHandler {
     }
     
     /**
-     * erstellt einen neuen Termin & gibt TerminID zurück
+     * erstellt einen neuen Termin und gibt TerminID zurück
      * der termin sollte vorher auf dem server schonmal angelegt werden
      * 
      * @param datum datum des termins
@@ -858,7 +858,7 @@ public class DBHandler {
     }
     
     /**
-     * gibt den meldungsCounter zurück & inkrementiert ihn danach um 1
+     * gibt den meldungsCounter zurück und inkrementiert ihn danach um 1
      * 
      * @return
      * @throws SQLException 

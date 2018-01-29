@@ -99,15 +99,14 @@ public class ClientStubImpl implements ClientStub{
     
     /**
      * Methode um einen User einzuloggen
-     * Testet ob username & passwort stimmen
+     * Testet ob username und passwort stimmen
      * Client muss mit dem richtigen Server verbunden sein
      * 
      * @param username username des einzuloggenden users
      * @param passwort passwort des einzuloggenden users
      * @return gibt die SitzungsID oder -1 im Fehlerfall zurück
      * @throws Utilities.BenutzerException  
-     * @throws java.sql.SQLException   
-     * @throws Server.Utilities.DatenbankException   
+     * @throws java.sql.SQLException      
      * @throws java.rmi.RemoteException   
      */
     @Override
@@ -193,7 +192,7 @@ public class ClientStubImpl implements ClientStub{
     /**
      * Methode um das Passwort einen Users zurückzusetzen
      * User bekommt das neue Passwort via Email gesendet
-     * FindServerForUser() vorher aufrufen & mit Ergebnis verbinden!
+     * FindServerForUser() vorher aufrufen und mit Ergebnis verbinden!
      * 
      * @param username username des Users desssen Passwort zurückgesetzt werden soll
      * @throws BenutzerException
