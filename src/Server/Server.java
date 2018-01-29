@@ -9,18 +9,16 @@ import Server.Utilities.DatenbankException;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import org.omg.CORBA.portable.RemarshalException;
 
 /**
- *
- * @author timtim
+ * Diese Klasse enthält Methoden zum initialisieren Client und Server Stub, sowie zum starten
+ * 
  */
 public class Server {
 

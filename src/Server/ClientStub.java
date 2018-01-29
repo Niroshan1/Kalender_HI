@@ -18,8 +18,8 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 /**
+ *  Interface Klasse mit allen Methoden, die in dem Client benutzt werden.
  *
- * @author nader
  */
 public interface ClientStub extends Remote{
     

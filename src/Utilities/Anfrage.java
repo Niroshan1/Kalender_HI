@@ -7,6 +7,9 @@ package Utilities;
 
 import java.io.Serializable;
 
+/**
+ * Klasse mit Informationen fuer Anfrage
+ */
 public class Anfrage extends Meldung implements Serializable{
     
     // Variablen Deklaration und Initialisierung
@@ -14,7 +17,7 @@ public class Anfrage extends Meldung implements Serializable{
     private final String absender;
     
     /**
-     * Konstruktur
+     *  
      * @param text
      * @param termin
      * @param absender
@@ -27,24 +30,27 @@ public class Anfrage extends Meldung implements Serializable{
     }
     
     /**
-     * Mehtode, die einen Termin zurueckgibt
-     * @return 
+     * gibt den Termin zurueck
+     * 
+     * @return termin
      */
     public Termin getTermin(){
         return termin;
     }
     
     /**
-     * Methode, die den Absender zurueckgibt
-     * @return 
+     * gibt den Absender zurueck 
+     * 
+     * @return absender
      */
     public String getAbsender(){
         return absender;
     }
     
     /**
-     * Methode, die eine Einladung für den Client zurueckgibt
-     * @return 
+     * gibt den Text fuer die zurueck
+     * 
+     * @return string
      */
     @Override
     public String getText(){
