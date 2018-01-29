@@ -707,9 +707,14 @@ public class ServerStubImpl implements ServerStub {
                     meldungsID = serverDaten.datenbank.addMeldung(teilnehmer.getUsername(), text, false);
                     meldung = new Meldung(text, meldungsID);
                     
+                    System.out.println("----> " + teilnehmer.getUsername());
                     for(Verbindung child : this.serverDaten.childConnection){
                         try{
-                            child.getServerStub().setNimmtTeil(termin.getID(), serverDaten.getServerIdByUsername(teilnehmer.getUsername()), username, meldung);
+                            System.out.println(">> " + child.getID());
+                            String serverID = serverDaten.getServerIdByUsername(teilnehmer.getUsername());
+                            System.out.println(">>>>");
+                            child.getServerStub().setNimmtTeil(termin.getID(), serverID, username, meldung);
+                            System.out.println("<<");
                         } catch (BenutzerException ex){}
                     }
                 }                    

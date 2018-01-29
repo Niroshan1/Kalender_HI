@@ -199,6 +199,7 @@ public class Benutzer implements Serializable{
     /**
      * 
      * @param meldungsID 
+     * @throws Utilities.BenutzerException 
      */
     public void deleteMeldung(int meldungsID) throws BenutzerException{
         int counter = 0;
