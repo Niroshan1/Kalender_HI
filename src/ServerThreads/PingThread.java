@@ -9,22 +9,29 @@ import Server.ServerStub;
 import java.rmi.RemoteException;
 import Server.ServerDaten;
 
-/**
- *
- * @author timtim
- */
+
 public class PingThread extends Thread{
     
+    // Variablen Deklaration und Initialisierung
     private final ServerStub serverStub;
     private final Counter counter;
     private final ServerDaten serverDaten;
     
+    /**
+     * Konstruktur
+     * @param serverStub
+     * @param counter
+     * @param serverDaten 
+     */
     public PingThread(ServerStub serverStub, Counter counter, ServerDaten serverDaten){
         this.serverStub = serverStub;
         this.counter = counter;
         this.serverDaten = serverDaten;
     }    
     
+    /**
+     * Methode die einen Server einen anderen Server anpingen laesst
+     */
     @Override 
     public void run(){
         try {          
