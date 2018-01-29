@@ -99,10 +99,12 @@ public class LoginFenster extends javax.swing.JFrame {
                 start.fillMeldList();           
             }  
         }
-        catch(BenutzerException e){
+        catch(BenutzerException | DatenbankException e){
             //JOptionPane.showMessageDialog(null, e.getMessage(), "Anmelden", JOptionPane.ERROR_MESSAGE);
             infoBoxText.setText(e.getMessage());
             infoBoxPanel.setVisible(true);
+            JOptionPane.showMessageDialog(null,e.getMessage(), "Anmelden", JOptionPane.ERROR_MESSAGE);
+            verbindeMitRoot();
         }  
     }
 
