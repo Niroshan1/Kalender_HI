@@ -63,7 +63,7 @@ public interface ServerStub extends Remote{
            
     public void deleteTerminNichtOwner(Termin termin, String username, String text) throws RemoteException, SQLException, BenutzerException;  
     public void deleteTerminAlsOwner(Termin termin, String username, String text) throws RemoteException, SQLException;
-    public void removeTeilnehmer(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException;
+    public void removeTeilnehmer(int terminID, String username, String teilnehmer, String serverID, Meldung meldung) throws RemoteException, SQLException;
     public void removeTermin(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException;
         
     public void teilnehmerNimmtTeil(Termin termin, String username, String text) throws RemoteException, SQLException; 

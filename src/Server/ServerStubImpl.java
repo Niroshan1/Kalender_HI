@@ -458,7 +458,7 @@ public class ServerStubImpl implements ServerStub {
                     
                     for(Verbindung child : this.serverDaten.childConnection){
                         try{
-                            child.getServerStub().removeTeilnehmer(termin.getID(), serverDaten.getServerIdByUsername(teilnehmer.getUsername()), username, meldung);
+                            child.getServerStub().removeTeilnehmer(termin.getID(), teilnehmer.getUsername(), username, serverDaten.getServerIdByUsername(teilnehmer.getUsername()), meldung);
                         } catch (BenutzerException ex){}
                     }
                 }                    
@@ -514,20 +514,21 @@ public class ServerStubImpl implements ServerStub {
      * 
      * @param terminID
      * @param username
+     * @param teilnehmer
      * @param serverID
      * @param meldung
      * @throws RemoteException
      * @throws SQLException 
      */
     @Override
-    public void removeTeilnehmer(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException{
+    public void removeTeilnehmer(int terminID, String username, String teilnehmer, String serverID, Meldung meldung) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     try {
                         //entfernt den Teilnehmer
-                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).removeTeilnehmer(username);
+                        sitzung.getEingeloggterBenutzer().getTerminkalender().getTerminByID(terminID).removeTeilnehmer(teilnehmer);
                         //fügt meldung hinzu
                         sitzung.getEingeloggterBenutzer().addMeldung(meldung);
                     } catch (TerminException ex) {
@@ -539,7 +540,7 @@ public class ServerStubImpl implements ServerStub {
         //ist man auf dem richtigen weg? (serverID ersten x ziffern gleich)
         else if(serverID.startsWith(serverDaten.primitiveDaten.serverID)){          
             for(Verbindung child : this.serverDaten.childConnection){
-                child.getServerStub().removeTeilnehmer(terminID, username, serverID, meldung);
+                child.getServerStub().removeTeilnehmer(terminID, username, teilnehmer, serverID, meldung);
             }           
         }
     }
