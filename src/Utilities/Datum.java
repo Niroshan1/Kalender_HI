@@ -7,15 +7,20 @@ package Utilities;
 
 import java.io.Serializable;
 
-/**
- *
- * @author Tim Meyer
- */
 public class Datum implements Serializable{
+    
+    //Variablen Deklaration und Initialisierung
     private int tag;
     private int monat;
     private int jahr;
     
+    /**
+     * Konstruktur
+     * @param tag
+     * @param monat
+     * @param jahr
+     * @throws Utilities.Datum.DatumException 
+     */
     public Datum(int tag, int monat, int jahr) throws DatumException{
         if(monat > 12 || monat < 1){
             throw new DatumException("kein gültiger Monat!");
@@ -28,30 +33,66 @@ public class Datum implements Serializable{
         this.jahr = jahr;
     }
 
-    //Setter:
+    /**
+     * ----------------Setter----------------
+     */
+    
+    /**
+     * Methode, die den Tag setzt
+     * @param tag
+     * @throws Utilities.Datum.DatumException 
+     */
     public void setTag(int tag) throws DatumException{
         if(!existiertTagInMonat(tag, monat, jahr)){
             throw new DatumException("Monat " + monat + " hat keinen Tag " + tag);
         }
         this.tag = tag;
     }
+    
+    /**
+     * Methode, die den Monat setzt
+     * @param monat 
+     */
     public void setMonat(int monat){
         this.monat = monat;
     }
+    
+    /**
+     * Methode, die das Jahr setzt
+     * @param jahr 
+     */
     public void setJahr(int jahr){
         this.jahr = jahr;
     }
     
-    //Getter:
+    /**
+     * ----------------Getter----------------
+     */
+    
+    /**
+     * Methode, die den Tag zurueckgibt
+     * @return 
+     */
     public int getTag(){
         return tag;
-    }    
+    }
+
+    /**
+     * Methode, die den Monat zurueckgibt
+     * @return 
+     */    
     public int getMonat(){
         return monat;
-    }    
+    }  
+    
+    /**
+     * Methode, die dad Jahr zurueckgibt
+     * @return 
+     */
     public int getJahr(){
         return jahr;
     }
+    
     /**
      * gibt die Kalenderwoche des Datums zurück
      * 
@@ -70,6 +111,7 @@ public class Datum implements Serializable{
         
         return kalenderwoche;
     }
+    
     /**
      * Gibt zurück der wievielte Tag des Jahres an dem Datum ist
      * 
@@ -95,6 +137,7 @@ public class Datum implements Serializable{
         
         return tagDesJahres;
     }
+    
     /**
      * gibt Wochentag als Zahl (1-7) des Datums zurück
      * 
@@ -111,11 +154,20 @@ public class Datum implements Serializable{
         return wochentag;
     }
     
+    /**
+     * toSting-Methode
+     * @return 
+     */
     @Override
     public String toString(){
         return this.tag + "." + this.monat + "." + this.jahr;
     }
     
+    /**
+     * Methode, die das Datum auf Gleichheit überprüft
+     * @param datum
+     * @return 
+     */
     public boolean equal(Datum datum){
         return datum.getTag() == this.tag && datum.getMonat() == this.monat && datum.getJahr() == this.jahr;
     }
@@ -178,10 +230,18 @@ public class Datum implements Serializable{
 
         private final String message;
         
+        /**
+         * Konstruktur der Exception-Klasse
+         * @param message 
+         */
         public DatumException(String message) {
             this.message = message;
         }
         
+        /**
+         * Methode, die eine Exception-Nachricht zurueckgeben soll
+         * @return 
+         */
         @Override
         public String getMessage(){
             return message;
