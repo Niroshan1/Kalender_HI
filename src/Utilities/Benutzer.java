@@ -1,8 +1,3 @@
-/*
- * TODO: alles mit todo markiert + Metoden für getTermineImMonat & getTermineInWoche
- * implementieren
- * 
- */
 package Utilities;
 
 import Server.Utilities.EMailService;
@@ -10,9 +5,8 @@ import java.util.LinkedList;
 import java.io.Serializable;
 import java.security.SecureRandom;
 
-/**
+/** 
  *
- * @author Tim Meyer
  */
 public class Benutzer implements Serializable{
     

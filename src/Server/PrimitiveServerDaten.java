@@ -6,8 +6,8 @@
 package Server;
 
 /**
- *
- * @author timtim
+ * Diese Klasse erzeugt die benötigten Informationen für den Server
+ * 
  */
 public class PrimitiveServerDaten {
     
@@ -16,7 +16,12 @@ public class PrimitiveServerDaten {
     public int sitzungscounter;  
     public String serverID;  
     public int childCounter;
-        
+    
+    /**
+     * 
+     * @param ownIP
+     * @param serverID 
+     */    
     public PrimitiveServerDaten(String ownIP, String serverID){
         this.requestCounter = 0;  
         this.sitzungscounter = 1;
@@ -25,6 +30,11 @@ public class PrimitiveServerDaten {
         this.childCounter = 0;
     }
     
+    /**
+     * Methode getNewChildId 
+     * 
+     * @return id
+     */
     public String getNewChildId(){
         String id = serverID + childCounter;
         childCounter++;

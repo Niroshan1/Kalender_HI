@@ -23,8 +23,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author timtim
+ * Diese Klasse ermöglicht die Verbindung von einem Server mit anderen.
+ * Sie baut die Verbindung zum Datenbank 
+ * 
  */
 public class ServerDaten {
 
@@ -39,7 +40,14 @@ public class ServerDaten {
     public PrimitiveServerDaten primitiveDaten;
         
     public final LinkedList<UserAnServer> userAnServerListe; 
-
+    
+    /**
+     * 
+     * @param args
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws NoSuchAlgorithmException 
+     */
     public ServerDaten(String[] args) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {
         this.parent = null;
         this.childConnection = new LinkedList<>();
@@ -91,7 +99,13 @@ public class ServerDaten {
             Logger.getLogger(ServerDaten.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-        
+    /**
+     *  bekommt die ServerId anhand Userame
+     * 
+     * @param username
+     * @return
+     * @throws BenutzerException 
+     */    
     public String getServerIdByUsername(String username) throws BenutzerException{
         for(UserAnServer uas : userAnServerListe){
             if(uas.username.equals(username)){

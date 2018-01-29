@@ -20,8 +20,7 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 /**
- *
- * @author nader
+ * Interface ServerStub enthält die notwendigen Methoden für den Server
  */
 public interface ServerStub extends Remote{
     

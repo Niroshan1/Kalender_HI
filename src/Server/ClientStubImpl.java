@@ -19,18 +19,20 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 
 /**
- *
- * @author nader
- */
+ * Implementierung von der Klasse ClientStub Interface
+ * 
+*/
 public class ClientStubImpl implements ClientStub{
 
-    //private final BenutzerListe benutzerliste;
-    // Liste mit Benutzer + SitzungID
     private final ServerDaten serverDaten;
-    
+    /**
+     * 
+     * @param serverDaten
+     * @throws SQLException
+     * @throws DatenbankException 
+     */
     public ClientStubImpl(ServerDaten serverDaten) throws SQLException, DatenbankException{
         this.serverDaten = serverDaten;
-       // benutzerliste = new BenutzerListe(serverDaten.datenbank.getUserCounter());
     }
     
     /**
@@ -251,11 +253,7 @@ public class ClientStubImpl implements ClientStub{
         return eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID);
     }
     
-    
-    
-
-   
-    /**
+     /**
      * fügt dem eingeloggten Benutzer den Termin mit den übergebenen Parametern hinzu
      * 
      * @param datum datum des termins

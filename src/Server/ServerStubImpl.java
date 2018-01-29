@@ -27,8 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Niroshan, Vincent
+ * 
+ * Implementierung von Methoden aus der Interface ServerStub
  */
 public class ServerStubImpl implements ServerStub {
 
@@ -44,7 +44,8 @@ public class ServerStubImpl implements ServerStub {
      * ungerichteten Verbindung
      *
      * @param childIP
-     * @return childID Die neue ID wird zurückgegeben
+     * @return childID 
+     * Die neue ID wird zurückgegeben
      * @throws RemoteException
      * @throws AccessException
      */
@@ -79,7 +80,7 @@ public class ServerStubImpl implements ServerStub {
      * Methode um zu testen, ob noch eine Verbindung zum Server besteht
      *
      * @param senderIP
-     * @return
+     * @return result
      * @throws RemoteException
      */
     @Override
@@ -101,7 +102,8 @@ public class ServerStubImpl implements ServerStub {
     
     /**
      * Gibt die ID des Servers zurueck
-     * @return
+     * 
+     * @return serverID
      * @throws java.rmi.RemoteException
      */
     @Override
@@ -112,7 +114,7 @@ public class ServerStubImpl implements ServerStub {
      /**
       * gibt die anzahl eingeloggter Benutzer des Server zurück
       * 
-      * @return
+      * @return size
       * @throws RemoteException 
       */
     @Override
@@ -120,6 +122,12 @@ public class ServerStubImpl implements ServerStub {
         return this.serverDaten.aktiveSitzungen.size();
     }      
     
+    /**
+     * suche server mit wenigstern usern und gib ip dessen zurück
+     * 
+     * @return minServerIP
+     * @throws RemoteException 
+     */
     @Override
     public ServerIdUndAnzahlUser findServerForUser() throws RemoteException{
         int tmp;
@@ -227,6 +235,14 @@ public class ServerStubImpl implements ServerStub {
         }
     }
     
+    /**
+     * Methode um das Passwort einen Users zurückzusetzen
+     * 
+     * @param passwort
+     * @param username
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void changePasswort(String passwort, String username) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -237,6 +253,14 @@ public class ServerStubImpl implements ServerStub {
         }           
     }
     
+    /**
+     *  Ändert den Vornamen eines Benutzers
+     * 
+     * @param vorname
+     * @param username
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void changeVorname(String vorname, String username) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -247,6 +271,14 @@ public class ServerStubImpl implements ServerStub {
         }           
     }
     
+    /**
+     * Ändert den Nachnamen eines Users
+     * 
+     * @param nachname
+     * @param username
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void changeNachname(String nachname, String username) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -257,6 +289,14 @@ public class ServerStubImpl implements ServerStub {
         }           
     }
     
+    /**
+     * Ändert die Email Adresse eines Benutzers
+     * 
+     * @param email
+     * @param username
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void changeEmail(String email, String username) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -267,6 +307,15 @@ public class ServerStubImpl implements ServerStub {
         }           
     }
     
+    /**
+     * Fügt dem User einen neuen Kontakt hinzu
+     * Es wird getestet ob dieser vorhanden ist
+     * 
+     * @param kontaktname
+     * @param userID
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void addKontakt(String kontaktname, int userID) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -277,6 +326,14 @@ public class ServerStubImpl implements ServerStub {
         }    
     }
     
+    /**
+     * Entfernt einen Kontakt des Users
+     * 
+     * @param kontaktname
+     * @param userID
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void removeKontakt(String kontaktname, int userID) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -287,6 +344,13 @@ public class ServerStubImpl implements ServerStub {
         }    
     }
     
+    /**
+     * Löscht eine bestimmte Meldung eines Users
+     * 
+     * @param meldungsID
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void deleteMeldung(int meldungsID) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -297,6 +361,13 @@ public class ServerStubImpl implements ServerStub {
         }    
     }
     
+    /**
+     * Setzt eine Meldung als gelesen
+     * 
+     * @param meldungsID
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void setMeldungenGelesen(int meldungsID) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -307,6 +378,18 @@ public class ServerStubImpl implements ServerStub {
         }    
     }
     
+    /**
+     * fügt dem eingeloggten Benutzer den Termin mit den übergebenen Parametern hinzu
+     * 
+     * @param datum
+     * @param beginn
+     * @param ende
+     * @param titel
+     * @param userID
+     * @return
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public int addNewTermin(Datum datum, Zeit beginn, Zeit ende, String titel, int userID) throws RemoteException, SQLException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -319,6 +402,15 @@ public class ServerStubImpl implements ServerStub {
         }
     }
     
+   /**
+    * Ändert die Editierrechte eines Termins in der Datenbank
+    * 
+    * @param termin
+    * @param userID
+    * @throws RemoteException
+    * @throws SQLException
+    * @throws BenutzerException 
+    */
     @Override
     public void changeEditierrechteDB(Termin termin, int userID) throws RemoteException, SQLException, BenutzerException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -344,6 +436,7 @@ public class ServerStubImpl implements ServerStub {
     }
     
     /**
+     * Ändert die Editierrechte eines Termins
      * 
      * @param termin
      * @param serverID
@@ -375,6 +468,15 @@ public class ServerStubImpl implements ServerStub {
         }
     }
     
+    /**
+     * aktuallisiert einen Termin in der Datenbank
+     * 
+     * @param termin
+     * @param userID
+     * @throws RemoteException
+     * @throws SQLException
+     * @throws BenutzerException 
+     */
     @Override
     public void changeTerminDB(Termin termin, int userID) throws RemoteException, SQLException, BenutzerException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -438,6 +540,16 @@ public class ServerStubImpl implements ServerStub {
         }
     }
     
+    /**
+     * entfernt den termin als nicht Owner aus der Datenbank
+     * 
+     * @param termin
+     * @param username
+     * @param text
+     * @throws RemoteException
+     * @throws SQLException
+     * @throws BenutzerException 
+     */
     @Override
     public void deleteTerminNichtOwner(Termin termin, String username, String text) throws RemoteException, SQLException, BenutzerException{
         Meldung meldung;
@@ -470,6 +582,7 @@ public class ServerStubImpl implements ServerStub {
     }
     
     /**
+     * entfernt den termin als Owner aus der Datenbank
      * 
      * @param termin
      * @param username
@@ -511,6 +624,7 @@ public class ServerStubImpl implements ServerStub {
     }
     
     /**
+     * Entfernt einen Teilnehmer aus der Datenbank
      * 
      * @param terminID
      * @param username
@@ -543,6 +657,16 @@ public class ServerStubImpl implements ServerStub {
         }
     }
     
+    /**
+     * entfernt den termin mit angegebener id 
+     * 
+     * @param terminID
+     * @param username
+     * @param serverID
+     * @param meldung
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void removeTermin(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
@@ -568,6 +692,16 @@ public class ServerStubImpl implements ServerStub {
         }
     }
     
+    /**
+     * fügt einem Termin einen neuen Teilnehmer hinzu in der Datenbank
+     * 
+     * @param termin
+     * @param username
+     * @param einlader
+     * @throws RemoteException
+     * @throws SQLException
+     * @throws BenutzerException 
+     */
     @Override
     public void addTerminTeilnehmerDB(Termin termin, String username, String einlader) throws RemoteException, SQLException, BenutzerException{
         if(serverDaten.primitiveDaten.serverID.equals("0")){
@@ -605,7 +739,6 @@ public class ServerStubImpl implements ServerStub {
     }
     
     
-    //asd
     /**
      * Methode fügt allen Teilnehmern des Termins den neuen Teilnehmer hinzu
      * 
@@ -640,7 +773,8 @@ public class ServerStubImpl implements ServerStub {
     }
     
     /**
-     *
+     * fügt dem eingeloggten Benutzer den Termin 
+     * 
      * @param serverID
      * @param username
      * @param anfrage Anfrage in Form einer Meldung
@@ -715,6 +849,17 @@ public class ServerStubImpl implements ServerStub {
         }
     }
    
+    /**
+     * Setzt 1 fuer den User als Teilnehmer
+     * 
+     * @param terminID
+     * @param username
+     * @param teilnehmer
+     * @param serverID
+     * @param meldung
+     * @throws RemoteException
+     * @throws SQLException 
+     */
     @Override
     public void setNimmtTeil(int terminID, String username, String teilnehmer, String serverID, Meldung meldung) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
