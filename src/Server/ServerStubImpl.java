@@ -551,11 +551,11 @@ public class ServerStubImpl implements ServerStub {
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     try {
                         //entfernt den Teilnehmer
-                        sitzung.getEingeloggterBenutzer().getTerminkalender().removeTerminByID(terminID);
-                        //entfernt die Anfrage zu dem Termin (evtl)
-                        sitzung.getEingeloggterBenutzer().deleteAnfrage(terminID);
+                        sitzung.getEingeloggterBenutzer().getTerminkalender().removeTerminByID(terminID);                       
                         //fügt meldung hinzu
                         sitzung.getEingeloggterBenutzer().addMeldung(meldung);
+                        //entfernt die Anfrage zu dem Termin (evtl)
+                        sitzung.getEingeloggterBenutzer().deleteAnfrage(terminID);
                     } catch (TerminException | BenutzerException ex) {
                         Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
                     }     
