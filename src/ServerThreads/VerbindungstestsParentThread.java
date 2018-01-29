@@ -77,6 +77,12 @@ public class VerbindungstestsParentThread extends Thread{
                 rootIP = line;
 
                 this.serverDaten.connectToParent(rootIP);
+                int counter = 0;
+                for(Verbindung child : this.serverDaten.childConnection){
+                    child.getServerStub().setID(this.serverDaten.primitiveDaten.serverID + counter);
+                    counter++;
+                }
+                
             }      
             else{
                 System.out.println("LOG * ---> Verbindung zu Root-Server konnte nicht hergestellt werden!");

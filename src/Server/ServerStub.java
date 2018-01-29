@@ -25,6 +25,7 @@ import java.util.LinkedList;
  */
 public interface ServerStub extends Remote{
     
+    public void setID(String newID) throws RemoteException;
     public String initConnection(String ip) throws RemoteException;
     public boolean ping(String senderIP) throws RemoteException;
     public String getServerID() throws RemoteException; 
