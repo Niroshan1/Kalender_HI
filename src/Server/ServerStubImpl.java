@@ -524,6 +524,7 @@ public class ServerStubImpl implements ServerStub {
     public void removeTeilnehmer(int terminID, String username, String teilnehmer, String serverID, Meldung meldung) throws RemoteException, SQLException{
         //ist man schon am richtigen server? (serverID gleich)
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
+            System.out.println("richtiger server: " + serverID + " / löschen bei user " + username + " / gelöscht wird " + teilnehmer);
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     try {                       
@@ -556,9 +557,7 @@ public class ServerStubImpl implements ServerStub {
                         sitzung.getEingeloggterBenutzer().addMeldung(meldung);
                         //entfernt die Anfrage zu dem Termin (evtl)
                         sitzung.getEingeloggterBenutzer().deleteAnfrage(terminID);
-                    } catch (TerminException | BenutzerException ex) {
-                        Logger.getLogger(ServerStubImpl.class.getName()).log(Level.SEVERE, null, ex);
-                    }     
+                    } catch (TerminException | BenutzerException ex) {}     
                 }
             }            
         }
