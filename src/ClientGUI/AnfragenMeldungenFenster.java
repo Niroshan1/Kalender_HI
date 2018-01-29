@@ -246,7 +246,6 @@ public class AnfragenMeldungenFenster extends javax.swing.JFrame {
             Anfrage anfrage = (Anfrage) meldung;
               
             stub.terminAblehnen(anfrage.getTermin().getID(), sitzungsID);
-            stub.deleteMeldung(meldung.meldungsID, sitzungsID);
             JOptionPane.showMessageDialog(null, "Einladung wurde abgelehnt");
 
             hauptfenster.fillMeldList();
