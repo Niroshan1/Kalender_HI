@@ -5,10 +5,6 @@
  */
 package Server.Utilities;
 
-/**
- *
- * @author timtim
- */
 import Server.PrimitiveServerDaten;
 import Utilities.Anfrage;
 import Utilities.Benutzer;
@@ -38,6 +34,12 @@ public class DBHandler {
     private final LinkedList<Verbindung> connectionList;
     public PrimitiveServerDaten primitiveDaten;
     
+    /**
+     * Konstruktur
+     * @param aktiveSitzungen
+     * @param connectionlist
+     * @param primitiveDaten 
+     */
     public DBHandler(LinkedList<Sitzung> aktiveSitzungen, LinkedList<Verbindung> connectionlist, PrimitiveServerDaten primitiveDaten){
         abfrage = true;
         hasData = false;
@@ -47,6 +49,13 @@ public class DBHandler {
         this.primitiveDaten = primitiveDaten;
     }   
     
+    /**
+     * Stellt Verbindung zur Datenbank her
+     * @param serverID
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws NoSuchAlgorithmException 
+     */
     public void getConnection(int serverID) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException {       
         if(con == null){
             Class.forName("org.sqlite.JDBC");
@@ -720,6 +729,12 @@ public class DBHandler {
         statement.execute(); 
     }
     
+    /**
+     * Methode, die einen Termin für einen User auf seinem Client nicht mehr sichtbar macht
+     * @param terminID
+     * @param username
+     * @throws SQLException 
+     */
     public void removeAnfrageForUserByTerminID(int terminID, String username) throws SQLException{
         Statement state = con.createStatement();
         ResultSet resSet = state.executeQuery("Select * FROM meldungen JOIN anfragen ON " +
@@ -1235,6 +1250,12 @@ public class DBHandler {
     
     // ****************************** Hilfsmethoden ****************************** //
     
+    /**
+     * Hilfsmethode um Username anhand der UserID zu bekommen
+     * @param userID
+     * @return
+     * @throws SQLException 
+     */
     private String getUsernameByUserID(int userID) throws SQLException{
         String username;
         Statement state = con.createStatement();
@@ -1249,6 +1270,12 @@ public class DBHandler {
         return null; 
     }
     
+    /**
+     * Hilfsmethode um Teilnemer dem Termin hinzuzufügen 
+     * @param terminID
+     * @return
+     * @throws SQLException 
+     */
     private ResultSet getTeilnehmerSet(int terminID) throws SQLException{
         Statement state = con.createStatement();
         ResultSet resSet = state.executeQuery("Select * From terminkalender " +
@@ -1257,6 +1284,13 @@ public class DBHandler {
         return resSet;
     }
 
+    /**
+     * Hilfsmethode um User am Termin teilnehmen zu lassen
+     * @param username
+     * @param terminID
+     * @return
+     * @throws SQLException 
+     */
     private boolean testUserNimmtTeil(String username, int terminID) throws SQLException {
         Statement state = con.createStatement();
         ResultSet resSet = state.executeQuery("Select * From terminkalender " +

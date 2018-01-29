@@ -39,6 +39,24 @@ public class ServerStubImpl implements ServerStub {
     }
 
     /**
+     * ändert die ID des Servers bei dem die Methode aufgerufen wird
+     * wird verwendet um teilbaum neu zu strukturieren
+     * 
+     * @param newID
+     * @throws RemoteException 
+     */
+    @Override
+    public void setID(String newID) throws RemoteException{
+        System.out.println("Neue ServerID zugewiesen: " + newID);
+        this.serverDaten.primitiveDaten.serverID = newID;
+        int counter = 0;
+        for(Verbindung child : this.serverDaten.childConnection){
+            child.getServerStub().setID(this.serverDaten.primitiveDaten.serverID + counter);
+            counter++;
+        }
+    }
+    
+    /**
      * gibt Server die IP-Adresse und den Port eines Servers mit dem er sich
      * verbinden soll dient der Erzeugung einer beidseitigen Verbindung /
      * ungerichteten Verbindung

@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 public class Anfrage extends Meldung implements Serializable{
     
+    // Variablen Deklaration und Initialisierung
     private final Termin termin;
     private final String absender;
     

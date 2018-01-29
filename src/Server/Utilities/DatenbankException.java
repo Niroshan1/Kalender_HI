@@ -5,18 +5,23 @@
  */
 package Server.Utilities;
 
-/**
- *
- * @author timtim
- */
-public class DatenbankException extends Exception {
 
+public class DatenbankException extends Exception {
+    // Variablen Deklaration und Initialisierung
     private final String message;
     
+    /**
+     * Konstruktur
+     * @param message 
+     */
     public DatenbankException(String message) {
         this.message = message;
     }
     
+    /**
+     * Gibt Meldung der Datenbank zurück
+     * @return 
+     */
     @Override
     public String getMessage(){
         return this.message;

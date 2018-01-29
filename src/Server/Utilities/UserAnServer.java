@@ -13,10 +13,17 @@ import java.io.Serializable;
  */
 public class UserAnServer implements Serializable{
     
+    // Variablen Deklaration und Initialisierung
     public String serverID;
     public String username;
     public String serverIP;
     
+    /**
+     * Konstruktur
+     * @param serverID
+     * @param username
+     * @param serverIP 
+     */
     public UserAnServer(String serverID, String username, String serverIP){
         this.serverID = serverID;
         this.username = username;

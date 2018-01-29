@@ -12,6 +12,10 @@ import Utilities.Datum;
 import Utilities.TerminException;
 import Utilities.Zeit;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -77,7 +81,7 @@ public class LoginFenster extends javax.swing.JFrame {
                 
                 //infoBoxPanel.setBackground(new Color(153,0,51));
                 infoBoxPanel.setVisible(true);
-                
+                verbindeMitRoot();
             
             }
             else{
@@ -95,13 +99,60 @@ public class LoginFenster extends javax.swing.JFrame {
                 start.fillMeldList();           
             }  
         }
-        catch(BenutzerException e){
+        catch(BenutzerException | DatenbankException e){
             //JOptionPane.showMessageDialog(null, e.getMessage(), "Anmelden", JOptionPane.ERROR_MESSAGE);
             infoBoxText.setText(e.getMessage());
             infoBoxPanel.setVisible(true);
+            JOptionPane.showMessageDialog(null,e.getMessage(), "Anmelden", JOptionPane.ERROR_MESSAGE);
+            verbindeMitRoot();
         }  
     }
 
+    private void verbindeMitRoot(){
+        Registry registry;     
+                
+        String rootIP;
+        String line;            
+        BufferedReader bufferedReader = null;
+
+        //liest IP-Adressen aller Server aus File und speichert sie in LinkedList
+        File file = new File(".\\src\\data\\serverlist.txt"); 
+        //für mac-pcs
+        if (!file.canRead() || !file.isFile()){
+            file = new File("./src/data/severlist.txt"); 
+        }
+        try { 
+            bufferedReader = new BufferedReader(new FileReader(file));  
+            if((line = bufferedReader.readLine()) != null) { 
+                rootIP = line;
+                
+                try {
+                    //baut Verbindung zu Server auf
+                    registry = LocateRegistry.getRegistry(rootIP, 1099);
+                    this.stub = (ClientStub) registry.lookup("ClientStub");
+                    System.out.println("LOG * ---> Verbindung zu Root-Server mit IP " + rootIP + " hergestellt!");
+
+                } catch (RemoteException | NotBoundException ex) {
+                    System.out.println("LOG * ---> Verbindung zu Root-Server mit IP " + rootIP + " konnte nicht hergestellt werden!");  
+                }
+            }      
+            else{
+                System.out.println("LOG * ---> Verbindung zu Root-Server konnte nicht hergestellt werden!");
+            }
+        } catch (IOException e) { 
+            e.printStackTrace(); 
+        } 
+        // zum schließen des readers
+        finally { 
+            if (bufferedReader != null) 
+                try { 
+                    bufferedReader.close(); 
+                } catch (IOException e) { 
+            } 
+        }  
+    }
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -7,16 +7,20 @@ package Server.Utilities;
 
 import java.io.Serializable;
 
-/**
- *
- * @author timtim
- */
+
 public class ServerIdUndAnzahlUser implements Serializable {
     
+    // Variablen Deklaration und Initialisierung
     public int anzahlUser;
     public String serverID;
     public String serverIP;
     
+    /**
+     * Konstruktur
+     * @param anzahlUser
+     * @param serverID
+     * @param serverIP 
+     */
     public ServerIdUndAnzahlUser(int anzahlUser, String serverID, String serverIP){
         this.anzahlUser = anzahlUser;
         this.serverID = serverID;

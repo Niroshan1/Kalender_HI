@@ -20,14 +20,23 @@ import java.util.logging.Logger;
  */
 public class VerbindungstestsParentThread extends Thread{
     
+    // Variablen Deklaration und Initialisierung
     private final ServerDaten serverDaten;
     private final Verbindung verbindung;
     
+    /**
+     * Konstruktur
+     * @param serverDaten
+     * @param verbindung 
+     */
     public VerbindungstestsParentThread(ServerDaten serverDaten, Verbindung verbindung){
         this.serverDaten = serverDaten;
         this.verbindung = verbindung;
     }    
     
+    /**
+     * Methode, die die Verbindung zum Vater testet
+     */
     @Override 
     public void run(){
         Counter counter = new Counter();
@@ -60,6 +69,10 @@ public class VerbindungstestsParentThread extends Thread{
         }
     }
     
+    /**
+     * Methode, die die Kinder zum Vater verbinden laesst
+     * Dabei wird die IP des Vaters in eine Datei geschrieben
+     */
     private void connectToRoot(){       
         String rootIP;
         String line;            
@@ -77,6 +90,12 @@ public class VerbindungstestsParentThread extends Thread{
                 rootIP = line;
 
                 this.serverDaten.connectToParent(rootIP);
+                int counter = 0;
+                for(Verbindung child : this.serverDaten.childConnection){
+                    child.getServerStub().setID(this.serverDaten.primitiveDaten.serverID + counter);
+                    counter++;
+                }
+                
             }      
             else{
                 System.out.println("LOG * ---> Verbindung zu Root-Server konnte nicht hergestellt werden!");

@@ -10,18 +10,25 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.*;
 import javax.mail.internet.*;
-/**
- *
- * @author TimMeyer
- */
+
 public class EMailService {
     
+    // Variablen Deklaration und Initialisierung
     Session session;
     
+    /**
+     * Konstruktur
+     */
     public EMailService(){
         session = getGMailSession("terminkalenderserviceteam@gmail.com", "hallowelt123");        
     }
     
+    /**
+     * Methode, die E-Mails versenden laesst
+     * @param receiver
+     * @param subject
+     * @param message 
+     */
     public void sendMail(String receiver, String subject, String message){
         try {
             postMail(session, receiver, subject, message);
@@ -30,6 +37,14 @@ public class EMailService {
         } 
     }
     
+    /**
+     * Methode, die E-Mails beschreiben und versenden laesst
+     * @param session
+     * @param recipient
+     * @param subject
+     * @param message
+     * @throws MessagingException 
+     */
     private static void postMail(Session session, String recipient, String subject, String message) throws MessagingException{
         Message msg = new MimeMessage(session);
 
@@ -41,6 +56,12 @@ public class EMailService {
         Transport.send(msg);
     }
     
+    /**
+     * Methode, um E-Mails empfangen
+     * @param user
+     * @param pass
+     * @return 
+     */
     private static Session getGMailSession(String user, String pass){
         final Properties props = new Properties();
         

@@ -10,20 +10,26 @@ import Server.Utilities.Verbindung;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author timtim
- */
+
 public class VerbindungstestsChildsThread extends Thread{
     
+    // Variablen Deklaration und Initialisierung
     private final ServerDaten serverDaten;
     private final Verbindung verbindung;
     
+    /**
+     * Konstruktur
+     * @param serverDaten
+     * @param verbindung 
+     */
     public VerbindungstestsChildsThread(ServerDaten serverDaten, Verbindung verbindung){
         this.serverDaten = serverDaten;
         this.verbindung = verbindung;
     }    
     
+    /**
+     * Methode, die die Verbindung zum Kind testet
+     */
     @Override 
     public void run(){
         Counter counter = new Counter();
