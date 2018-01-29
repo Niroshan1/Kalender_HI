@@ -226,7 +226,6 @@ public class AnfragenMeldungenFenster extends javax.swing.JFrame {
             Anfrage anfrage = (Anfrage) meldung;
               
             stub.terminAnnehmen(anfrage.getTermin().getID(), sitzungsID);
-            stub.deleteMeldung(meldung.meldungsID, sitzungsID);
             JOptionPane.showMessageDialog(null, "Einladung wurde angennomen");
 
             hauptfenster.fillMeldList();
