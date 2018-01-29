@@ -499,7 +499,7 @@ public class ServerStubImpl implements ServerStub {
                     
                     for(Verbindung child : this.serverDaten.childConnection){
                         try{
-                            child.getServerStub().removeTermin(termin.getID(), username, serverDaten.getServerIdByUsername(teilnehmer.getUsername()), meldung);
+                            child.getServerStub().removeTermin(termin.getID(), teilnehmer.getUsername(), serverDaten.getServerIdByUsername(teilnehmer.getUsername()), meldung);
                         } catch (BenutzerException ex){}
                     }
                 }                    
@@ -545,10 +545,8 @@ public class ServerStubImpl implements ServerStub {
     
     @Override
     public void removeTermin(int terminID, String username, String serverID, Meldung meldung) throws RemoteException, SQLException{
-        System.out.println(serverID + " server: " + serverDaten.primitiveDaten.serverID);
         //ist man schon am richtigen server? (serverID gleich)
         if(serverID.equals(serverDaten.primitiveDaten.serverID)){
-            System.out.println("richtiger server: " + serverID + " / löschen bei user " + username);
             for(Sitzung sitzung : serverDaten.aktiveSitzungen){
                 if(sitzung.getEingeloggterBenutzer().getUsername().equals(username)){
                     try {
