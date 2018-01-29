@@ -492,7 +492,6 @@ public class ClientStubImpl implements ClientStub{
         
         this.serverDaten.parent.getServerStub().teilnehmerNimmtTeil(eingeloggterBenutzer.getTerminkalender().getTerminByID(terminID), eingeloggterBenutzer.getUsername(), text);
         eingeloggterBenutzer.deleteAnfrage(terminID);
-        eingeloggterBenutzer.getTerminkalender().removeTerminByID(terminID);  
     }
      
     /**
