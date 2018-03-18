@@ -7,6 +7,7 @@ package ClientGUI;
 
 import Server.ClientStub;
 import Utilities.BenutzerException;
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -29,6 +30,24 @@ public class RemoveKontaktFenster extends javax.swing.JFrame {
         initComponents();
         this.stub = stub;
         this.sitzungsID = sitzungsID;
+        setColor();
+    }
+    
+    private void setColor() throws RemoteException, BenutzerException{
+        
+        Color[] color = stub.getColor(sitzungsID);
+        Color color1 = color[0];
+        Color color2 = color[1];
+        Color color3 = color[2];
+        
+        //Light
+        jPanel3.setBackground(color1);
+        jPanel5.setBackground(color1);
+        
+        
+        //Middle
+        jPanel1.setBackground(color2);
+        
     }
     
     private RemoveKontaktFenster() {

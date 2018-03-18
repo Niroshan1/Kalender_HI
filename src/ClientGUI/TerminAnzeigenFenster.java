@@ -63,6 +63,8 @@ public class TerminAnzeigenFenster extends javax.swing.JFrame {
         this.sitzungsID = sitzungsID;
         this.termin = stub.getTermin(terminID, sitzungsID);
         
+        setColor();
+        
         datum.setText(termin.getDatum().toString());
         titel.setText(termin.getTitel());
         startZeit.setText(termin.getBeginn().toString() + " Uhr");
@@ -82,6 +84,30 @@ public class TerminAnzeigenFenster extends javax.swing.JFrame {
             jPanel8.setVisible(false);
             jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 200, 180));
         }      
+    }
+    
+    private void setColor() throws RemoteException, BenutzerException{
+        
+        Color[] color = stub.getColor(sitzungsID);
+        Color color1 = color[0];
+        Color color2 = color[1];
+        Color color3 = color[2];
+        
+        //Light
+        jPanel2.setBackground(color1);
+        jPanel3.setBackground(color1);
+        jPanel4.setBackground(color1);
+        jPanel6.setBackground(color1);
+        jPanel5.setBackground(color1);
+        jPanel7.setBackground(color1);
+        
+        
+        //Middle
+        jPanel1.setBackground(color2);
+        notiz.setBackground(color2);
+        teilnehmerliste.setBackground(color2);
+           
+        
     }
 
     private void fillTeilnehmerlist() throws RemoteException, BenutzerException, TerminException {

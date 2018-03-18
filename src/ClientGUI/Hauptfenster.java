@@ -78,14 +78,18 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
      * @param stub
      * @param sitzungsID
      * @param fenster
+     * @throws java.rmi.RemoteException
+     * @throws Utilities.BenutzerException
      */
-    public Hauptfenster(ClientStub stub, int sitzungsID, LoginFenster fenster) {
+    public Hauptfenster(ClientStub stub, int sitzungsID, LoginFenster fenster) throws RemoteException, RemoteException, BenutzerException, BenutzerException, BenutzerException, BenutzerException {
         initComponents();
 
         this.stub = stub;
         this.sitzungsID = sitzungsID;
         this.fenster = fenster;
         this.meldungssize = 0;
+        
+        setColor();
         
         jList1.setModel(listModel);
         termineListe.setModel(termineListeModel);
@@ -105,6 +109,94 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         };
         timer = new Timer(1000, taskPerformer);
         timer.start();
+        
+    }
+    
+    private void setColor() throws RemoteException, BenutzerException{
+        
+        Color[] color = stub.getColor(sitzungsID);
+        Color color1 = color[0];
+        Color color2 = color[1];
+        Color color3 = color[2];
+        
+        //Light
+        day1.setBackground(color1);
+        day2.setBackground(color1);
+        day3.setBackground(color1);
+        day4.setBackground(color1);
+        day5.setBackground(color1);
+        day6.setBackground(color1);
+        day7.setBackground(color1);
+        day8.setBackground(color1);
+        day9.setBackground(color1);
+        day10.setBackground(color1);
+        day11.setBackground(color1);
+        day12.setBackground(color1);
+        day13.setBackground(color1);
+        day14.setBackground(color1);
+        day15.setBackground(color1);
+        day16.setBackground(color1);
+        day17.setBackground(color1);
+        day18.setBackground(color1);
+        day19.setBackground(color1);
+        day20.setBackground(color1);
+        day21.setBackground(color1);
+        day22.setBackground(color1);
+        day23.setBackground(color1);
+        day24.setBackground(color1);
+        day25.setBackground(color1);
+        day26.setBackground(color1);
+        day27.setBackground(color1);
+        day28.setBackground(color1);
+        day29.setBackground(color1);
+        day30.setBackground(color1);
+        day31.setBackground(color1);
+        day32.setBackground(color1);
+        day33.setBackground(color1);
+        day34.setBackground(color1);
+        day35.setBackground(color1);
+        day36.setBackground(color1);
+        day37.setBackground(color1);
+        day38.setBackground(color1);
+        day39.setBackground(color1);
+        day40.setBackground(color1);
+        day41.setBackground(color1);
+        day42.setBackground(color1);
+        
+        jPanel7.setBackground(color1);
+        jPanel2.setBackground(color1);
+        jPanel1.setBackground(color1);
+        jPanel10.setBackground(color1);
+        jPanel14.setBackground(color1);
+        headerPanel.setBackground(color1);
+        jLabel16.setBackground(color1);
+        jLabel17.setBackground(color1);
+        jPanel11.setBackground(color1);
+        jPanel12.setBackground(color1);
+        jPanel13.setBackground(color1);
+        jPanel4.setBackground(color1);
+       
+        
+        //Middle
+        jPanel6.setBackground(color2);
+        contactUsernameField.setBackground(color2);
+        jList1.setBackground(color2);
+        showAddKontakt.setBackground(color2);
+        showRemoveKontakt.setBackground(color2);
+        benachList.setBackground(color2);
+        calendarPanel.setBackground(color2);
+        jPanel5.setBackground(color2);
+        
+        //Dark
+        mainPanel.setBackground(color3);
+        jPanel3.setBackground(color3);
+        montagLabel.setBackground(color3);
+        dienstagLabel.setBackground(color3);
+        mittwochLabel.setBackground(color3);
+        donnerstagLabel.setBackground(color3);
+        freitagLabel.setBackground(color3);
+        samstagLabel.setBackground(color3);
+        sonntagLabel.setBackground(color3);
         
     }
 

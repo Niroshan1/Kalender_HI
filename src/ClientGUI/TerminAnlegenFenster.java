@@ -57,6 +57,26 @@ public class TerminAnlegenFenster extends javax.swing.JFrame {
         
         stunde2.setSelectedItem(timeStamp.substring(9, 11));
         minute2.setSelectedItem(timeStamp.substring(11, 13));
+        
+        setColor();
+    }
+    
+    private void setColor() throws RemoteException, BenutzerException{
+        
+        Color[] color = stub.getColor(sitzungsID);
+        Color color1 = color[0];
+        Color color2 = color[1];
+        Color color3 = color[2];
+        
+        //Light
+        jPanel2.setBackground(color1);
+        jPanel3.setBackground(color1);
+        
+        
+        //Middle
+        jPanel1.setBackground(color2);
+        beschreibung.setBackground(color2);
+        
     }
 
     /**

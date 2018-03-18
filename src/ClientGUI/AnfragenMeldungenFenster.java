@@ -42,6 +42,8 @@ public class AnfragenMeldungenFenster extends javax.swing.JFrame {
         this.hauptfenster = hauptfenster;
         
         initComponents();
+        
+        setColor();
 
         meldungsText.setText(meldung.getText());
         //Wenn es eine Meldung ist, welche auf keine Antwort wartet, annehmen/ablehnen unsichtbar machen
@@ -56,6 +58,25 @@ public class AnfragenMeldungenFenster extends javax.swing.JFrame {
             jPanel7.setVisible(false);
         }
         setTitle("");
+    }
+    
+    private void setColor() throws RemoteException, BenutzerException{
+        
+        Color[] color = stub.getColor(sitzungsID);
+        Color color1 = color[0];
+        Color color2 = color[1];
+        Color color3 = color[2];
+        
+        //Light
+        jPanel3.setBackground(color1);
+        jPanel5.setBackground(color1);
+        jPanel6.setBackground(color1);
+        jPanel7.setBackground(color1);
+        
+        
+        //Middle
+        jPanel2.setBackground(color2);
+        
     }
     
     /**

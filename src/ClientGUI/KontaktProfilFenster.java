@@ -7,6 +7,7 @@ package ClientGUI;
 
 import Server.ClientStub;
 import Utilities.BenutzerException;
+import java.awt.Color;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -33,7 +34,24 @@ public class KontaktProfilFenster extends javax.swing.JFrame {
         usernameField.setText(profil.get(0));
         emailField.setText(profil.get(1));
         vornameField.setText(profil.get(2));
-        nachnameField.setText(profil.get(3));        
+        nachnameField.setText(profil.get(3)); 
+        
+        setColor();
+    }
+    
+    private void setColor() throws RemoteException, BenutzerException{
+        
+        Color[] color = stub.getColor(sitzungsID);
+        Color color1 = color[0];
+        Color color2 = color[1];
+        Color color3 = color[2];
+        
+        //Light
+        jPanel3.setBackground(color1);
+            
+        //Middle
+        jPanel2.setBackground(color2);
+        
     }
 
     private KontaktProfilFenster() {
