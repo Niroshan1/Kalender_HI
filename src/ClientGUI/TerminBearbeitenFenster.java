@@ -91,6 +91,7 @@ public class TerminBearbeitenFenster extends javax.swing.JFrame {
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
         
         //Light
         jPanel2.setBackground(color1);
@@ -105,6 +106,31 @@ public class TerminBearbeitenFenster extends javax.swing.JFrame {
         jPanel1.setBackground(color2);
         notiz.setBackground(color2);
         teilnehmerliste.setBackground(color2);
+        
+        
+        //Font 
+        titel.setForeground(color4);
+        dateLabel.setForeground(color4);
+        startLabel.setForeground(color4);
+        endLabel.setForeground(color4);
+        ortLabel.setForeground(color4);
+        ownerLabel.setForeground(color4);
+        jLabel6.setForeground(color4);
+        notiz.setForeground(color4);
+        everyoneCanEditLabel.setForeground(color4);
+        bearbeitenLabel.setForeground(color4);
+        jLabel8.setForeground(color4);
+        tag1.setForeground(color4);
+        monat1.setForeground(color4);
+        jahr1.setForeground(color4);
+        stunde1.setForeground(color4);
+        stunde2.setForeground(color4);
+        minute1.setForeground(color4);
+        minute2.setForeground(color4);
+        jLabel4.setForeground(color4);
+        teilnehmerliste.setForeground(color4);
+        ortTextField.setForeground(color4);
+        ownerValueLabel.setForeground(color4);
            
         
     }

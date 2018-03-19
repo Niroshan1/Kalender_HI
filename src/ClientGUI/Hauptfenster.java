@@ -118,6 +118,7 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
         
         //Light
         day1.setBackground(color1);
@@ -197,6 +198,82 @@ public class Hauptfenster extends javax.swing.JFrame implements ListSelectionLis
         freitagLabel.setBackground(color3);
         samstagLabel.setBackground(color3);
         sonntagLabel.setBackground(color3);
+        
+        
+        //Font 
+        day1.setForeground(color4);
+        day2.setForeground(color4);
+        day3.setForeground(color4);
+        day4.setForeground(color4);
+        day5.setForeground(color4);
+        day6.setForeground(color4);
+        day7.setForeground(color4);
+        day8.setForeground(color4);
+        day9.setForeground(color4);
+        day10.setForeground(color4);
+        day11.setForeground(color4);
+        day12.setForeground(color4);
+        day13.setForeground(color4);
+        day14.setForeground(color4);
+        day15.setForeground(color4);
+        day16.setForeground(color4);
+        day17.setForeground(color4);
+        day18.setForeground(color4);
+        day19.setForeground(color4);
+        day20.setForeground(color4);
+        day21.setForeground(color4);
+        day22.setForeground(color4);
+        day23.setForeground(color4);
+        day24.setForeground(color4);
+        day25.setForeground(color4);
+        day26.setForeground(color4);
+        day27.setForeground(color4);
+        day28.setForeground(color4);
+        day29.setForeground(color4);
+        day30.setForeground(color4);
+        day31.setForeground(color4);
+        day32.setForeground(color4);
+        day33.setForeground(color4);
+        day34.setForeground(color4);
+        day35.setForeground(color4);
+        day36.setForeground(color4);
+        day37.setForeground(color4);
+        day38.setForeground(color4);
+        day39.setForeground(color4);
+        day40.setForeground(color4);
+        day41.setForeground(color4);
+        day42.setForeground(color4);
+        
+        jLabel2.setForeground(color4);
+        jLabel1.setForeground(color4);
+        jLabel8.setForeground(color4);
+        contactUsernameField.setForeground(color4);
+        showAddKontakt.setForeground(color4);
+        jList1.setForeground(color4);
+        showRemoveKontakt.setForeground(color4);
+        jLabel11.setForeground(color4);
+        benachList.setForeground(color4);
+        jLabel12.setForeground(color4);
+        eventMessage.setForeground(color4);
+        jLabel13.setForeground(color4);
+        jLabel14.setForeground(color4);
+        jLabel16.setForeground(color4);
+        dateLabel.setForeground(color4);
+        jLabel17.setForeground(color4);
+        zumProfil.setForeground(color4);
+        jLabel7.setForeground(color4);
+        termineListe.setForeground(color4);
+        jLabel14.setForeground(color4);
+        jLabel14.setForeground(color4);
+        
+        montagLabel.setForeground (color4);
+        dienstagLabel.setForeground (color4);
+        mittwochLabel.setForeground (color4);
+        donnerstagLabel.setForeground (color4);
+        freitagLabel.setForeground (color4);
+        samstagLabel.setForeground (color4);
+        sonntagLabel.setForeground (color4);
+        
         
     }
 

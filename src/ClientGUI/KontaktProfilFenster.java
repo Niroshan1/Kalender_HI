@@ -45,12 +45,25 @@ public class KontaktProfilFenster extends javax.swing.JFrame {
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
         
         //Light
         jPanel3.setBackground(color1);
             
         //Middle
         jPanel2.setBackground(color2);
+        
+        
+        //Font 
+        jLabel7.setForeground(color4);
+        jLabel1.setForeground(color4);
+        jLabel2.setForeground(color4);
+        jLabel3.setForeground(color4);
+        jLabel4.setForeground(color4);
+        usernameField.setForeground(color4);
+        vornameField.setForeground(color4);
+        nachnameField.setForeground(color4);
+        emailField.setForeground(color4);
         
     }
 

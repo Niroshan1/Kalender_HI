@@ -92,6 +92,8 @@ public class TerminAnzeigenFenster extends javax.swing.JFrame {
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
+
         
         //Light
         jPanel2.setBackground(color1);
@@ -106,6 +108,30 @@ public class TerminAnzeigenFenster extends javax.swing.JFrame {
         jPanel1.setBackground(color2);
         notiz.setBackground(color2);
         teilnehmerliste.setBackground(color2);
+        
+        //Font 
+        titel.setForeground(color4);
+        jLabel2.setForeground(color4);
+        jLabel3.setForeground(color4);
+        jLabel4.setForeground(color4);
+        jLabel5.setForeground(color4);
+        jLabel1.setForeground(color4);
+        start.setForeground(color4);
+        jLabel6.setForeground(color4);
+        notiz.setForeground(color4);
+        jLabel8.setForeground(color4);
+        bearbeitenLabel.setForeground(color4);
+        jLabel9.setForeground(color4);
+        datum.setForeground(color4);
+        startZeit.setForeground(color4);
+        endZeit.setForeground(color4);
+        ort.setForeground(color4);
+        terminersteller.setForeground(color4);
+        datum.setForeground(color4);
+        kontakte.setForeground(color4);
+        addTeilnahmeLabel.setForeground(color4);
+        teilnehmerliste.setForeground(color4);
+        
            
         
     }
@@ -336,8 +362,8 @@ public class TerminAnzeigenFenster extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(bearbeitenLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addComponent(bearbeitenLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

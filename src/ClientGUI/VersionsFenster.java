@@ -37,6 +37,13 @@ public class VersionsFenster extends javax.swing.JFrame {
         
         //Middle
         jPanel1.setBackground(color2);
+        
+        Color color4 = color[2];
+        //Font 
+        jLabel7.setForeground(color4);
+        jLabel1.setForeground(color4);
+        hinzufuegenlabel1.setForeground(color4);
+        userNameField.setForeground(color4);
  
     }
 
@@ -105,7 +112,7 @@ public class VersionsFenster extends javax.swing.JFrame {
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(240, 240, 240));
-        jLabel5.setText("1.872");
+        jLabel5.setText("Fusion 3.0");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N

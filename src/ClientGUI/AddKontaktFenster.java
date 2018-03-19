@@ -41,6 +41,7 @@ public class AddKontaktFenster extends javax.swing.JFrame {
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
         
         //Light theme
         jPanel3.setBackground(color1);
@@ -48,6 +49,13 @@ public class AddKontaktFenster extends javax.swing.JFrame {
         
         //Middle theme
         jPanel1.setBackground(color2);
+        
+        //Font 
+        jLabel7.setForeground(color4);
+        jLabel1.setForeground(color4);
+        hinzufuegenlabel1.setForeground(color4);
+        userNameField.setForeground(color4);
+        
     }
     
     private AddKontaktFenster() {

@@ -66,6 +66,8 @@ public class AnfragenMeldungenFenster extends javax.swing.JFrame {
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
+
         
         //Light
         jPanel3.setBackground(color1);
@@ -76,6 +78,13 @@ public class AnfragenMeldungenFenster extends javax.swing.JFrame {
         
         //Middle
         jPanel2.setBackground(color2);
+        
+        //Font 
+        jLabel7.setForeground(color4);
+        meldungsText.setForeground(color4);
+        buttonAblehnen.setForeground(color4);
+        buttonAnnehmen.setForeground(color4);
+        buttonDelete.setForeground(color4);
         
     }
     

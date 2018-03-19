@@ -51,6 +51,7 @@ public class LoginFenster extends javax.swing.JFrame {
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
         
         //Light
         jPanel1.setBackground(color1);
@@ -62,6 +63,17 @@ public class LoginFenster extends javax.swing.JFrame {
         //Middle
         jPanel2.setBackground(color2);
         jPanel6.setBackground(color2);
+        
+        
+        //Font 
+        jLabel9.setForeground(color4);
+        jLabel5.setForeground(color4);
+        jBenutzernameField.setForeground(color4);
+        jPasswortField.setForeground(color4);
+        jLabel8.setForeground(color4);
+        anmeldenLabel.setForeground(color4);
+        beendenLabel.setForeground(color4);
+
         
     }
 

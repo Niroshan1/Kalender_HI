@@ -50,6 +50,7 @@ public class ProfilFenster extends javax.swing.JFrame {
         Color color1 = color[0];
         Color color2 = color[1];
         Color color3 = color[2];
+        Color color4 = color[3];
         
         //Light
         jPanel2.setBackground(color1);
@@ -63,6 +64,29 @@ public class ProfilFenster extends javax.swing.JFrame {
         
         //Middle
         jPanel3.setBackground(color2);
+        
+        
+        //Font 
+        jLabel8.setForeground(color4);
+        jLabel1.setForeground(color4);
+        jLabel2.setForeground(color4);
+        jLabel3.setForeground(color4);
+        jLabel4.setForeground(color4);
+        jLabel5.setForeground(color4);
+        jLabel7.setForeground(color4);
+        jLabel11.setForeground(color4);
+        jLabel12.setForeground(color4);
+        usernameField.setForeground(color4);
+        vornameField.setForeground(color4);
+        nachnameField.setForeground(color4);
+        emailField.setForeground(color4);
+        altesPWField.setForeground(color4);
+        neuesPWField.setForeground(color4);
+        jButton2.setForeground(color4);
+        jButton3.setForeground(color4);
+        jButton4.setForeground(color4);
+        jButton1.setForeground(color4);
+        
         
     }
 
